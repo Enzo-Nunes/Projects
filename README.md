@@ -13,3 +13,8 @@ Plagiarism is a VERY serious problem in the academic environment and the institu
 
 Don't break that trust.
 Thank you.
+
+## Organization
+
+The repo is subdivided into subject folders, which are in turn subdivided into the project folders.
+Each of these project folders have several files which include test files, the PDF with the problem to be solved, the project itself and more.
