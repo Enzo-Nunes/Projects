@@ -1,3 +1,4 @@
+:- style_check(-discontiguous). 
 evento(1,'engenharia biomolecular',laboratorial,5,'1-75').
 horario(1,quarta-feira,14.0,17.0,3.0,p2).
 turno(1,mbmrp,1,mbmrp0103).
@@ -3513,9 +3514,35 @@ eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
 
 % Função que adiciona p1_2 à ListaPeriodos se a lista contiver p1 ou p2 e adiciona p3_4 se a lista contiver p3 ou p4.
 adicionaSemestres(ListaPeriodos, ListaNova) :-
-    member(p1, ListaPeriodos), ListaAux = [p1_2|ListaPeriodos];
-    member(p3, ListaPeriodos), ListaAux = [p3_4|ListaPeriodos];
-    member(p2, ListaPeriodos), ListaAux = [p1_2|ListaPeriodos];
-    member(p4, ListaPeriodos), ListaAux = [p3_4|ListaPeriodos],
-    sort(ListaAux, ListaNova).
+    member(p1, ListaPeriodos),                                  ListaNova = [p1_2|ListaPeriodos].
 
+adicionaSemestres(ListaPeriodos, ListaNova) :-
+    member(p2, ListaPeriodos), not(member(p1, ListaPeriodos)),  ListaNova = [p1_2|ListaPeriodos].
+
+adicionaSemestres(ListaPeriodos, ListaNova) :-
+    member(p3, ListaPeriodos),                                  ListaNova = [p3_4|ListaPeriodos].
+
+adicionaSemestres(ListaPeriodos, ListaNova) :-
+    member(p4, ListaPeriodos), not(member(p3, ListaPeriodos)),  ListaNova = [p3_4|ListaPeriodos].
+
+
+/*
+Escreva o predicado organizaEventos(ListaEventos, Periodo, EventosNoPeriodo), que significa que
+EventosNoPeriodo é a lista, ordenada e sem elementos repetidos, dos IDs dos
+eventos de ListaEventos que ocorrem no período Periodo. Este predicado tem
+que ser escrito com recursão, sem o uso de meta-predicados como findall, bagof,
+setof, sort, etc.
+*/
+
+% organizaEventos([], _, []). % Caso base
+
+% organizaEventos(_, Periodo, _) :-
+    
+
+
+% organizaEventos([H|T], Periodos, EventosNoPeriodo) :-
+%     horario(H, _, _, _, _, P),
+%     P == Periodo,
+%     append([H], EventosNoPeriodoAux, EventosNoPeriodo),
+%     organizaEventos(T, Periodo, EventosNoPeriodoAux);
+%     organizaEventos(T, Periodo, EventosNoPeriodo).
