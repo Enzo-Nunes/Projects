@@ -3552,30 +3552,33 @@ procuraDisciplinas(Curso, ListaDisciplinasCursoSorted) :-
     findall(Disciplina, (evento(E,Disciplina,_,_,_), turno(E,Curso,_,_)), ListaDisciplinasCurso),
     sort(ListaDisciplinasCurso, ListaDisciplinasCursoSorted).
 
-/* organizaDisciplinas(ListaDisciplinas, Curso, Semestres) é verdade se Semestres
-é uma lista com duas listas. A lista na primeira posição contém as disciplinas de
-ListaDisciplinas do curso Curso que ocorrem no primeiro semestre; idem para a lista na
-segunda posição, que contém as que ocorrem no segundo semestre. */
-
-
 % Engorda Predicado.
 organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2]) :-
-    organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2], []).
+    organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2], [[], []]).
 
+% Caso base.
+organizaDisciplinas([], _, [Semestre1Sorted, Semestre2Sorted], [Semestre1, Semestre2]) :-
+    sort(Semestre1, Semestre1Sorted),
+    sort(Semestre2, Semestre2Sorted), !.
 
-organizaDisciplinas([], _, [Semestre1, Semestre2], [Semestre1, Semestre2]).
-
-organizaDisciplinas([Disciplina|T], Curso, [Semestre1, Semestre2], Aux) :-
+% Caso recursivo, adiciona a disciplina a lista do semestre correspondente.
+organizaDisciplinas([Disciplina|T], Curso, [Semestre1, Semestre2], [Semestre1Aux, Semestre2Aux]) :-
+    procuraDisciplinas(Curso, ListaDisciplinasCurso),
+    member(Disciplina, ListaDisciplinasCurso),
     evento(E, Disciplina,_,_,_), horario(E,_,_,_,_,P),
-    member(P, [p1, p2, p1_2]), 
+    (
+    member(P, [p1, p2, p1_2]),
+    append([Disciplina], Semestre1Aux, Semestre1Novo),
+    organizaDisciplinas(T, Curso, [Semestre1, Semestre2], [Semestre1Novo, Semestre2Aux]), !;
+    member(P, [p3, p4, p3_4]),
+    append([Disciplina], Semestre2Aux, Semestre2Novo),
+    organizaDisciplinas(T, Curso, [Semestre1, Semestre2], [Semestre1Aux, Semestre2Novo])
+    ).
 
-
-
-
-
-% organizaDisciplinas([], _, List) :- !.
-
-% organizaDisciplinas([Disciplina|T], Curso, [Semestre1, Semestre2]) :-
-%     evento(E, Disciplina,_,_,_), horario(E,_,_,_,_,P),
-%     (member(P, [p1, p2, p1_2]), append([Disciplina], Semestre1, Semestre1Novo), organizaDisciplinas(T, Curso, [Semestre1Novo, Semestre2]), !;
-%     member(P, [p3, p4, p3_4]), append([Disciplina], Semestre2, Semestre2Novo), organizaDisciplinas(T, Curso, [Semestre1, Semestre2Novo])), !.
+/*     horasCurso(Periodo, Curso, Ano, TotalHoras) é verdade se TotalHoras for o número
+    de horas total dos eventos associadas ao curso Curso, no ano Ano e período Periodo. Aulas de turmas diferentes devem contar apenas uma vez */
+    
+    horasCurso(Periodo, Curso, Ano, TotalHoras) :-
+        adicionaSemestres([Periodo], ListaSemestrada),
+        findall(D, (turno(E, Curso, Ano, T), horario(E, _, _, _, D, P), member(P, ListaSemestrada)), ListaHoras),
+        sum_list(ListaHoras, TotalHoras).
