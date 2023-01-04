@@ -5,16 +5,36 @@
 eventosSemSalas(EventosSemSala) :-
     findall(E, evento(E,_,_,_,semSala), EventosSemSala).
 
+
 eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
     findall(E, (evento(E,_,_,_,semSala), horario(E,DiaDaSemana,_,_,_,_)), EventosSemSala).
 
-eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
-    adicionaSemestres(ListaPeriodos, ListaNova),
-    findall(E, (evento(E,_,_,_,semSala), horario(E,_,_,_,_,P), member(P, ListaNova)), EventosSemSala).
 
-% Predicado auxiliar para adicionar os semestres 1_2 e 3_4 à ListaPeriodos.
-adicionaSemestres(ListaPeriodos, ListaNova) :-
-    member(p1, ListaPeriodos),                                 ListaNova = [p1_2|ListaPeriodos], !;
-    member(p2, ListaPeriodos), not(member(p1, ListaPeriodos)), ListaNova = [p1_2|ListaPeriodos], !;
-    member(p3, ListaPeriodos),                                 ListaNova = [p3_4|ListaPeriodos], !;
-    member(p4, ListaPeriodos), not(member(p3, ListaPeriodos)), ListaNova = [p3_4|ListaPeriodos], !.
+eventosSemSalasPeriodo([], []).
+
+eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
+    adicionaSemestres(ListaPeriodos, ListaSemestrada),
+    findall(E, (evento(E,_,_,_,semSala), horario(E,_,_,_,_,P), member(P, ListaSemestrada)), EventosSemSala).
+
+
+adicionaSemestres(ListaPeriodos, ListaSemestrada) :-
+    (member(p1, ListaPeriodos) ; member(p2, ListaPeriodos)), append([p1_2], ListaPeriodos, ListaSemestrada), !;
+    (member(p3, ListaPeriodos) ; member(p4, ListaPeriodos)), append([p3_4], ListaPeriodos, ListaSemestrada).
+
+
+% Engorda o predicado.
+organizaEventos(ListaEventos, Periodo, EventosNoPeriodo) :-
+    organizaEventos(ListaEventos, Periodo, EventosNoPeriodo, []).
+
+ % Caso base.
+organizaEventos([], _, EventosNoPeriodo, EventosNoPeriodo).
+
+% Caso recursivo, se o evento estiver no periodo, adiciona-o a lista de eventos no periodo.
+organizaEventos([H|T], Periodo, EventosNoPeriodo, Aux) :-
+    adicionaSemestres([Periodo], ListaSemestrada),
+    horario(H, _, _, _, _, P),
+    member(P, ListaSemestrada),
+    append(Aux, [H], EventosNoPeriodoNovo),
+    organizaEventos(T, Periodo, EventosNoPeriodo, EventosNoPeriodoNovo), !;
+    organizaEventos(T, Periodo, EventosNoPeriodo, Aux).
+
