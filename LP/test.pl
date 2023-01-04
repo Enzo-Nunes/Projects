@@ -3503,46 +3503,79 @@ turno(800,legi,1,legi0103).
 eventosSemSalas(EventosSemSala) :-
     findall(E, evento(E,_,_,_,semSala), EventosSemSala).
 
+
 eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
-    findall(E, (evento(E,_,_,_,semSala), horario(E,DiaDaSemana,_,_,_,_)), EventosSemSalaAux),
-    sort(EventosSemSalaAux, EventosSemSala).
-    
+    findall(E, (evento(E,_,_,_,semSala), horario(E,DiaDaSemana,_,_,_,_)), EventosSemSala).
+
+
+eventosSemSalasPeriodo([], []).
 
 eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
-    adicionaSemestres(ListaPeriodos, ListaNova),
-    findall(E, (evento(E,_,_,_,semSala), horario(E,_,_,_,_,P), member(P, ListaNova)), EventosSemSala).
-
-% Função que adiciona p1_2 à ListaPeriodos se a lista contiver p1 ou p2 e adiciona p3_4 se a lista contiver p3 ou p4.
-adicionaSemestres(ListaPeriodos, ListaNova) :-
-    member(p1, ListaPeriodos),                                  ListaNova = [p1_2|ListaPeriodos].
-
-adicionaSemestres(ListaPeriodos, ListaNova) :-
-    member(p2, ListaPeriodos), not(member(p1, ListaPeriodos)),  ListaNova = [p1_2|ListaPeriodos].
-
-adicionaSemestres(ListaPeriodos, ListaNova) :-
-    member(p3, ListaPeriodos),                                  ListaNova = [p3_4|ListaPeriodos].
-
-adicionaSemestres(ListaPeriodos, ListaNova) :-
-    member(p4, ListaPeriodos), not(member(p3, ListaPeriodos)),  ListaNova = [p3_4|ListaPeriodos].
+    adicionaSemestres(ListaPeriodos, ListaSemestrada),
+    findall(E, (evento(E,_,_,_,semSala), horario(E,_,_,_,_,P), member(P, ListaSemestrada)), EventosSemSala).
 
 
-/*
-Escreva o predicado organizaEventos(ListaEventos, Periodo, EventosNoPeriodo), que significa que
-EventosNoPeriodo é a lista, ordenada e sem elementos repetidos, dos IDs dos
-eventos de ListaEventos que ocorrem no período Periodo. Este predicado tem
-que ser escrito com recursão, sem o uso de meta-predicados como findall, bagof,
-setof, sort, etc.
-*/
-
-% organizaEventos([], _, []). % Caso base
-
-% organizaEventos(_, Periodo, _) :-
-    
+adicionaSemestres(ListaPeriodos, ListaSemestrada) :-
+    (member(p1, ListaPeriodos) ; member(p2, ListaPeriodos)), append([p1_2], ListaPeriodos, ListaSemestrada), !;
+    (member(p3, ListaPeriodos) ; member(p4, ListaPeriodos)), append([p3_4], ListaPeriodos, ListaSemestrada).
 
 
-% organizaEventos([H|T], Periodos, EventosNoPeriodo) :-
-%     horario(H, _, _, _, _, P),
-%     P == Periodo,
-%     append([H], EventosNoPeriodoAux, EventosNoPeriodo),
-%     organizaEventos(T, Periodo, EventosNoPeriodoAux);
-%     organizaEventos(T, Periodo, EventosNoPeriodo).
+% Engorda o predicado.
+organizaEventos(ListaEventos, Periodo, EventosNoPeriodo) :-
+    organizaEventos(ListaEventos, Periodo, EventosNoPeriodo, []).
+
+ % Caso base.
+organizaEventos([], _, EventosNoPeriodoSorted, EventosNoPeriodo) :-
+    sort(EventosNoPeriodo, EventosNoPeriodoSorted), !.
+
+% Caso recursivo, se o evento estiver no periodo, adiciona-o a lista de eventos no periodo.
+organizaEventos([H|T], Periodo, EventosNoPeriodo, Aux) :-
+    adicionaSemestres([Periodo], ListaSemestrada),
+    horario(H, _, _, _, _, P),
+    member(P, ListaSemestrada),
+    append([H], Aux, EventosNoPeriodoNovo),
+    organizaEventos(T, Periodo, EventosNoPeriodo, EventosNoPeriodoNovo), !;
+    organizaEventos(T, Periodo, EventosNoPeriodo, Aux).
+
+% Predicado que permite obter a lista de ids dos eventos que tem duracao inferior a Duracao.
+eventosMenoresQue(Duracao, ListaEventosMenoresSorted) :-
+    findall(E, (horario(E,_,_,_,D,_), D =< Duracao), ListaEventosMenores),
+    sort(ListaEventosMenores, ListaEventosMenoresSorted).
+
+% Predicado que retorna True se o evento E tem duracao inferior a Duracao.
+eventosMenoresQueBool(E, Duracao) :-
+    horario(E,_,_,_,D,_),
+    D =< Duracao.
+
+% Predicado que permite obter a lista ordenada alfabeticamente de disciplinas de um dado curso.
+procuraDisciplinas(Curso, ListaDisciplinasCursoSorted) :-
+    findall(Disciplina, (evento(E,Disciplina,_,_,_), turno(E,Curso,_,_)), ListaDisciplinasCurso),
+    sort(ListaDisciplinasCurso, ListaDisciplinasCursoSorted).
+
+/* organizaDisciplinas(ListaDisciplinas, Curso, Semestres) é verdade se Semestres
+é uma lista com duas listas. A lista na primeira posição contém as disciplinas de
+ListaDisciplinas do curso Curso que ocorrem no primeiro semestre; idem para a lista na
+segunda posição, que contém as que ocorrem no segundo semestre. */
+
+
+% Engorda Predicado.
+organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2]) :-
+    organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2], []).
+
+
+organizaDisciplinas([], _, [Semestre1, Semestre2], [Semestre1, Semestre2]).
+
+organizaDisciplinas([Disciplina|T], Curso, [Semestre1, Semestre2], Aux) :-
+    evento(E, Disciplina,_,_,_), horario(E,_,_,_,_,P),
+    member(P, [p1, p2, p1_2]), 
+
+
+
+
+
+% organizaDisciplinas([], _, List) :- !.
+
+% organizaDisciplinas([Disciplina|T], Curso, [Semestre1, Semestre2]) :-
+%     evento(E, Disciplina,_,_,_), horario(E,_,_,_,_,P),
+%     (member(P, [p1, p2, p1_2]), append([Disciplina], Semestre1, Semestre1Novo), organizaDisciplinas(T, Curso, [Semestre1Novo, Semestre2]), !;
+%     member(P, [p3, p4, p3_4]), append([Disciplina], Semestre2, Semestre2Novo), organizaDisciplinas(T, Curso, [Semestre1, Semestre2Novo])), !.
