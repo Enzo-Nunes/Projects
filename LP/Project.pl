@@ -7,19 +7,28 @@ eventosSemSalas(EventosSemSala) :-
 
 
 eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
-    findall(E, (evento(E,_,_,_,semSala), horario(E,DiaDaSemana,_,_,_,_)), EventosSemSala).
+    findall(E, (
+            evento(E,_,_,_,semSala),
+            horario(E,DiaDaSemana,_,_,_,_)),
+        EventosSemSala).
 
 
 eventosSemSalasPeriodo([], []).
 
 eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
     adicionaSemestres(ListaPeriodos, ListaSemestrada),
-    findall(E, (evento(E,_,_,_,semSala), horario(E,_,_,_,_,P), member(P, ListaSemestrada)), EventosSemSala).
+    findall(E, (
+            evento(E,_,_,_,semSala),
+            horario(E,_,_,_,_,P),
+            member(P, ListaSemestrada)),
+        EventosSemSala).
 
 
 adicionaSemestres(ListaPeriodos, ListaSemestrada) :-
-    (member(p1, ListaPeriodos) ; member(p2, ListaPeriodos)), append([p1_2], ListaPeriodos, ListaSemestrada), !;
-    (member(p3, ListaPeriodos) ; member(p4, ListaPeriodos)), append([p3_4], ListaPeriodos, ListaSemestrada).
+    (member(p1, ListaPeriodos) ; member(p2, ListaPeriodos)),
+        append([p1_2], ListaPeriodos, ListaSemestrada), !;
+    (member(p3, ListaPeriodos) ; member(p4, ListaPeriodos)),
+        append([p3_4], ListaPeriodos, ListaSemestrada).
 
 
 % Engorda o predicado.
@@ -51,28 +60,86 @@ eventosMenoresQueBool(E, Duracao) :-
 
 % Predicado que permite obter a lista ordenada alfabeticamente de disciplinas de um dado curso.
 procuraDisciplinas(Curso, ListaDisciplinasCursoSorted) :-
-    findall(Disciplina, (evento(E,Disciplina,_,_,_), turno(E,Curso,_,_)), ListaDisciplinasCurso),
+    findall(Disciplina, (
+            evento(E,Disciplina,_,_,_),
+            turno(E,Curso,_,_)),
+        ListaDisciplinasCurso),
     sort(ListaDisciplinasCurso, ListaDisciplinasCursoSorted).
 
 % Engorda Predicado.
-organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2]) :-
-    organizaDisciplinas(ListaDisciplinas, Curso, [Semestre1, Semestre2], [[], []]).
+organizaDisciplinas(ListaDisciplinas, Curso, [Seme1, Seme2]) :-
+    organizaDisciplinas(ListaDisciplinas, Curso, [Seme1, Seme2], [[], []]).
 
 % Caso base.
-organizaDisciplinas([], _, [Semestre1Sorted, Semestre2Sorted], [Semestre1, Semestre2]) :-
-    sort(Semestre1, Semestre1Sorted),
-    sort(Semestre2, Semestre2Sorted), !.
+organizaDisciplinas([], _, [Seme1Sorted, Seme2Sorted], [Seme1, Seme2]) :-
+    sort(Seme1, Seme1Sorted),
+    sort(Seme2, Seme2Sorted), !.
 
 % Caso recursivo, adiciona a disciplina a lista do semestre correspondente.
-organizaDisciplinas([Disciplina|T], Curso, [Semestre1, Semestre2], [Semestre1Aux, Semestre2Aux]) :-
-    procuraDisciplinas(Curso, ListaDisciplinasCurso),
-    member(Disciplina, ListaDisciplinasCurso),
-    evento(E, Disciplina,_,_,_), horario(E,_,_,_,_,P),
+organizaDisciplinas([Discip|T], Curso, [Seme1, Seme2], [Seme1Aux, Seme2Aux]) :-
+    procuraDisciplinas(Curso, ListaDiscipCurso),
+    member(Discip, ListaDiscipCurso),
+    evento(E, Discip,_,_,_), horario(E,_,_,_,_,P),
     (
     member(P, [p1, p2, p1_2]),
-    append([Disciplina], Semestre1Aux, Semestre1Novo),
-    organizaDisciplinas(T, Curso, [Semestre1, Semestre2], [Semestre1Novo, Semestre2Aux]), !;
+    append([Discip], Seme1Aux, Seme1Novo),
+    organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Novo, Seme2Aux]), !;
     member(P, [p3, p4, p3_4]),
-    append([Disciplina], Semestre2Aux, Semestre2Novo),
-    organizaDisciplinas(T, Curso, [Semestre1, Semestre2], [Semestre1Aux, Semestre2Novo])
+    append([Discip], Seme2Aux, Seme2Novo),
+    organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Aux, Seme2Novo])
     ).
+
+
+horasCurso(Periodo, Curso, Ano, TotalHoras) :-
+    adicionaSemestres([Periodo], ListaSemestrada),
+    findall(E, turno(E, Curso, Ano, _), ListaEventos),
+    sort(ListaEventos, ListaEventosSorted),
+    findall(D, (
+            horario(E, _, _, _, D, P),
+            member(E, ListaEventosSorted),
+            member(P, ListaSemestrada)),
+        ListaHoras), !,
+    sum_list(ListaHoras, TotalHoras).
+
+
+evolucaoHorasCurso(Curso, Evolucao) :-
+    findall((Ano, Periodo, NumHoras), (
+            horasCurso(Periodo, Curso, Ano, NumHoras)),
+        Evolucao).
+
+
+ocupaSlot(HoraInicioDada, HoraFimDada, HoraInicioEvento, HoraFimEvento, Horas) :-
+    HoraInicioEvento >= HoraInicioDada, HoraFimEvento =< HoraFimDada,
+    Horas is HoraFimEvento - HoraInicioEvento, !;
+
+    HoraInicioEvento =< HoraInicioDada, HoraFimEvento >= HoraFimDada,
+    Horas is HoraFimDada - HoraInicioDada, !;
+
+    HoraInicioEvento >= HoraInicioDada, HoraFimEvento >= HoraFimDada,
+    HoraInicioEvento =< HoraFimDada,
+    Horas is HoraFimDada - HoraInicioEvento, !;
+
+    HoraInicioEvento =< HoraInicioDada, HoraFimEvento =< HoraFimDada,
+    HoraFimEvento >= HoraInicioDada,
+    Horas is HoraFimEvento - HoraInicioDada.
+
+numHorasOcupadas(Periodo, TipoSala, DiaSemana, HoraInicio, HoraFim, SomaHoras) :-
+    adicionaSemestres([Periodo], ListaSemestrada),
+    salas(TipoSala, Salas),
+    findall(Horas, (
+            horario(E, DiaSemana, HoraInicioEvento, HoraFimEvento, _, P),
+            evento(E, _, _, _, S),
+            member(S, Salas), member(P, ListaSemestrada),
+            ocupaSlot(HoraInicio, HoraFim, HoraInicioEvento, HoraFimEvento, Horas)),
+        ListaHoras),
+    sum_list(ListaHoras, SomaHoras).
+
+
+ocupacaoMax(TipoSala, HoraInicio, HoraFim, Max) :-
+    salas(TipoSala, Salas),
+    length(Salas, NumSalas),
+    Max is (HoraFim - HoraInicio) * NumSalas.
+
+
+percentagem(SomaHoras, Max, Percentagem) :-
+    Percentagem is (SomaHoras / Max) * 100.
