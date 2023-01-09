@@ -3596,14 +3596,12 @@ organizaDisciplinas([Discip|T], Curso, [Seme1, Seme2], [Seme1Aux, Seme2Aux]) :-
     procuraDisciplinas(Curso, ListaDiscipCurso),
     member(Discip, ListaDiscipCurso),
     evento(E, Discip,_,_,_), horario(E,_,_,_,_,P),
-    (
-    member(P, [p1, p2, p1_2]),
+    (member(P, [p1, p2, p1_2]),
     append([Discip], Seme1Aux, Seme1Novo),
     organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Novo, Seme2Aux]), !;
     member(P, [p3, p4, p3_4]),
     append([Discip], Seme2Aux, Seme2Novo),
-    organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Aux, Seme2Novo])
-    ).
+    organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Aux, Seme2Novo])).
 
 
 horasCurso(Periodo, Curso, Ano, TotalHoras) :-
@@ -3620,6 +3618,8 @@ horasCurso(Periodo, Curso, Ano, TotalHoras) :-
 
 evolucaoHorasCurso(Curso, Evolucao) :-
     findall((Ano, Periodo, NumHoras), (
+            member(Ano, [1, 2, 3]),
+            member(Periodo, [p1, p2, p1_2, p3, p4, p3_4]),
             horasCurso(Periodo, Curso, Ano, NumHoras)),
         Evolucao).
 
@@ -3659,3 +3659,19 @@ ocupacaoMax(TipoSala, HoraInicio, HoraFim, Max) :-
 
 percentagem(SomaHoras, Max, Percentagem) :-
     Percentagem is (SomaHoras / Max) * 100.
+
+ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
+    findall(casosCriticos(DiaSemana, TipoSala, PercentagemFinal), (
+            member(Periodo, [p1, p2, p3, p4]),
+            salas(TipoSala, ListaSalas),
+            member(Sala, ListaSalas),
+            evento(E, _, _, _, Sala),
+            horario(E, DiaSemana, _, _, _, Periodo),
+            numHorasOcupadas(Periodo, TipoSala, DiaSemana, HoraInicio, HoraFim, SomaHoras),
+            ocupacaoMax(TipoSala, HoraInicio, HoraFim, Max),
+            percentagem(SomaHoras, Max, Percentagem),
+            Percentagem > Threshold,
+            ceiling(Percentagem, PercentagemFinal)),
+        Resultados),
+    sort(Resultados, ResFinal).
+    

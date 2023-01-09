@@ -1,3 +1,4 @@
-organizaDisciplinas([], _, [Sem1Sorted, Sem2Sorted], [Sem1, Sem2]) :-
-    sort(Sem1, Sem1Sorted),
-    sort(Sem2, Sem2Sorted), !.
+Resultados = [casosCriticos(segunda-feira,grandesAnfiteatros,89),
+    casosCriticos(segunda-feira,grandesAnfiteatros,95),
+    casosCriticos(segunda-feira,pequenosAnfiteatros,93),
+    casosCriticos(sexta-feira,labsQuimica,89)].

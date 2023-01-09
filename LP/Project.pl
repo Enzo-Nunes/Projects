@@ -104,6 +104,8 @@ horasCurso(Periodo, Curso, Ano, TotalHoras) :-
 
 evolucaoHorasCurso(Curso, Evolucao) :-
     findall((Ano, Periodo, NumHoras), (
+            member(Ano, [1, 2, 3]),
+            member(Periodo, [p1, p2, p1_2, p3, p4, p3_4]),
             horasCurso(Periodo, Curso, Ano, NumHoras)),
         Evolucao).
 
@@ -143,3 +145,18 @@ ocupacaoMax(TipoSala, HoraInicio, HoraFim, Max) :-
 
 percentagem(SomaHoras, Max, Percentagem) :-
     Percentagem is (SomaHoras / Max) * 100.
+
+    ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
+        findall(casosCriticos(DiaSemana, TipoSala, PercentagemFinal), (
+                member(Periodo, [p1, p2, p3, p4]),
+                salas(TipoSala, ListaSalas),
+                member(Sala, ListaSalas),
+                evento(E, _, _, _, Sala),
+                horario(E, DiaSemana, _, _, _, Periodo),
+                numHorasOcupadas(Periodo, TipoSala, DiaSemana, HoraInicio, HoraFim, SomaHoras),
+                ocupacaoMax(TipoSala, HoraInicio, HoraFim, Max),
+                percentagem(SomaHoras, Max, Percentagem),
+                Percentagem > Threshold,
+                ceiling(Percentagem, PercentagemFinal)),
+            Resultados),
+        sort(Resultados, ResFinal).
