@@ -3674,4 +3674,110 @@ ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
             ceiling(Percentagem, PercentagemFinal)),
         Resultados),
     sort(Resultados, ResFinal).
-    
+
+
+/*
+ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) é verdade se
+ListaPessoas for a lista com o nome das pessoas a sentar à mesa, ListaRestricoes
+for a lista de restricoes a verificar (ver abaixo) e OcupacaoMesa for uma lista com tres listas,
+em que a primeira contem as 3 pessoas de um lado da mesa, a segunda as
+2 pessoas à cabeceira e a terceira as 3 pessoas do outro lado da mesa,
+de modo a que essas pessoas são exactamente as da ListaPessoas e verificam todas as
+restricoes de ListaRestricoes. A mesa tem exatamente 8 lugares e podes assumir que vai haver uma e uma única solucao.
+
+restrições possíveis:
+    - cab1(NomePessoa): é verdade se NomePessoa for a pessoa que fica na cabeceira 1;
+    - cab2(NomePessoa): é verdade se NomePessoa for a pessoa que fica na cabeceira 2;
+    - honra(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 estiver numa das cabeceiras e NomePessoa2 ficar à sua direita;
+    - lado(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 ficarem lado a lado na mesa;
+    - naoLado(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 nao ficarem lado a lado na mesa;
+    - frente(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 ficarem exatamente de frente um para o outro na mesa;
+    - naoFrente(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 nao ficarem exatamente de frente um para o outro na mesa.
+*/
+
+possibilidades(ListaPessoas, Possibilidades) :-
+    findall([[X1, X2, X3], [X4, X5], [X6, X7, X8]], (
+            member(X1, ListaPessoas),
+            (member(X2, ListaPessoas),
+                X2 \= X1),
+            (member(X3, ListaPessoas),
+                X3 \= X1, X3 \= X2),
+            (member(X4, ListaPessoas),
+                X4 \= X1, X4 \= X2, X4 \= X3),
+            (member(X5, ListaPessoas),
+                X5 \= X1, X5 \= X2, X5 \= X3, X5 \= X4),
+            (member(X6, ListaPessoas),
+                X6 \= X1, X6 \= X2, X6 \= X3, X6 \= X4,
+                X6 \= X5),
+            (member(X7, ListaPessoas),
+                X7 \= X1, X7 \= X2, X7 \= X3, X7 \= X4,
+                X7 \= X5, X7 \= X6),
+            (member(X8, ListaPessoas),
+                X8 \= X1, X8 \= X2, X8 \= X3, X8 \= X4,
+                X8 \= X5, X8 \= X6, X8 \= X7)),
+        Possibilidades).
+
+
+ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) :-
+    % Todas as possibilidades.
+    possibilidades(ListaPessoas, Possibilidades),
+    findall(Solucao, (
+            member(Solucao, Possibilidades),
+            (member(cab1(NomePessoa), ListaRestricoes),
+                verificaCab1(Solucao, NomePessoa)),
+            (member(cab2(NomePessoa), ListaRestricoes),
+                verificaCab2(Solucao, NomePessoa)),
+            (member(honra(NomePessoa1, NomePessoa2), ListaRestricoes),
+                verificaHonra(Solucao, NomePessoa1, NomePessoa2)),
+            (member(lado(NomePessoa1, NomePessoa2), ListaRestricoes),
+                verificaLado(Solucao, NomePessoa1, NomePessoa2)),
+            (member(naoLado(NomePessoa1, NomePessoa2), ListaRestricoes),
+                verificaNaoLado(Solucao, NomePessoa1, NomePessoa2)),
+            (member(frente(NomePessoa1, NomePessoa2), ListaRestricoes),
+                verificaFrente(Solucao, NomePessoa1, NomePessoa2)),
+            member(naoFrente(NomePessoa1, NomePessoa2), ListaRestricoes),
+                verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2)),
+        OcupacaoMesa).
+
+
+verificaCab1(Solucao, NomePessoa) :-
+    nth0(1, Solucao, [NomePessoa, _]).
+
+verificaCab2(Solucao, NomePessoa) :-
+    nth0(1, Solucao, [_, NomePessoa]).
+
+verificaHonra(Solucao, NomePessoa1, NomePessoa2) :-
+    (nth0(1, Solucao, [NomePessoa1, _]),
+    nth0(2, Solucao, [NomePessoa2, _, _]));
+    (nth0(1, Solucao, [_, NomePessoa1]),
+    nth0(0, Solucao, [_, _, NomePessoa2])).
+
+verificaLado(Solucao, NomePessoa1, NomePessoa2) :-
+    nth0(0, Solucao, [NomePessoa1, NomePessoa2, _]);
+    nth0(0, Solucao, [_, NomePessoa1, NomePessoa2]);
+    nth0(2, Solucao, [NomePessoa1, NomePessoa2, _]);
+    nth0(2, Solucao, [_, NomePessoa1, NomePessoa2]);
+    nth0(0, Solucao, [NomePessoa2, NomePessoa1, _]);
+    nth0(0, Solucao, [_, NomePessoa2, NomePessoa1]);
+    nth0(2, Solucao, [NomePessoa2, NomePessoa1, _]);
+    nth0(2, Solucao, [_, NomePessoa2, NomePessoa1]).
+
+verificaNaoLado(Solucao, NomePessoa1, NomePessoa2) :-
+    \+ verificaLado(Solucao, NomePessoa1, NomePessoa2).
+
+verificaFrente(Solucao, NomePessoa1, NomePessoa2) :-
+    (nth0(0, Solucao, [NomePessoa1, _, _]), 
+        nth0(2, Solucao, [NomePessoa2, _, _]));
+    (nth0(0, Solucao, [_, NomePessoa1, _]), 
+        nth0(2, Solucao, [_, NomePessoa2, _]));
+    (nth0(0, Solucao, [_, _, NomePessoa1]), 
+        nth0(2, Solucao, [_, _, NomePessoa2]));
+    (nth0(0, Solucao, [NomePessoa2, _, _]), 
+        nth0(2, Solucao, [NomePessoa1, _, _]));
+    (nth0(0, Solucao, [_, NomePessoa2, _]), 
+        nth0(2, Solucao, [_, NomePessoa1, _]));
+    (nth0(0, Solucao, [_, _, NomePessoa2]), 
+        nth0(2, Solucao, [_, _, NomePessoa1])).
+
+verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2) :-
+    \+ verificaFrente(Solucao, NomePessoa1, NomePessoa2).
