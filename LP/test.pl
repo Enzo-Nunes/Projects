@@ -3675,26 +3675,6 @@ ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
         Resultados),
     sort(Resultados, ResFinal).
 
-
-/*
-ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) é verdade se
-ListaPessoas for a lista com o nome das pessoas a sentar à mesa, ListaRestricoes
-for a lista de restricoes a verificar (ver abaixo) e OcupacaoMesa for uma lista com tres listas,
-em que a primeira contem as 3 pessoas de um lado da mesa, a segunda as
-2 pessoas à cabeceira e a terceira as 3 pessoas do outro lado da mesa,
-de modo a que essas pessoas são exactamente as da ListaPessoas e verificam todas as
-restricoes de ListaRestricoes. A mesa tem exatamente 8 lugares e podes assumir que vai haver uma e uma única solucao.
-
-restrições possíveis:
-    - cab1(NomePessoa): é verdade se NomePessoa for a pessoa que fica na cabeceira 1;
-    - cab2(NomePessoa): é verdade se NomePessoa for a pessoa que fica na cabeceira 2;
-    - honra(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 estiver numa das cabeceiras e NomePessoa2 ficar à sua direita;
-    - lado(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 ficarem lado a lado na mesa;
-    - naoLado(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 nao ficarem lado a lado na mesa;
-    - frente(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 ficarem exatamente de frente um para o outro na mesa;
-    - naoFrente(NomePessoa1, NomePessoa2): é verdade se NomePessoa1 e NomePessoa2 nao ficarem exatamente de frente um para o outro na mesa.
-*/
-
 possibilidades(ListaPessoas, Possibilidades) :-
     findall([[X1, X2, X3], [X4, X5], [X6, X7, X8]], (
             member(X1, ListaPessoas),
@@ -3718,26 +3698,27 @@ possibilidades(ListaPessoas, Possibilidades) :-
         Possibilidades).
 
 
-ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) :-
+ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesaSorted) :-
     % Todas as possibilidades.
     possibilidades(ListaPessoas, Possibilidades),
     findall(Solucao, (
             member(Solucao, Possibilidades),
-            (member(cab1(NomePessoa), ListaRestricoes),
-                verificaCab1(Solucao, NomePessoa)),
+            ((member(cab1(NomePessoa), ListaRestricoes),
+                verificaCab1(Solucao, NomePessoa));
             (member(cab2(NomePessoa), ListaRestricoes),
-                verificaCab2(Solucao, NomePessoa)),
+                verificaCab2(Solucao, NomePessoa));
             (member(honra(NomePessoa1, NomePessoa2), ListaRestricoes),
-                verificaHonra(Solucao, NomePessoa1, NomePessoa2)),
+                verificaHonra(Solucao, NomePessoa1, NomePessoa2));
             (member(lado(NomePessoa1, NomePessoa2), ListaRestricoes),
-                verificaLado(Solucao, NomePessoa1, NomePessoa2)),
+                verificaLado(Solucao, NomePessoa1, NomePessoa2));
             (member(naoLado(NomePessoa1, NomePessoa2), ListaRestricoes),
-                verificaNaoLado(Solucao, NomePessoa1, NomePessoa2)),
+                verificaNaoLado(Solucao, NomePessoa1, NomePessoa2));
             (member(frente(NomePessoa1, NomePessoa2), ListaRestricoes),
-                verificaFrente(Solucao, NomePessoa1, NomePessoa2)),
-            member(naoFrente(NomePessoa1, NomePessoa2), ListaRestricoes),
-                verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2)),
-        OcupacaoMesa).
+                verificaFrente(Solucao, NomePessoa1, NomePessoa2));
+            (member(naoFrente(NomePessoa1, NomePessoa2), ListaRestricoes),
+                verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2)))),
+        OcupacaoMesa),
+    sort(OcupacaoMesa, OcupacaoMesaSorted).
 
 
 verificaCab1(Solucao, NomePessoa) :-
