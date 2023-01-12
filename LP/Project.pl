@@ -2,10 +2,22 @@
 :- set_prolog_flag(answer_write_options,[max_depth(0)]). % para listas completas
 :- ['dados.pl'], ['keywords.pl']. % ficheiros a importar.
 
+
+% Predicado auxiliar que adiciona os semestres 1_2 e 3_4 a uma lista de periodos.
+% Util em predicados que procurem por eventos, dado que ha tambem eventos semestrais.
+adicionaSemestres(ListaPeriodos, ListaSemestrada) :-
+    (member(p1, ListaPeriodos) ; member(p2, ListaPeriodos)),
+        append([p1_2], ListaPeriodos, ListaSemestrada), !;
+    (member(p3, ListaPeriodos) ; member(p4, ListaPeriodos)),
+        append([p3_4], ListaPeriodos, ListaSemestrada).
+
+
+% Predicado que permite obter a lista de ids dos eventos que nao tem sala.
 eventosSemSalas(EventosSemSala) :-
     findall(E, evento(E,_,_,_,semSala), EventosSemSala).
 
 
+% Predicado que permite obter a lista de ids dos eventos sem sala num dado dia da semana.
 eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
     findall(E, (
             evento(E,_,_,_,semSala),
@@ -13,8 +25,13 @@ eventosSemSalasDiaSemana(DiaDaSemana, EventosSemSala) :-
         EventosSemSala).
 
 
+% Predicado que permite obter a lista de ids dos eventos sem sala num dado periodo.
+% Caso base
 eventosSemSalasPeriodo([], []).
 
+
+% Caso recursivo, se o eventos for do periodo correspondente, adiciona o evento
+% a lista de eventos sem sala.
 eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
     adicionaSemestres(ListaPeriodos, ListaSemestrada),
     findall(E, (
@@ -24,13 +41,7 @@ eventosSemSalasPeriodo(ListaPeriodos, EventosSemSala) :-
         EventosSemSala).
 
 
-adicionaSemestres(ListaPeriodos, ListaSemestrada) :-
-    (member(p1, ListaPeriodos) ; member(p2, ListaPeriodos)),
-        append([p1_2], ListaPeriodos, ListaSemestrada), !;
-    (member(p3, ListaPeriodos) ; member(p4, ListaPeriodos)),
-        append([p3_4], ListaPeriodos, ListaSemestrada).
-
-
+% Predicado que permite obter uma lista de eventos num dado periodo.
 % Engorda o predicado.
 organizaEventos(ListaEventos, Periodo, EventosNoPeriodo) :-
     organizaEventos(ListaEventos, Periodo, EventosNoPeriodo, []).
@@ -48,15 +59,18 @@ organizaEventos([H|T], Periodo, EventosNoPeriodo, Aux) :-
     organizaEventos(T, Periodo, EventosNoPeriodo, EventosNoPeriodoNovo), !;
     organizaEventos(T, Periodo, EventosNoPeriodo, Aux).
 
+
 % Predicado que permite obter a lista de ids dos eventos que tem duracao inferior a Duracao.
 eventosMenoresQue(Duracao, ListaEventosMenoresSorted) :-
     findall(E, (horario(E,_,_,_,D,_), D =< Duracao), ListaEventosMenores),
     sort(ListaEventosMenores, ListaEventosMenoresSorted).
 
-% Predicado que retorna True se o evento E tem duracao inferior a Duracao.
+
+% Predicado que retorna True se, e apenas se, o evento E tem duracao inferior a Duracao.
 eventosMenoresQueBool(E, Duracao) :-
     horario(E,_,_,_,D,_),
     D =< Duracao.
+
 
 % Predicado que permite obter a lista ordenada alfabeticamente de disciplinas de um dado curso.
 procuraDisciplinas(Curso, ListaDisciplinasCursoSorted) :-
@@ -66,6 +80,9 @@ procuraDisciplinas(Curso, ListaDisciplinasCursoSorted) :-
         ListaDisciplinasCurso),
     sort(ListaDisciplinasCurso, ListaDisciplinasCursoSorted).
 
+
+% Predicado que permite obter uma lista com duas listas ordenadas de eventos de
+% um curso que ocorrem no primeiro e segundo semestre, respetivamente.
 % Engorda Predicado.
 organizaDisciplinas(ListaDisciplinas, Curso, [Seme1, Seme2]) :-
     organizaDisciplinas(ListaDisciplinas, Curso, [Seme1, Seme2], [[], []]).
@@ -79,17 +96,18 @@ organizaDisciplinas([], _, [Seme1Sorted, Seme2Sorted], [Seme1, Seme2]) :-
 organizaDisciplinas([Discip|T], Curso, [Seme1, Seme2], [Seme1Aux, Seme2Aux]) :-
     procuraDisciplinas(Curso, ListaDiscipCurso),
     member(Discip, ListaDiscipCurso),
-    evento(E, Discip,_,_,_), horario(E,_,_,_,_,P),
-    (
+    evento(E, Discip,_,_,_), horario(E,_,_,_,_,P), (
+    
     member(P, [p1, p2, p1_2]),
     append([Discip], Seme1Aux, Seme1Novo),
     organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Novo, Seme2Aux]), !;
+
     member(P, [p3, p4, p3_4]),
     append([Discip], Seme2Aux, Seme2Novo),
-    organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Aux, Seme2Novo])
-    ).
+    organizaDisciplinas(T, Curso, [Seme1, Seme2], [Seme1Aux, Seme2Novo])).
 
 
+% Predicado que permite obter o numero de horas dos eventos de um dado curso num dado periodo.
 horasCurso(Periodo, Curso, Ano, TotalHoras) :-
     adicionaSemestres([Periodo], ListaSemestrada),
     findall(E, turno(E, Curso, Ano, _), ListaEventos),
@@ -102,6 +120,7 @@ horasCurso(Periodo, Curso, Ano, TotalHoras) :-
     sum_list(ListaHoras, TotalHoras).
 
 
+% Predicado que permite obter o numero de horas dos eventos organizados por Ano e Periodo.
 evolucaoHorasCurso(Curso, Evolucao) :-
     findall((Ano, Periodo, NumHoras), (
             member(Ano, [1, 2, 3]),
@@ -110,21 +129,25 @@ evolucaoHorasCurso(Curso, Evolucao) :-
         Evolucao).
 
 
-ocupaSlot(HoraInicioDada, HoraFimDada, HoraInicioEvento, HoraFimEvento, Horas) :-
-    HoraInicioEvento >= HoraInicioDada, HoraFimEvento =< HoraFimDada,
+% Predicado que permite obter as horas ocupadas por um dado evento num dado slot.
+ocupaSlot(HoraInicioSlot, HoraFimSlot, HoraInicioEvento, HoraFimEvento, Horas) :-
+    HoraInicioEvento >= HoraInicioSlot, HoraFimEvento =< HoraFimSlot,
     Horas is HoraFimEvento - HoraInicioEvento, !;
 
-    HoraInicioEvento =< HoraInicioDada, HoraFimEvento >= HoraFimDada,
-    Horas is HoraFimDada - HoraInicioDada, !;
+    HoraInicioEvento =< HoraInicioSlot, HoraFimEvento >= HoraFimSlot,
+    Horas is HoraFimSlot - HoraInicioSlot, !;
 
-    HoraInicioEvento >= HoraInicioDada, HoraFimEvento >= HoraFimDada,
-    HoraInicioEvento =< HoraFimDada,
-    Horas is HoraFimDada - HoraInicioEvento, !;
+    HoraInicioEvento >= HoraInicioSlot, HoraFimEvento >= HoraFimSlot,
+    HoraInicioEvento =< HoraFimSlot,
+    Horas is HoraFimSlot - HoraInicioEvento, !;
 
-    HoraInicioEvento =< HoraInicioDada, HoraFimEvento =< HoraFimDada,
-    HoraFimEvento >= HoraInicioDada,
-    Horas is HoraFimEvento - HoraInicioDada.
+    HoraInicioEvento =< HoraInicioSlot, HoraFimEvento =< HoraFimSlot,
+    HoraFimEvento >= HoraInicioSlot,
+    Horas is HoraFimEvento - HoraInicioSlot.
 
+
+% Predicado que permite obter o total de horas ocupadas de uma sala num dado
+% slot de um dia da semana, num dado periodo.
 numHorasOcupadas(Periodo, TipoSala, DiaSemana, HoraInicio, HoraFim, SomaHoras) :-
     adicionaSemestres([Periodo], ListaSemestrada),
     salas(TipoSala, Salas),
@@ -137,15 +160,20 @@ numHorasOcupadas(Periodo, TipoSala, DiaSemana, HoraInicio, HoraFim, SomaHoras) :
     sum_list(ListaHoras, SomaHoras).
 
 
+% Predicado que permite obter o maximo de horas que uma sala pode estar ocupada num dado slot.
 ocupacaoMax(TipoSala, HoraInicio, HoraFim, Max) :-
     salas(TipoSala, Salas),
     length(Salas, NumSalas),
     Max is (HoraFim - HoraInicio) * NumSalas.
 
 
+% Predicado que calcula percentagens. o_o
 percentagem(SomaHoras, Max, Percentagem) :-
     Percentagem is (SomaHoras / Max) * 100.
 
+
+% Predicado que permite obter a lista de eventos com percentagem de ocupacao superior
+% a um dado threshold, organizados em tuplos de dia da semana, tipo de sala e percentagem.
 ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
     findall(casosCriticos(DiaSemana, TipoSala, PercentagemFinal), (
             member(Periodo, [p1, p2, p3, p4]),
@@ -161,18 +189,25 @@ ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
         Resultados),
     sort(Resultados, ResFinal).
 
+
+% Predicado que permite organizar uma mesa retangular de 8 lugares de acordo com
+% as restricoes dadas.
+% Todas as possibilidades de mesas.
 possibilidades(ListaPessoas, Possibilidades) :-
     findall([[X1, X2, X3], [X4, X5], [X6, X7, X8]], (
             permutation(ListaPessoas, [X1, X2, X3, X4, X5, X6, X7, X8])),
         Possibilidades).
 
+% Engorda o predicado com todas as possibilidades de mesas.
 ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) :-
     possibilidades(ListaPessoas, Possibilidades),
     ocupacaoMesa(ListaPessoas, ListaRestricoes, Possibilidades, OcupacaoMesa).
 
+% Caso base.
 ocupacaoMesa(_, [], Possibilidades, SolucaoFinal) :-
     append(Possibilidades, SolucaoFinal).
-    
+
+% Recursao principal para ver cada restricao, uma a uma.
 ocupacaoMesa(ListaPessoas, [Restricao | Resto], Possibilidades, OcupacaoMesa) :-
     (Restricao = cab1(NomePessoa),
         findall(Solucao, (member(Solucao, Possibilidades), verificaCab1(Solucao, NomePessoa)), Mesas),
@@ -202,6 +237,7 @@ ocupacaoMesa(ListaPessoas, [Restricao | Resto], Possibilidades, OcupacaoMesa) :-
         findall(Solucao, (member(Solucao, Possibilidades), verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2)), Mesas),
         ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)).
 
+% Predicados auxiliares para verificar as restricoes.
 verificaCab1(Solucao, NomePessoa) :-
     nth0(1, Solucao, [NomePessoa, _]).
 
