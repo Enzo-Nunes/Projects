@@ -160,3 +160,86 @@ ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
             ceiling(Percentagem, PercentagemFinal)),
         Resultados),
     sort(Resultados, ResFinal).
+
+possibilidades(ListaPessoas, Possibilidades) :-
+    findall([[X1, X2, X3], [X4, X5], [X6, X7, X8]], (
+            permutation(ListaPessoas, [X1, X2, X3, X4, X5, X6, X7, X8])),
+        Possibilidades).
+
+ocupacaoMesa(ListaPessoas, ListaRestricoes, OcupacaoMesa) :-
+    possibilidades(ListaPessoas, Possibilidades),
+    ocupacaoMesa(ListaPessoas, ListaRestricoes, Possibilidades, OcupacaoMesa).
+
+ocupacaoMesa(_, [], Possibilidades, SolucaoFinal) :-
+    append(Possibilidades, SolucaoFinal).
+    
+ocupacaoMesa(ListaPessoas, [Restricao | Resto], Possibilidades, OcupacaoMesa) :-
+    (Restricao = cab1(NomePessoa),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaCab1(Solucao, NomePessoa)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)), !;
+
+    (Restricao = cab2(NomePessoa),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaCab2(Solucao, NomePessoa)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)), !;
+
+    (Restricao = honra(NomePessoa1, NomePessoa2),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaHonra(Solucao, NomePessoa1, NomePessoa2)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)), !;
+
+    (Restricao = lado(NomePessoa1, NomePessoa2),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaLado(Solucao, NomePessoa1, NomePessoa2)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)), !;
+
+    (Restricao = naoLado(NomePessoa1, NomePessoa2),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaNaoLado(Solucao, NomePessoa1, NomePessoa2)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)), !;
+
+    (Restricao = frente(NomePessoa1, NomePessoa2),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaFrente(Solucao, NomePessoa1, NomePessoa2)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)), !;
+
+    (Restricao = naoFrente(NomePessoa1, NomePessoa2),
+        findall(Solucao, (member(Solucao, Possibilidades), verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2)), Mesas),
+        ocupacaoMesa(ListaPessoas, Resto, Mesas, OcupacaoMesa)).
+
+verificaCab1(Solucao, NomePessoa) :-
+    nth0(1, Solucao, [NomePessoa, _]).
+
+verificaCab2(Solucao, NomePessoa) :-
+    nth0(1, Solucao, [_, NomePessoa]).
+
+verificaHonra(Solucao, NomePessoa1, NomePessoa2) :-
+    (nth0(1, Solucao, [NomePessoa1, _]),
+    nth0(2, Solucao, [NomePessoa2, _, _])), !;
+    (nth0(1, Solucao, [_, NomePessoa1]),
+    nth0(0, Solucao, [_, _, NomePessoa2])).
+
+verificaLado(Solucao, NomePessoa1, NomePessoa2) :-
+    nth0(0, Solucao, [NomePessoa1, NomePessoa2, _]), !;
+    nth0(0, Solucao, [_, NomePessoa1, NomePessoa2]), !;
+    nth0(2, Solucao, [NomePessoa1, NomePessoa2, _]), !;
+    nth0(2, Solucao, [_, NomePessoa1, NomePessoa2]), !;
+    nth0(0, Solucao, [NomePessoa2, NomePessoa1, _]), !;
+    nth0(0, Solucao, [_, NomePessoa2, NomePessoa1]), !;
+    nth0(2, Solucao, [NomePessoa2, NomePessoa1, _]), !;
+    nth0(2, Solucao, [_, NomePessoa2, NomePessoa1]).
+
+verificaNaoLado(Solucao, NomePessoa1, NomePessoa2) :-
+    \+ verificaLado(Solucao, NomePessoa1, NomePessoa2).
+
+verificaFrente(Solucao, NomePessoa1, NomePessoa2) :-
+    (nth0(0, Solucao, [NomePessoa1, _, _]), 
+        nth0(2, Solucao, [NomePessoa2, _, _])), !;
+    (nth0(0, Solucao, [_, NomePessoa1, _]), 
+        nth0(2, Solucao, [_, NomePessoa2, _])), !;
+    (nth0(0, Solucao, [_, _, NomePessoa1]), 
+        nth0(2, Solucao, [_, _, NomePessoa2])), !;
+    (nth0(0, Solucao, [NomePessoa2, _, _]), 
+        nth0(2, Solucao, [NomePessoa1, _, _])), !;
+    (nth0(0, Solucao, [_, NomePessoa2, _]), 
+        nth0(2, Solucao, [_, NomePessoa1, _])), !;
+    (nth0(0, Solucao, [_, _, NomePessoa2]), 
+        nth0(2, Solucao, [_, _, NomePessoa1])).
+
+verificaNaoFrente(Solucao, NomePessoa1, NomePessoa2) :-
+    \+ verificaFrente(Solucao, NomePessoa1, NomePessoa2).
