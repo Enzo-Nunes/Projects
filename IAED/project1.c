@@ -5,8 +5,23 @@
 #include <ctype.h>
 #include <string.h>
 
+#define BUFFER_SIZE BUFSIZ
 #define BUS_NAME_SIZE 20
-#define BUFFER_SIZE 8193
+#define STOP_NAME_SIZE 50
+#define LINE_NAME_SIZE 20
+
+
+typedef struct {
+    char stop_name[STOP_NAME_SIZE];
+    float lat;
+    float lon;
+} stop;
+
+typedef struct {
+    char line_name[LINE_NAME_SIZE];
+    stop origin;
+    stop destination;
+} line;
 
 int main() {
 
@@ -24,7 +39,7 @@ int main() {
             case 'q':
                 return 0;
             case 'c':
-
+                criaCarreira(buffer);
             case 'p':
 
             case 'l':
