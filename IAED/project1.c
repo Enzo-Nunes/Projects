@@ -10,7 +10,6 @@
 #define STOP_NAME_SIZE 50
 #define LINE_NAME_SIZE 20
 
-
 typedef struct {
     char stop_name[STOP_NAME_SIZE];
     float lat;
