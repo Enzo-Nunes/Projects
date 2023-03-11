@@ -6,9 +6,16 @@
 #include <string.h>
 
 #define BUFFER_SIZE BUFSIZ
-#define BUS_NAME_SIZE 20
 #define STOP_NAME_SIZE 50
 #define LINE_NAME_SIZE 20
+#define MAX_STOPS 10000
+#define MAX_LINES 200
+
+stop stop_list[MAX_STOPS];
+int nr_stops = 0;
+
+line line_list[MAX_LINES];
+int nr_lines = 0;
 
 typedef struct {
     char stop_name[STOP_NAME_SIZE];
@@ -20,14 +27,57 @@ typedef struct {
     char line_name[LINE_NAME_SIZE];
     stop origin;
     stop destination;
+
+
 } line;
+
+typedef struct {
+    line l;
+    stop origin;
+    stop destination;
+    float cost;
+    float duration;
+} link;
+
+
+char readNextWord(char buffer[]) {
+
+    int i;
+    char next_word[LINE_NAME_SIZE];
+
+    for (i = 2; i < (int) strlen(buffer); i++) {
+        if (buffer[i] != ' ' && buffer[i] != '\n') {
+            next_word[i - 2] = buffer[i];
+        }
+    }
+    next_word[i - 1] = '\0';
+
+    return next_word;
+}
+
+
+
+void listLines() {
+    int i;
+
+    for (i = 0; i < nr_lines; i++) {
+        printf("%s", line_list[i].line_name);
+    }
+}
+
+void createLine(char buffer[]) {
+    line l;
+}
 
 int main() {
 
-    char buffer[BUFFER_SIZE], c;
-    int count = 0;
+    char buffer[BUFFER_SIZE], c, name_pre[LINE_NAME_SIZE], l;
+    int i, count = 0;
 
     while (1) {
+
+        memset(buffer, 0, BUFFER_SIZE);
+
         while (c = getchar() != '\n') {
             buffer[count] = c;
             count++;
@@ -38,7 +88,26 @@ int main() {
             case 'q':
                 return 0;
             case 'c':
-                criaCarreira(buffer);
+                if (buffer[2] == '\0') {
+                    listLines();
+                } else {
+
+                    l = readNextWord(buffer);
+                    if (checkLine (l)) {
+                        /*CONTINUAR A PARTIR DAQUI*/
+                    }
+
+                    for (i = 0; i < nr_lines; i++) {
+                        if (strcmp(name_pre, line_list[i].line_name) == 0) {
+                            listStopLines(name_pre, buffer);
+                            break;
+                        }
+                    }
+
+                    createLine(name_pre);
+
+                }
+                break;
             case 'p':
 
             case 'l':
