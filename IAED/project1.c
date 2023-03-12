@@ -71,7 +71,7 @@ void createLine(char buffer[]) {
 
 int main() {
 
-    char buffer[BUFFER_SIZE], c, name_pre[LINE_NAME_SIZE], l;
+    char buffer[BUFFER_SIZE], c, l;
     int i, count = 0;
 
     while (1) {
@@ -93,18 +93,18 @@ int main() {
                 } else {
 
                     l = readNextWord(buffer);
-                    if (checkLine (l)) {
-                        /*CONTINUAR A PARTIR DAQUI*/
+                    if (isLine (l)) {
+                        listLineStops(l, buffer);
+                    } else {
+                        createLine(l);
                     }
 
                     for (i = 0; i < nr_lines; i++) {
-                        if (strcmp(name_pre, line_list[i].line_name) == 0) {
-                            listStopLines(name_pre, buffer);
+                        if (strcmp(l, line_list[i].line_name) == 0) {
+                            listLineStops(l, buffer);
                             break;
                         }
                     }
-
-                    createLine(name_pre);
 
                 }
                 break;
