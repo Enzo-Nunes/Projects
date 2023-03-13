@@ -104,7 +104,7 @@ void listLines() {
 }
 
 void listLineStops(char l[]) {
-    /*Cause I'm gay*/
+    
 }
 
 void createLine(char l, char buffer[]) {
