@@ -19,16 +19,16 @@ line line_list[MAX_LINES];
 int nr_lines = 0;
 
 
-typedef struct line {
+typedef struct {
     char line_name[LINE_NAME_SIZE];
-    // char origin[STOP_NAME_SIZE];
-    // char destination[STOP_NAME_SIZE];
+    /*char origin[STOP_NAME_SIZE];
+    char destination[STOP_NAME_SIZE];*/
     char course[MAX_STOPS];
     int nr_line_stops;
     float total_cost, total_duration;
 } line;
 
-typedef struct stop {
+typedef struct {
     char stop_name[STOP_NAME_SIZE];
     float lat;
     float lon;
@@ -104,7 +104,7 @@ void listLines() {
 }
 
 void listLineStops(char l[]) {
-
+    /*Cause I'm gay*/
 }
 
 void createLine(char l, char buffer[]) {
