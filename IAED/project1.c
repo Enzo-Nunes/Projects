@@ -1,8 +1,8 @@
 /* iaed-23 - ist1106336 - project1 */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
 
 #define BUFFER_SIZE BUFSIZ
@@ -11,52 +11,61 @@
 #define MAX_STOPS 10000
 #define MAX_LINES 200
 
-
 typedef struct {
     char stop_name[STOP_NAME_SIZE];
-    float lat;
-    float lon;
+    double lat;
+    double lon;
 } stop;
 
 typedef struct {
     char line_name[LINE_NAME_SIZE];
     stop course[MAX_STOPS];
     int nr_line_stops;
-    float total_cost, total_duration;
+    double total_cost, total_duration;
 } line;
 
-
+/* Global lists of lines and stops. */
 line line_list[MAX_LINES];
 stop stop_list[MAX_STOPS];
 
-int nr_lines  = 0;
-int nr_stops  = 0;
+/* Global variable used to keep track of the next word to read in the buffer
+   when calling the readNextWork(buffer) function. Resets back to 0 every time
+   a new input is asked and the buffer is created again. */
+int buffer_index = 0;
+
+/* Global variables to keep track of the numbers of lines and stops. */
+int nr_lines = 0;
+int nr_stops = 0;
 int nr_intsec = 0;
 
-
-char* readNextWord(char buffer[]) {
-    static int index = 0;
+/* Function that reads the next word in the buffer and returns it. */
+char *readNextWord(char buffer[]) {
     int i = 0;
-    char* next_word = malloc(BUFSIZ);
+    char *next_word = malloc(BUFSIZ);
 
-    while (buffer[index] == ' ' || buffer[index] == '\n') {
-        index++;
+    while (buffer[buffer_index] == ' ' || buffer[buffer_index] == '\n') {
+        buffer_index++;
     }
 
-    while (
-        buffer[index] != ' ' &&
-        buffer[index] != '\n' &&
-        buffer[index] != '\0'
-    ) {
-        next_word[i] = buffer[index];
-        i++, index++;
+    if (buffer[buffer_index] = '"') {
+        buffer_index++;
+        while (buffer[buffer_index] != '"') {
+            next_word[i] = buffer[buffer_index];
+            i++, buffer_index++;
+        }
+        buffer_index++;
+    } else {
+        while (buffer[buffer_index] != ' ' && buffer[buffer_index] != '\n' &&
+               buffer[buffer_index] != '\0') {
+            next_word[i] = buffer[buffer_index];
+            i++, buffer_index++;
+        }
     }
 
     next_word[i] = '\0';
 
     return (i == 0) ? NULL : next_word;
 }
-
 
 int isLine(char l[]) {
     int i;
@@ -77,16 +86,13 @@ void listLines() {
         printf("%s ", line_list[i].line_name);
 
         if (line_list[i].nr_line_stops > 0) {
-            printf("%s %s ",
-                line_list[i].course[0].stop_name,
+            printf(
+                "%s %s ", line_list[i].course[0].stop_name,
                 line_list[i].course[line_list[i].nr_line_stops - 1].stop_name);
         }
 
-        printf( "%d %.2f %.2f\n",
-                line_list[i].nr_line_stops,
-                line_list[i].total_cost,
-                line_list[i].total_duration
-        );
+        printf("%d %.2f %.2f\n", line_list[i].nr_line_stops,
+               line_list[i].total_cost, line_list[i].total_duration);
     }
 }
 
@@ -141,7 +147,7 @@ void lineCommand(char buffer[]) {
         listLines();
     } else {
         l = readNextWord(buffer);
-        if ((i = isLine (l)) != -1) {
+        if ((i = isLine(l)) != -1) {
             listLineStops(i, buffer);
         } else {
             createLine(l);
@@ -149,6 +155,86 @@ void lineCommand(char buffer[]) {
     }
 }
 
+void createStop(char *s, char *lat, char *lon) {
+    stop new_stop;
+
+    strcpy(new_stop.stop_name, s);
+    new_stop.lat = atof(lat);
+    new_stop.lon = atof(lon);
+
+    stop_list[nr_stops] = new_stop;
+    nr_stops++;
+}
+
+void printStopCoords(int i) {
+    printf("%16.12f %16.12f\n", stop_list[i].lat, stop_list[i].lon);
+}
+
+int isStop(char s[]) {
+    int i;
+
+    for (i = 0; i < nr_stops; i++) {
+        if (strcmp(s, stop_list[i].stop_name) == 0) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+int nrStopLines(char s[]) {
+
+    int i, j, count = 0;
+
+    for (i = 0; i < nr_lines; i++) {
+        for (j = 0; j < line_list[i].nr_line_stops; j++) {
+            if (strcmp(s, line_list[i].course[j].stop_name) == 0) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+void listStops() {
+
+    int i;
+
+    for (i = 0; i < nr_stops; i++) {
+        printf("%s: %16.12f %16.12f %d\n", stop_list[i].stop_name,
+               stop_list[i].lat, stop_list[i].lon,
+               nrStopLines(stop_list[i].stop_name));
+    }
+}
+
+void stopCommand(char buffer[]) {
+
+    char *s, *lat, *lon;
+    int i;
+
+    if (readNextWord(buffer) == NULL) {
+        listStops();
+    } else {
+        s = readNextWord(buffer);
+        if ((lat = readNextWord(buffer)) != NULL) {
+            if (isStop(s) == -1) {
+                lon = readNextWord(buffer);
+                createStop(s, lat, lon);
+            } else {
+                printf("stop already exists.\n");
+                return;
+            }
+        } else {
+            if ((i = isStop(s)) != -1) {
+                printStopCoords(i);
+            } else {
+                printf("no such stop.\n");
+                return;
+            }
+        }
+    }
+}
 
 int main() {
 
@@ -158,17 +244,21 @@ int main() {
     while (1) {
 
         memset(buffer, 0, BUFFER_SIZE);
+        buffer_index = 0;
 
         for (count = 0; (c = getchar()) != '\n'; count++) {
             buffer[count] = c;
         }
 
         switch (buffer[0]) {
-            case 'q':
-                return 0;
-            case 'c':
-                lineCommand(buffer);
-                break;
+        case 'q':
+            return 0;
+        case 'c':
+            lineCommand(buffer);
+            break;
+        case 'p':
+            stopCommand(buffer);
+            break;
         }
     }
 }
