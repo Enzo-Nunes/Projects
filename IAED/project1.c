@@ -47,7 +47,7 @@ char *readNextWord(char buffer[]) {
         buffer_index++;
     }
 
-    if (buffer[buffer_index] = '"') {
+    if (buffer[buffer_index] == '"') {
         buffer_index++;
         while (buffer[buffer_index] != '"') {
             next_word[i] = buffer[buffer_index];
@@ -143,27 +143,16 @@ void lineCommand(char buffer[]) {
     char *l;
     int i;
 
-    if (readNextWord(buffer) == NULL) {
+    l = readNextWord(buffer);
+    if (l == NULL) {
         listLines();
     } else {
-        l = readNextWord(buffer);
         if ((i = isLine(l)) != -1) {
             listLineStops(i, buffer);
         } else {
             createLine(l);
         }
     }
-}
-
-void createStop(char *s, char *lat, char *lon) {
-    stop new_stop;
-
-    strcpy(new_stop.stop_name, s);
-    new_stop.lat = atof(lat);
-    new_stop.lon = atof(lon);
-
-    stop_list[nr_stops] = new_stop;
-    nr_stops++;
 }
 
 void printStopCoords(int i) {
@@ -208,30 +197,60 @@ void listStops() {
     }
 }
 
+void createStop(char *s, char *lat, char *lon) {
+    stop new_stop;
+
+    strcpy(new_stop.stop_name, s);
+    new_stop.lat = atof(lat);
+    new_stop.lon = atof(lon);
+
+    stop_list[nr_stops] = new_stop;
+    nr_stops++;
+}
+
 void stopCommand(char buffer[]) {
 
     char *s, *lat, *lon;
     int i;
 
-    if (readNextWord(buffer) == NULL) {
+    s = readNextWord(buffer);
+    if (s == NULL) {
         listStops();
     } else {
-        s = readNextWord(buffer);
         if ((lat = readNextWord(buffer)) != NULL) {
             if (isStop(s) == -1) {
                 lon = readNextWord(buffer);
                 createStop(s, lat, lon);
             } else {
-                printf("stop already exists.\n");
+                printf("%s: stop already exists.\n", s);
                 return;
             }
         } else {
             if ((i = isStop(s)) != -1) {
                 printStopCoords(i);
             } else {
-                printf("no such stop.\n");
+                printf("%s: no such stop.\n", s);
                 return;
             }
+        }
+    }
+}
+
+void linkCommand(char buffer[]) {
+
+    char *l, *s;
+
+    l = readNextWord(buffer);
+    if (isLine(l) == -1) {
+        printf("%s: no such line.\n", l);
+        return;
+    } else {
+        s = readNextWord(buffer);
+        if (isStop(s) == -1) {
+            printf("%s: no such stop.\n", s);
+            return;
+        } else {
+            if () {
         }
     }
 }
@@ -254,10 +273,13 @@ int main() {
         case 'q':
             return 0;
         case 'c':
-            lineCommand(buffer);
+            lineCommand(buffer + 2);
             break;
         case 'p':
-            stopCommand(buffer);
+            stopCommand(buffer + 2);
+            break;
+        case 'l':
+            linkCommand(buffer + 2);
             break;
         }
     }
