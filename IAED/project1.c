@@ -10,6 +10,7 @@
 #define LINE_NAME_SIZE 20
 #define MAX_STOPS 10000
 #define MAX_LINES 200
+#define MAX_LINKS 30000
 
 typedef struct {
     char stop_name[STOP_NAME_SIZE];
