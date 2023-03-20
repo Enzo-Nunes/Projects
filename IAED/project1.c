@@ -127,6 +127,10 @@ void listLineStops(int i, char buffer[]) {
     char *flag;
 
     current_line = line_list[i];
+    
+    if (current_line.nr_line_stops == 0) {
+        return;
+    }
 
     /*Check if the command is reversed*/
     flag = readNextWord(buffer);
