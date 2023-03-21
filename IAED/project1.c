@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BUFFER_SIZE BUFSIZ
-#define STOP_NAME_SIZE 50
-#define LINE_NAME_SIZE 20
+#define BUFFER_SIZE BUFSIZ + 1
+#define STOP_NAME_SIZE 51
+#define LINE_NAME_SIZE 21
 #define MAX_STOPS 10000
 #define MAX_LINES 200
 #define MAX_LINKS 30000
