@@ -11,7 +11,6 @@
 #define MAX_STOPS 10000
 #define MAX_LINES 200
 #define MAX_LINKS 30000
-#define REVERSE_FLAG "inverso"
 
 typedef struct {
     char stop_name[STOP_NAME_SIZE];
@@ -21,7 +20,7 @@ typedef struct {
 
 typedef struct {
     char line_name[LINE_NAME_SIZE];
-    stop course[MAX_STOPS];
+    stop *course;
     int nr_line_stops, is_cycle;
     double total_cost, total_duration;
 } line;
@@ -67,7 +66,6 @@ char *readNextWord(char buffer[]) {
 
     return (i == 0) ? NULL : next_word;
 }
-
 
 line *sortLines(line lines_list[]) {
 
@@ -123,31 +121,13 @@ void listLines() {
     }
 }
 
-int isReverse(char flag[]) {
-
-    int i = 0;
-    char reverse[8] = REVERSE_FLAG;
-
-    while (flag[i] != '\0') {
-        if (flag[i] != reverse[i]) {
-            return 1;
-        }
-        i++;
-    }
-    if (i < 3) {
-        return 1;
-    }
-
-    return 0;
-}
-
 void listLineStops(int i, char buffer[]) {
     int j, reverse = 0;
     line current_line;
     char *flag;
 
     current_line = line_list[i];
-    
+
     if (current_line.nr_line_stops == 0) {
         return;
     }
@@ -155,7 +135,7 @@ void listLineStops(int i, char buffer[]) {
     /*Check if the command is reversed*/
     flag = readNextWord(buffer);
     if (flag != NULL) {
-        if (isReverse(flag) == 0) {
+        if (strncmp(flag, "inverso", 3) == 0) {
             reverse = 1;
         } else {
             printf("incorrect sort option.\n");
@@ -184,6 +164,7 @@ void createLine(char *l) {
     new_line.total_cost = 0;
     new_line.total_duration = 0;
     new_line.is_cycle = 0;
+    new_line.course = (stop *)malloc(2 * sizeof(stop));
 
     line_list[nr_lines] = new_line;
     nr_lines++;
@@ -239,6 +220,7 @@ int nrStopLines(char s[]) {
 }
 
 void listStops() {
+
     int i;
 
     for (i = 0; i < nr_stops; i++) {
@@ -287,7 +269,8 @@ void stopCommand(char buffer[]) {
     }
 }
 
-int isLinkLineCompatible(int line_index, int origin_index, int destination_index) {
+int isLinkLineCompatible(int line_index, int origin_index,
+                         int destination_index) {
 
     if (line_list[line_index].is_cycle == 1) {
         printf("link cannot be associated with bus line.\n");
@@ -361,8 +344,13 @@ void createLink(int line_index, int origin_index, int destination_index,
                 double cost_pre, double duration_pre, int link_info) {
 
     int i;
+
     switch (link_info) {
     case 0: {
+        line_list[line_index].course = (stop *)realloc(
+            line_list[line_index].course,
+            (line_list[line_index].nr_line_stops + 1) * sizeof(stop));
+
         for (i = line_list[line_index].nr_line_stops - 1; i >= 0; i--) {
             line_list[line_index].course[i + 1] =
                 line_list[line_index].course[i];
@@ -371,6 +359,9 @@ void createLink(int line_index, int origin_index, int destination_index,
     } break;
 
     case 1: {
+        line_list[line_index].course = (stop *)realloc(
+            line_list[line_index].course,
+            (line_list[line_index].nr_line_stops + 1) * sizeof(stop));
         line_list[line_index].course[line_list[line_index].nr_line_stops] =
             stop_list[destination_index];
     } break;
