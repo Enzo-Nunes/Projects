@@ -11,7 +11,6 @@
 #define MAX_STOPS 10000
 #define MAX_LINES 200
 #define MAX_LINKS 30000
-#define REVERSE_FLAG "inverso"
 
 typedef struct {
     char stop_name[STOP_NAME_SIZE];
@@ -39,9 +38,7 @@ int buffer_index = 0;
 int nr_lines = 0;
 int nr_stops = 0;
 
-/*
- * Function that reads the next word in the buffer and returns it.
- */
+/* Function that reads the next word in the buffer and returns it. */
 char *readNextWord(char buffer[]) {
     int i = 0;
     char *next_word = malloc(BUFSIZ);
@@ -70,10 +67,6 @@ char *readNextWord(char buffer[]) {
     return (i == 0) ? NULL : next_word;
 }
 
-/*
- * Receives a list of lines and returns a new, alphabetically sorted list of
- * lines.
- */
 line *sortLines(line lines_list[]) {
 
     int i, j, min_index;
@@ -99,10 +92,6 @@ line *sortLines(line lines_list[]) {
     return sorted_lines_list;
 }
 
-/*
- * Checks if the input is an existing line in the system. Returns the
- * corresponding line index in the global line list if it is, -1 otherwise.
- */
 int isLine(char l[]) {
     int i;
 
@@ -115,9 +104,6 @@ int isLine(char l[]) {
     return -1;
 }
 
-/*
- * List all the lines in the system.
- */
 void listLines() {
     int i;
 
@@ -135,32 +121,6 @@ void listLines() {
     }
 }
 
-/*
- * Checks if the flag is "inverso" or any of its up to 3 character
- * abbreviations. Returns 0 if it is, 1 otherwise.
- */
-int isReverse(char flag[]) {
-
-    int i = 0;
-    char reverse[8] = REVERSE_FLAG;
-
-    while (flag[i] != '\0') {
-        if (flag[i] != reverse[i]) {
-            return 1;
-        }
-        i++;
-    }
-    if (i < 3) {
-        return 1;
-    }
-
-    return 0;
-}
-
-/*
- * Prints all the stops in the line corresponnding to the index i in the global
- * line list.
- */
 void listLineStops(int i, char buffer[]) {
     int j, reverse = 0;
     line current_line;
@@ -175,7 +135,7 @@ void listLineStops(int i, char buffer[]) {
     /*Check if the command is reversed*/
     flag = readNextWord(buffer);
     if (flag != NULL) {
-        if (isReverse(flag) == 0) {
+        if (strncmp(flag, "inverso", 3) == 0) {
             reverse = 1;
         } else {
             printf("incorrect sort option.\n");
@@ -196,13 +156,10 @@ void listLineStops(int i, char buffer[]) {
     printf("%s\n", current_line.course[j].stop_name);
 }
 
-/*
- * Creates a new line with the input name and adds it to the global line list.
- */
-void createLine(char *line_name) {
+void createLine(char *l) {
     line new_line;
 
-    strcpy(new_line.line_name, line_name);
+    strcpy(new_line.line_name, l);
     new_line.nr_line_stops = 0;
     new_line.total_cost = 0;
     new_line.total_duration = 0;
@@ -213,9 +170,6 @@ void createLine(char *line_name) {
     nr_lines++;
 }
 
-/*
- * Main function that manages all the line commands.
- */
 void lineCommand(char buffer[]) {
 
     char *l;
@@ -233,17 +187,10 @@ void lineCommand(char buffer[]) {
     }
 }
 
-/*
- * Prints the coordinates of the stop in the index i in the global stop list.
- */
 void printStopCoords(int i) {
     printf("%16.12f %16.12f\n", stop_list[i].lat, stop_list[i].lon);
 }
 
-/*
- * Checks if the input is an existing stop in the system. Returns the
- * corresponding stop index in the global stop list if it is, -1 otherwise.
- */
 int isStop(char s[]) {
     int i;
 
@@ -256,9 +203,6 @@ int isStop(char s[]) {
     return -1;
 }
 
-/*
- * Counts the number of lines that pass through the stop with the input name.
- */
 int nrStopLines(char s[]) {
 
     int i, j, count = 0;
@@ -275,9 +219,6 @@ int nrStopLines(char s[]) {
     return count;
 }
 
-/*
- * Lists all the stops in the system.
- */
 void listStops() {
 
     int i;
@@ -289,10 +230,6 @@ void listStops() {
     }
 }
 
-/*
- * Creates a new stop with the input name, latitude and longitude and adds it to
- * the global stop list.
- */
 void createStop(char *s, char *lat, char *lon) {
     stop new_stop;
 
@@ -304,10 +241,6 @@ void createStop(char *s, char *lat, char *lon) {
     nr_stops++;
 }
 
-/*
- * Main function that manages all the stop commands, i.e. creating stops,
- * listing all stops and printing specific stop coordinates.
- */
 void stopCommand(char buffer[]) {
 
     char *s, *lat, *lon;
@@ -336,11 +269,6 @@ void stopCommand(char buffer[]) {
     }
 }
 
-/*
- * Checks whether the link attempted to create is valid for the given line.
- * Returns information represented by integers on the link type back to
- * isValidLink.
- */
 int isLinkLineCompatible(int line_index, int origin_index,
                          int destination_index) {
 
@@ -366,11 +294,6 @@ int isLinkLineCompatible(int line_index, int origin_index,
     return -1;
 }
 
-/*
- * Checks if the link attempted to create has valid arguments. Returns -1 if
- * it's invalid, 0 if it's an origin link, 1 if it's a destination link and 2 if
- * these are the first stops to be added to the line course.
- */
 int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
                 double cost_pre, double duration_pre) {
 
@@ -407,10 +330,6 @@ int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
     return isLinkLineCompatible(line_index, origin_index, destination_index);
 }
 
-/*
- * Function used to create the first 2 stops of the line of index i in the
- * global line list.
- */
 void createFirstStops(int line_index, int origin_index, int destination_index,
                       double cost_pre, double duration_pre) {
 
@@ -421,16 +340,12 @@ void createFirstStops(int line_index, int origin_index, int destination_index,
     line_list[line_index].total_duration = duration_pre;
 }
 
-/*
- * Inserts a new stop either at the begining or at the end of the line of index
- * i in the global line list, depending on the link type.
- */
 void createLink(int line_index, int origin_index, int destination_index,
                 double cost_pre, double duration_pre, int link_info) {
+
     int i;
 
     switch (link_info) {
-    /* Origin link. Stop is inserted in the begining of the line course. */
     case 0: {
         line_list[line_index].course = (stop *)realloc(
             line_list[line_index].course,
@@ -442,7 +357,7 @@ void createLink(int line_index, int origin_index, int destination_index,
         }
         line_list[line_index].course[0] = stop_list[origin_index];
     } break;
-    /* Destination link. Stop is inserted at the end of the line course. */
+
     case 1: {
         line_list[line_index].course = (stop *)realloc(
             line_list[line_index].course,
@@ -451,8 +366,6 @@ void createLink(int line_index, int origin_index, int destination_index,
             stop_list[destination_index];
     } break;
 
-    /* First stops. The mentioned link actually represents the first stops to be
-     * inserted in the line course. */
     case 2: {
         createFirstStops(line_index, origin_index, destination_index, cost_pre,
                          duration_pre);
@@ -464,8 +377,6 @@ void createLink(int line_index, int origin_index, int destination_index,
     line_list[line_index].total_cost += cost_pre;
     line_list[line_index].total_duration += duration_pre;
 
-    /* Final step to determine if the line becomes a cycle after adding the
-     * link. */
     if (line_list[line_index].course[0].stop_name ==
         line_list[line_index]
             .course[line_list[line_index].nr_line_stops - 1]
@@ -474,10 +385,6 @@ void createLink(int line_index, int origin_index, int destination_index,
     }
 }
 
-/*
- * Main link function that manages all link commands, i. e. creating links by
- * adding stops to line courses.
- */
 void linkCommand(char buffer[]) {
 
     int line_index, origin_index, destination_index;
@@ -506,9 +413,6 @@ void linkCommand(char buffer[]) {
     return;
 }
 
-/*
- * Intersection Command. Lists all the line intersections in the system.
- */
 void intsecCommand() {
 
     int i, j, k;
@@ -533,10 +437,6 @@ void intsecCommand() {
     }
 }
 
-/*
- * Main function. Inserts the input into the buffer and calls all the other main
- * command functions.
- */
 int main() {
 
     char buffer[BUFFER_SIZE], c;
