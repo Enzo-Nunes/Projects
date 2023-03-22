@@ -160,7 +160,7 @@ void createLine(char *l) {
     new_line.total_cost = 0;
     new_line.total_duration = 0;
     new_line.is_cycle = 0;
-    new_line.course = (stop *)malloc(2 * sizeof(stop));
+    new_line.course = (stop *)malloc(MAX_STOPS * sizeof(stop));
 
     line_list[nr_lines] = new_line;
     nr_lines++;
@@ -329,6 +329,7 @@ int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
 void createFirstStops(int line_index, int origin_index, int destination_index,
                       double cost_pre, double duration_pre) {
 
+    line_list[line_index].course = (stop *)malloc(2 * sizeof(stop));
     line_list[line_index].course[0] = stop_list[origin_index];
     line_list[line_index].course[1] = stop_list[destination_index];
     line_list[line_index].nr_line_stops = 2;
