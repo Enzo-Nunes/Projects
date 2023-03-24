@@ -100,8 +100,8 @@ line *sortLines(line lines_list[]) {
 }
 
 /*
- * Checks if the input is an existing line in the system. Returns the
- * corresponding line index in the global line list if it is, -1 otherwise.
+ * Checks if the input is an existing line in the system. Returns the line's
+ * corresponding index in the global line list if it is, -1 otherwise.
  */
 int isLine(char l[]) {
     int i;
@@ -158,7 +158,7 @@ int isReverse(char flag[]) {
 }
 
 /*
- * Prints all the stops in the line corresponnding to the index i in the global
+ * Prints all the stops in the line corresponding to the index i in the global
  * line list.
  */
 void listLineStops(int i, char buffer[]) {
@@ -172,7 +172,7 @@ void listLineStops(int i, char buffer[]) {
         return;
     }
 
-    /*Check if the command is reversed*/
+    /* Checks if the command is reversed. */
     flag = readNextWord(buffer);
     if (flag != NULL) {
         if (isReverse(flag) == 0) {
@@ -183,7 +183,7 @@ void listLineStops(int i, char buffer[]) {
         }
     }
 
-    /*Print the stops*/
+    /* Print the stops. */
     if (reverse == 0) {
         for (j = 0; j < current_line.nr_line_stops - 1; j++) {
             printf("%s, ", current_line.course[j].stop_name);
@@ -234,15 +234,16 @@ void lineCommand(char buffer[]) {
 }
 
 /*
- * Prints the coordinates of the stop in the index i in the global stop list.
+ * Prints the coordinates of the stop corresponding to the index i in the global
+ * stop list.
  */
 void printStopCoords(int i) {
     printf("%16.12f %16.12f\n", stop_list[i].lat, stop_list[i].lon);
 }
 
 /*
- * Checks if the input is an existing stop in the system. Returns the
- * corresponding stop index in the global stop list if it is, -1 otherwise.
+ * Checks if the input is an existing stop in the system. Returns the stop's
+ * corresponding index in the global stop list if it is, -1 otherwise.
  */
 int isStop(char s[]) {
     int i;
@@ -337,9 +338,9 @@ void stopCommand(char buffer[]) {
 }
 
 /*
- * Checks whether the link attempted to create is valid for the given line.
- * Returns information represented by integers on the link type back to
- * isValidLink.
+ * Function called only by isValidLink that checks whether the link attempted to
+ * create is valid for the given line. Returns integers that represent link
+ * types back to the isValidLink.
  */
 int isLinkLineCompatible(int line_index, int origin_index,
                          int destination_index) {
@@ -369,7 +370,7 @@ int isLinkLineCompatible(int line_index, int origin_index,
 /*
  * Checks if the link attempted to create has valid arguments. Returns -1 if
  * it's invalid, 0 if it's an origin link, 1 if it's a destination link and 2 if
- * these are the first stops to be added to the line course.
+ * these are the first stops to be inserted in the line course.
  */
 int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
                 double cost_pre, double duration_pre) {
@@ -408,7 +409,7 @@ int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
 }
 
 /*
- * Function used to create the first 2 stops of the line of index i in the
+ * Function used to insert the first 2 stops in the line of index i in the
  * global line list.
  */
 void createFirstStops(int line_index, int origin_index, int destination_index,
@@ -422,14 +423,15 @@ void createFirstStops(int line_index, int origin_index, int destination_index,
 }
 
 /*
- * Inserts a new stop either at the begining or at the end of the line of index
- * i in the global line list, depending on the link type.
+ * Line course-plotting function. Based on the link type, adds new stops
+ * to the course of the line of index i in the global line list .
  */
 void createLink(int line_index, int origin_index, int destination_index,
-                double cost_pre, double duration_pre, int link_info) {
+                double cost_pre, double duration_pre, int link_type) {
     int i;
 
-    switch (link_info) {
+    switch (link_type) {
+
     /* Origin link. Stop is inserted in the begining of the line course. */
     case 0: {
         line_list[line_index].course = (stop *)realloc(
@@ -442,6 +444,7 @@ void createLink(int line_index, int origin_index, int destination_index,
         }
         line_list[line_index].course[0] = stop_list[origin_index];
     } break;
+
     /* Destination link. Stop is inserted at the end of the line course. */
     case 1: {
         line_list[line_index].course = (stop *)realloc(
@@ -460,6 +463,7 @@ void createLink(int line_index, int origin_index, int destination_index,
         return;
     }
 
+    /* Updates the line's information. */
     line_list[line_index].nr_line_stops++;
     line_list[line_index].total_cost += cost_pre;
     line_list[line_index].total_duration += duration_pre;
@@ -475,17 +479,13 @@ void createLink(int line_index, int origin_index, int destination_index,
 }
 
 /*
- * Main link function that manages all link commands, i. e. creating links by
- * adding stops to line courses.
+ * Main link function that manages all link commands. Analyzes the link type and
+ * adds stops to the line accordingly.
  */
 void linkCommand(char buffer[]) {
 
-    int line_index, origin_index, destination_index;
+    int line_index, origin_index, destination_index, link_type;
     double cost_pre, duration_pre;
-
-    /* -1 if not possible, 0 if origin link, 1 if destination or cycle link, 2
-     * if first stops.*/
-    int link_info;
     char *line_pre, *origin_pre, *destination_pre;
 
     line_pre = readNextWord(buffer);
@@ -498,10 +498,10 @@ void linkCommand(char buffer[]) {
     cost_pre = atof(readNextWord(buffer));
     duration_pre = atof(readNextWord(buffer));
 
-    if ((link_info = isValidLink(line_pre, origin_pre, destination_pre,
+    if ((link_type = isValidLink(line_pre, origin_pre, destination_pre,
                                  cost_pre, duration_pre)) != -1) {
         createLink(line_index, origin_index, destination_index, cost_pre,
-                   duration_pre, link_info);
+                   duration_pre, link_type);
     }
     return;
 }
@@ -535,7 +535,7 @@ void intsecCommand() {
 
 /*
  * Main function. Inserts the input into the buffer and calls all the other main
- * command functions.
+ * command functions. Inputs are asked indefinitely until the user inputs 'q'.
  */
 int main() {
 
