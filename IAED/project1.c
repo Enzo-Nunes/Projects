@@ -429,17 +429,17 @@ void createFirstStops(int line_index, int origin_index, int destination_index,
  */
 void createLink(int line_index, int origin_index, int destination_index,
                 double cost_pre, double duration_pre, int link_type) {
-    int i;
+    int i, nr_line_index_stops = line_list[line_index].nr_line_stops;
 
     switch (link_type) {
 
     /* Origin link. Stop is inserted in the begining of the line course. */
     case 0: {
-        line_list[line_index].course = (stop *)realloc(
-            line_list[line_index].course,
-            (line_list[line_index].nr_line_stops + 1) * sizeof(stop));
+        line_list[line_index].course =
+            (stop *)realloc(line_list[line_index].course,
+                            (nr_line_index_stops + 1) * sizeof(stop));
 
-        for (i = line_list[line_index].nr_line_stops - 1; i >= 0; i--) {
+        for (i = nr_line_index_stops - 1; i >= 0; i--) {
             line_list[line_index].course[i + 1] =
                 line_list[line_index].course[i];
         }
@@ -448,10 +448,10 @@ void createLink(int line_index, int origin_index, int destination_index,
 
     /* Destination link. Stop is inserted at the end of the line course. */
     case 1: {
-        line_list[line_index].course = (stop *)realloc(
-            line_list[line_index].course,
-            (line_list[line_index].nr_line_stops + 1) * sizeof(stop));
-        line_list[line_index].course[line_list[line_index].nr_line_stops] =
+        line_list[line_index].course =
+            (stop *)realloc(line_list[line_index].course,
+                            (nr_line_index_stops + 1) * sizeof(stop));
+        line_list[line_index].course[nr_line_index_stops] =
             stop_list[destination_index];
     } break;
 
