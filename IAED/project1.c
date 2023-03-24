@@ -35,9 +35,10 @@ stop stop_list[MAX_STOPS];
    a new input is asked and the buffer is created again. */
 int buffer_index = 0;
 
-/* Global variables to keep track of the numbers of lines and stops. */
+/* Global variables to keep track of the numbers of lines, stops and links. */
 int nr_lines = 0;
 int nr_stops = 0;
+int nr_links = 0;
 
 /*
  * Function that reads the next word in the buffer and returns it.
@@ -463,6 +464,8 @@ void createLink(int line_index, int origin_index, int destination_index,
         return;
     }
 
+    nr_links++;
+
     /* Updates the line's information. */
     line_list[line_index].nr_line_stops++;
     line_list[line_index].total_cost += cost_pre;
@@ -487,6 +490,10 @@ void linkCommand(char buffer[]) {
     int line_index, origin_index, destination_index, link_type;
     double cost_pre, duration_pre;
     char *line_pre, *origin_pre, *destination_pre;
+
+    if (nr_links == MAX_LINKS) {
+        return;
+    }
 
     line_pre = readNextWord(buffer);
     origin_pre = readNextWord(buffer);
