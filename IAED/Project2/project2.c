@@ -5,9 +5,9 @@
 /*
  * Function that reads the next word in the buffer and returns it.
  */
-char *readNextWord(char buffer[]) {
+char *readNextWord(unsigned buffer_index, char buffer[]) {
     int i = 0;
-    char *next_word = malloc(BUFSIZ);
+    char *next_word = malloc(BUFFER_SIZE);
 
     while (buffer[buffer_index] == ' ' || buffer[buffer_index] == '\n') {
         buffer_index++;
@@ -37,7 +37,7 @@ char *readNextWord(char buffer[]) {
  * Receives a list of lines and returns a new, alphabetically sorted list of
  * lines.
  */
-line *sortLines(line lines_list[]) {
+line *sortLines(unsigned nr_lines, line lines_list[]) {
 
     int i, j, min_index;
 
@@ -66,11 +66,11 @@ line *sortLines(line lines_list[]) {
  * Checks if the input is an existing line in the system. Returns the line's
  * corresponding index in the global line list if it is, -1 otherwise.
  */
-int isLine(char l[]) {
+int isLine(system *sys, char l[]) {
     int i;
 
-    for (i = 0; i < nr_lines; i++) {
-        if (strcmp(l, line_list[i].line_name) == 0) {
+    for (i = 0; i < sys->nr_lines; i++) {
+        if (strcmp(l, sys->line_list[i].line_name) == 0) {
             return i;
         }
     }
@@ -162,8 +162,15 @@ void listLineStops(int i, char buffer[]) {
 /*
  * Creates a new line with the input name and adds it to the global line list.
  */
-void createLine(char *line_name) {
+void createLine(system *sys, char *line_name) {
     line new_line;
+
+    if (sys->nr_lines == 0) {
+        sys->line_list = (line *)malloc(CHUNK_SIZE * sizeof(line));
+    } else if (sys->nr_lines % CHUNK_SIZE == 0) {
+        sys->line_list = (line *)realloc(
+            sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(line));
+    }
 
     strcpy(new_line.line_name, line_name);
     new_line.nr_line_stops = 0;
@@ -172,9 +179,10 @@ void createLine(char *line_name) {
     new_line.is_cycle = 0;
     new_line.course = (stop *)malloc(2 * sizeof(stop));
 
-    line_list[nr_lines] = new_line;
-    nr_lines++;
+    sys->line_list[sys->nr_lines] = new_line;
+    sys->nr_lines++;
 }
+
 
 /*
  * Main function that manages all the line commands.
@@ -257,14 +265,21 @@ void listStops() {
  * Creates a new stop with the input name, latitude and longitude and adds it to
  * the global stop list.
  */
-void createStop(char *s, char *lat, char *lon) {
+void createStop(system *sys, char *s, char *lat, char *lon) {
     stop new_stop;
+
+    if (sys->nr_stops == 0) {
+        sys->stop_list = (stop *)malloc(CHUNK_SIZE * sizeof(stop));
+    } else if (sys->nr_stops % CHUNK_SIZE == 0) {
+        sys->stop_list = (stop *)realloc(
+            sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(stop));
+    }
 
     strcpy(new_stop.stop_name, s);
     new_stop.lat = atof(lat);
     new_stop.lon = atof(lon);
 
-    stop_list[nr_stops] = new_stop;
+    sys->stop_list[nr_stops] = new_stop;
     nr_stops++;
 }
 
@@ -478,20 +493,21 @@ void linkCommand(char buffer[]) {
 /*
  * Intersection Command. Lists all the line intersections in the system.
  */
-void intsecCommand() {
+void intsecCommand(system sys) {
 
     int i, j, k;
     char *stop_pre;
-    line *sorted_lines_list = sortLines(line_list);
+    line *sorted_lines_list = sortLines(sys.nr_lines, sys.line_list);
 
-    for (i = 0; i < nr_stops; i++) {
-        stop_pre = stop_list[i].stop_name;
+    for (i = 0; i < sys.nr_stops; i++) {
+        stop_pre = sys.stop_list[i].stop_name;
         if (nrStopLines(stop_pre) > 1) {
             printf("%s %d:", stop_pre, nrStopLines(stop_pre));
-            for (j = 0; j < nr_lines; j++) {
+            for (j = 0; j < sys.nr_lines; j++) {
                 for (k = 0; k < sorted_lines_list[j].nr_line_stops; k++) {
                     if (strcmp(stop_pre,
-                               sorted_lines_list[j].course[k].stop_name) == 0) {
+                               sorted_lines_list[j].course[k].stop_name) ==
+                        0) { /* SOLVE COURSE ARRAY TO INDICES */
                         printf(" %s", sorted_lines_list[j].line_name);
                         break;
                     }
@@ -503,24 +519,25 @@ void intsecCommand() {
 }
 
 system startSystem() {
-    system main_sys;
+    system sys;
 
-    main_sys.buffer_index = 0;
-    main_sys.nr_lines = 0;
-    main_sys.nr_links = 0;
-    main_sys.nr_stops = 0;
-    main_sys.line_list = (line *)malloc(16 * sizeof(line));
-    main_sys.stop_list = (stop *)malloc(16 * sizeof(stop));
+    sys.buffer_index = 0;
+    sys.nr_lines = 0;
+    sys.nr_links = 0;
+    sys.nr_stops = 0;
 
-    return main_sys;
+    /* Arrays are created later, simultaneously with first lines or stops. */
+
+    return sys;
 }
 
-char *getBuffer(system main_sys) {
-    char buffer[BUFFER_SIZE], c;
+char *getBuffer(system *main_sys) {
+    char c;
+    char *buffer = (char *)malloc(BUFFER_SIZE * sizeof(char));
     unsigned count;
 
     memset(buffer, 0, BUFFER_SIZE);
-    main_sys.buffer_index = 0;
+    main_sys->buffer_index = 0;
 
     for (count = 0; (c = getchar()) != '\n'; count++) {
         buffer[count] = c;
