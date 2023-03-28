@@ -23,8 +23,8 @@ typedef struct {
 
 /* System struct for holding global values needed. */
 typedef struct {
-    unsigned nr_lines, nr_stops, nr_links;
+    unsigned nr_lines, nr_stops, nr_links, buffer_index;
     line *line_list;
     stop *stop_list;
-    unsigned line_list_chunks, stop_list_chunks, buffer_index;
+
 } system;
