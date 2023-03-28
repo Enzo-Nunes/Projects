@@ -183,7 +183,6 @@ void createLine(system *sys, char *line_name) {
     sys->nr_lines++;
 }
 
-
 /*
  * Main function that manages all the line commands.
  */
@@ -518,15 +517,17 @@ void intsecCommand(system sys) {
     }
 }
 
-system startSystem() {
-    system sys;
+system *startSystem() {
+    system *sys = (system *)malloc(sizeof(system));
 
-    sys.buffer_index = 0;
-    sys.nr_lines = 0;
-    sys.nr_links = 0;
-    sys.nr_stops = 0;
+    sys->buffer_index = 0;
+    sys->nr_lines = 0;
+    sys->nr_links = 0;
+    sys->nr_stops = 0;
 
-    /* Arrays are created later, simultaneously with first lines or stops. */
+    /* Memory is allocated to the arrays later when adding lines or stops. */
+    sys->line_list = NULL;
+    sys->stop_list = NULL;
 
     return sys;
 }
@@ -542,6 +543,8 @@ char *getBuffer(system *main_sys) {
     for (count = 0; (c = getchar()) != '\n'; count++) {
         buffer[count] = c;
     }
+
+    return buffer;
 }
 
 /*
@@ -551,11 +554,10 @@ char *getBuffer(system *main_sys) {
 int main() {
 
     char *buffer;
-    system main_sys;
+    system *main_sys;
 
+    main_sys = startSystem();
     while (1) {
-
-        main_sys = startSystem();
         buffer = getBuffer(main_sys);
 
         switch (buffer[0]) {
@@ -571,7 +573,7 @@ int main() {
             linkCommand(buffer + 2);
             break;
         case 'i':
-            intsecCommand();
+            intsecCommand(*main_sys);
             break;
         }
     }
