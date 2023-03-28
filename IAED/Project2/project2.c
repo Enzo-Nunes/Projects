@@ -81,15 +81,15 @@ int isLine(system *sys, char l[]) {
 /*
  * List all the lines in the system.
  */
-void listLines() {
+void listLines(system *sys) {
     int i;
 
-    for (i = 0; i < nr_lines; i++) {
-        printf("%s ", line_list[i].line_name);
+    for (i = 0; i < sys->nr_lines; i++) {
+        printf("%s ", sys->line_list[i].line_name);
 
-        if (line_list[i].nr_line_stops > 0) {
+        if (sys->line_list[i].nr_line_stops > 0) {
             printf(
-                "%s %s ", line_list[i].course[0].stop_name,
+                "%s %s ", sys->line_list[i].course[0].stop_name,
                 line_list[i].course[line_list[i].nr_line_stops - 1].stop_name);
         }
 
@@ -403,23 +403,24 @@ void createFirstStops(int line_index, int origin_index, int destination_index,
  * Line course-plotting function. Based on the link type, adds new stops
  * to the course of the line of index i in the global line list .
  */
-void createLink(int line_index, int origin_index, int destination_index,
-                double cost_pre, double duration_pre, int link_type) {
-    int i, nr_line_index_stops = line_list[line_index].nr_line_stops;
+void createLink(system *sys, int line_index, int origin_index,
+                int destination_index, double cost_pre, double duration_pre,
+                int link_type) {
+    int i, nr_line_index_stops = sys->line_list[line_index].nr_line_stops;
 
     switch (link_type) {
 
     /* Origin link. Stop is inserted in the begining of the line course. */
     case 0: {
-        line_list[line_index].course =
-            (stop *)realloc(line_list[line_index].course,
+        sys->line_list[line_index].course =
+            (stop *)realloc(sys->line_list[line_index].course,
                             (nr_line_index_stops + 1) * sizeof(stop));
 
         for (i = nr_line_index_stops - 1; i >= 0; i--) {
-            line_list[line_index].course[i + 1] =
-                line_list[line_index].course[i];
+            sys->line_list[line_index].course[i + 1] =
+                sys->line_list[line_index].course[i];
         }
-        line_list[line_index].course[0] = stop_list[origin_index];
+        sys->line_list[line_index].course[0] = origin_index;
     } break;
 
     /* Destination link. Stop is inserted at the end of the line course. */
@@ -492,17 +493,17 @@ void linkCommand(char buffer[]) {
 /*
  * Intersection Command. Lists all the line intersections in the system.
  */
-void intsecCommand(system sys) {
+void intsecCommand(system *sys) {
 
     int i, j, k;
     char *stop_pre;
-    line *sorted_lines_list = sortLines(sys.nr_lines, sys.line_list);
+    line *sorted_lines_list = sortLines(sys->nr_lines, sys->line_list);
 
-    for (i = 0; i < sys.nr_stops; i++) {
-        stop_pre = sys.stop_list[i].stop_name;
+    for (i = 0; i < sys->nr_stops; i++) {
+        stop_pre = sys->stop_list[i].stop_name;
         if (nrStopLines(stop_pre) > 1) {
             printf("%s %d:", stop_pre, nrStopLines(stop_pre));
-            for (j = 0; j < sys.nr_lines; j++) {
+            for (j = 0; j < sys->nr_lines; j++) {
                 for (k = 0; k < sorted_lines_list[j].nr_line_stops; k++) {
                     if (strcmp(stop_pre,
                                sorted_lines_list[j].course[k].stop_name) ==
