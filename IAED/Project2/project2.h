@@ -7,24 +7,23 @@
 #define REVERSE_FLAG "inverso"
 #define CHUNK_SIZE 16
 
-typedef struct {
+typedef struct Stop {
     char *stop_name;
-    double lat;
-    double lon;
-} stop;
+    int nr_lines;
+    double lat, lon;
+} Stop;
 
-typedef struct {
+typedef struct Line {
     char *line_name;
-    unsigned *course;
-    unsigned nr_line_stops;
+    int *course;
+    int nr_line_stops;
     int is_cycle;
-    double total_cost, total_duration;
-} line;
+    double cost, duration;
+} Line;
 
 /* System struct for holding global values needed. */
-typedef struct {
-    unsigned nr_lines, nr_stops, nr_links, buffer_index;
-    line *line_list;
-    stop *stop_list;
-
-} system;
+typedef struct BusNetwork {
+    int nr_lines, nr_stops, buffer_index;
+    Line *line_list;
+    Stop *stop_list;
+} BusNetwork;
