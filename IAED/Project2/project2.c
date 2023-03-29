@@ -1,4 +1,4 @@
-/* iaed-23 - ist1106336 - project1 */
+/* iaed-23 - ist1106336 - project2 */
 
 #include "project2.h"
 
