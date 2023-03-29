@@ -3,28 +3,32 @@
 #include "project2.h"
 
 /*
- * Function that reads the next word in the buffer and returns it.
+ * Returns the next word read in the buffer.
  */
-char *readNextWord(unsigned buffer_index, char buffer[]) {
+char *readNextWord(BusNetwork *sys, char buffer[]) {
     int i = 0;
     char *next_word = malloc(BUFFER_SIZE);
 
-    while (buffer[buffer_index] == ' ' || buffer[buffer_index] == '\n') {
-        buffer_index++;
+    sys->buffer_index = sys->buffer_index;
+
+    while (buffer[sys->buffer_index] == ' ' ||
+           buffer[sys->buffer_index] == '\n') {
+        sys->buffer_index++;
     }
 
-    if (buffer[buffer_index] == '"') {
-        buffer_index++;
-        while (buffer[buffer_index] != '"') {
-            next_word[i] = buffer[buffer_index];
-            i++, buffer_index++;
+    if (buffer[sys->buffer_index] == '"') {
+        sys->buffer_index++;
+        while (buffer[sys->buffer_index] != '"') {
+            next_word[i] = buffer[sys->buffer_index];
+            i++, sys->buffer_index++;
         }
-        buffer_index++;
+        sys->buffer_index++;
     } else {
-        while (buffer[buffer_index] != ' ' && buffer[buffer_index] != '\n' &&
-               buffer[buffer_index] != '\0') {
-            next_word[i] = buffer[buffer_index];
-            i++, buffer_index++;
+        while (buffer[sys->buffer_index] != ' ' &&
+               buffer[sys->buffer_index] != '\n' &&
+               buffer[sys->buffer_index] != '\0') {
+            next_word[i] = buffer[sys->buffer_index];
+            i++, sys->buffer_index++;
         }
     }
 
@@ -37,12 +41,12 @@ char *readNextWord(unsigned buffer_index, char buffer[]) {
  * Receives a list of lines and returns a new, alphabetically sorted list of
  * lines.
  */
-line *sortLines(unsigned nr_lines, line lines_list[]) {
+Line *sortLines(int nr_lines, Line lines_list[]) {
 
     int i, j, min_index;
 
-    line *sorted_lines_list = malloc(nr_lines * sizeof(line));
-    memcpy(sorted_lines_list, lines_list, nr_lines * sizeof(line));
+    Line *sorted_lines_list = malloc(nr_lines * sizeof(Line));
+    memcpy(sorted_lines_list, lines_list, nr_lines * sizeof(Line));
 
     for (i = 0; i < nr_lines - 1; i++) {
         min_index = i;
@@ -53,7 +57,7 @@ line *sortLines(unsigned nr_lines, line lines_list[]) {
             }
         }
         if (min_index != i) {
-            line temp = sorted_lines_list[i];
+            Line temp = sorted_lines_list[i];
             sorted_lines_list[i] = sorted_lines_list[min_index];
             sorted_lines_list[min_index] = temp;
         }
@@ -63,10 +67,10 @@ line *sortLines(unsigned nr_lines, line lines_list[]) {
 }
 
 /*
- * Checks if the input is an existing line in the system. Returns the line's
- * corresponding index in the global line list if it is, -1 otherwise.
+ * Checks if the input is an existing Line in the system. Returns the Line's
+ * corresponding index in the system Line list if it is, -1 otherwise.
  */
-int isLine(system *sys, char l[]) {
+int isLine(BusNetwork *sys, char l[]) {
     int i;
 
     for (i = 0; i < sys->nr_lines; i++) {
@@ -81,20 +85,25 @@ int isLine(system *sys, char l[]) {
 /*
  * List all the lines in the system.
  */
-void listLines(system *sys) {
-    int i;
+void listLines(BusNetwork *sys) {
+    int i, origin_index, destination_index;
+    Stop origin, destination;
+    Line line;
 
     for (i = 0; i < sys->nr_lines; i++) {
-        printf("%s ", sys->line_list[i].line_name);
+        line = sys->line_list[i];
 
-        if (sys->line_list[i].nr_line_stops > 0) {
-            printf(
-                "%s %s ", sys->line_list[i].course[0].stop_name,
-                line_list[i].course[line_list[i].nr_line_stops - 1].stop_name);
+        printf("%s ", line.line_name);
+
+        if (line.nr_line_stops > 0) {
+            origin_index = line.course[0];
+            destination_index = line.course[line.nr_line_stops - 1];
+            origin = sys->stop_list[origin_index];
+            destination = sys->stop_list[destination_index];
+            printf("%s %s ", origin.stop_name, destination.stop_name);
         }
 
-        printf("%d %.2f %.2f\n", line_list[i].nr_line_stops,
-               line_list[i].total_cost, line_list[i].total_duration);
+        printf("%d %.2f %.2f\n", line.nr_line_stops, line.cost, line.duration);
     }
 }
 
@@ -121,23 +130,19 @@ int isReverse(char flag[]) {
 }
 
 /*
- * Prints all the stops in the line corresponding to the index i in the global
+ * Prints all the stops in the line corresponding to the index i in the system
  * line list.
  */
-void listLineStops(int i, char buffer[]) {
+void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
     int j, reverse = 0;
-    line current_line;
     char *flag;
 
-    current_line = line_list[i];
-
-    if (current_line.nr_line_stops == 0) {
+    if (line.nr_line_stops == 0) {
         return;
     }
 
     /* Checks if the command is reversed. */
-    flag = readNextWord(buffer);
-    if (flag != NULL) {
+    if ((flag = readNextWord(sys, buffer)) != NULL) {
         if (isReverse(flag) == 0) {
             reverse = 1;
         } else {
@@ -148,78 +153,76 @@ void listLineStops(int i, char buffer[]) {
 
     /* Print the stops. */
     if (reverse == 0) {
-        for (j = 0; j < current_line.nr_line_stops - 1; j++) {
-            printf("%s, ", current_line.course[j].stop_name);
+        for (j = 0; j < line.nr_line_stops - 1; j++) {
+            printf("%s, ", sys->stop_list[line.course[j]].stop_name);
         }
     } else {
-        for (j = current_line.nr_line_stops - 1; j > 0; j--) {
-            printf("%s, ", current_line.course[j].stop_name);
+        for (j = line.nr_line_stops - 1; j > 0; j--) {
+            printf("%s, ", sys->stop_list[line.course[j]].stop_name);
         }
     }
-    printf("%s\n", current_line.course[j].stop_name);
+    printf("%s\n", sys->stop_list[line.course[j]].stop_name);
 }
 
 /*
- * Creates a new line with the input name and adds it to the global line list.
+ * Creates a new Line with the input name and adds it to the system Line list.
  */
-void createLine(system *sys, char *line_name) {
-    line new_line;
+void createLine(BusNetwork *sys, char *line_name) {
+    Line new_line;
 
     if (sys->nr_lines == 0) {
-        sys->line_list = (line *)malloc(CHUNK_SIZE * sizeof(line));
+        sys->line_list = (Line *)malloc(CHUNK_SIZE * sizeof(Line));
     } else if (sys->nr_lines % CHUNK_SIZE == 0) {
-        sys->line_list = (line *)realloc(
-            sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(line));
+        sys->line_list = (Line *)realloc(
+            sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(Line));
     }
 
+    new_line.line_name = malloc((strlen(line_name) + 1) * sizeof(char));
     strcpy(new_line.line_name, line_name);
     new_line.nr_line_stops = 0;
-    new_line.total_cost = 0;
-    new_line.total_duration = 0;
+    new_line.cost = 0;
+    new_line.duration = 0;
     new_line.is_cycle = 0;
-    new_line.course = (stop *)malloc(2 * sizeof(stop));
 
     sys->line_list[sys->nr_lines] = new_line;
     sys->nr_lines++;
 }
 
 /*
- * Main function that manages all the line commands.
+ * Main function that manages all the Line commands.
  */
-void lineCommand(char buffer[]) {
+void lineCommand(BusNetwork *sys, char buffer[]) {
 
     char *l;
     int i;
 
-    l = readNextWord(buffer);
-    if (l == NULL) {
-        listLines();
+    if ((l = readNextWord(sys, buffer)) == NULL) {
+        listLines(sys);
     } else {
-        if ((i = isLine(l)) != -1) {
-            listLineStops(i, buffer);
+        if ((i = isLine(sys, l)) != -1) {
+            listLineStops(sys, sys->line_list[i], buffer);
         } else {
-            createLine(l);
+            createLine(sys, l);
         }
     }
 }
 
 /*
- * Prints the coordinates of the stop corresponding to the index i in the global
- * stop list.
+ * Prints the coordinates of the Stop of i index in the system Stop list.
  */
-void printStopCoords(int i) {
-    printf("%16.12f %16.12f\n", stop_list[i].lat, stop_list[i].lon);
+void printStopCoords(BusNetwork *sys, int i) {
+    printf("%16.12f %16.12f\n", sys->stop_list[i].lat, sys->stop_list[i].lon);
 }
 
 /*
- * Checks if the input is an existing stop in the system. Returns the stop's
- * corresponding index in the global stop list if it is, -1 otherwise.
+ * Checks if the input is an existing Stop in the system. Returns the Stop's
+ * corresponding index in the system Stop list if it is, -1 otherwise.
  */
-int isStop(char s[]) {
+int isStop(BusNetwork *sys, char stop_name[]) {
     int i;
 
-    for (i = 0; i < nr_stops; i++) {
-        if (strcmp(s, stop_list[i].stop_name) == 0) {
+    for (i = 0; i < sys->nr_stops; i++) {
+        if (strcmp(stop_name, sys->stop_list[i].stop_name) == 0) {
             return i;
         }
     }
@@ -228,86 +231,68 @@ int isStop(char s[]) {
 }
 
 /*
- * Counts the number of lines that pass through the stop with the input name.
- */
-int nrStopLines(char s[]) {
-
-    int i, j, count = 0;
-
-    for (i = 0; i < nr_lines; i++) {
-        for (j = 0; j < line_list[i].nr_line_stops; j++) {
-            if (strcmp(s, line_list[i].course[j].stop_name) == 0) {
-                count++;
-                break;
-            }
-        }
-    }
-
-    return count;
-}
-
-/*
  * Lists all the stops in the system.
  */
-void listStops() {
-
+void listStops(BusNetwork *sys) {
     int i;
+    Stop stop;
 
-    for (i = 0; i < nr_stops; i++) {
-        printf("%s: %16.12f %16.12f %d\n", stop_list[i].stop_name,
-               stop_list[i].lat, stop_list[i].lon,
-               nrStopLines(stop_list[i].stop_name));
+    for (i = 0; i < sys->nr_stops; i++) {
+        stop = sys->stop_list[i];
+        printf("%s: %16.12f %16.12f %d\n", stop.stop_name, stop.lat, stop.lon,
+               stop.nr_lines);
     }
 }
 
 /*
- * Creates a new stop with the input name, latitude and longitude and adds it to
- * the global stop list.
+ * Creates a new Stop with the input name, latitude and longitude and adds it to
+ * the system Stop list.
  */
-void createStop(system *sys, char *s, char *lat, char *lon) {
-    stop new_stop;
+void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
+    Stop new_stop;
 
     if (sys->nr_stops == 0) {
-        sys->stop_list = (stop *)malloc(CHUNK_SIZE * sizeof(stop));
+        sys->stop_list = (Stop *)malloc(CHUNK_SIZE * sizeof(Stop));
     } else if (sys->nr_stops % CHUNK_SIZE == 0) {
-        sys->stop_list = (stop *)realloc(
-            sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(stop));
+        sys->stop_list = (Stop *)realloc(
+            sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(Stop));
     }
 
-    strcpy(new_stop.stop_name, s);
+    new_stop.stop_name = malloc((strlen(stop_name) + 1) * sizeof(char));
+    strcpy(new_stop.stop_name, stop_name);
     new_stop.lat = atof(lat);
     new_stop.lon = atof(lon);
+    new_stop.nr_lines = 0;
 
-    sys->stop_list[nr_stops] = new_stop;
-    nr_stops++;
+    sys->stop_list[sys->nr_stops] = new_stop;
+    sys->nr_stops++;
 }
 
 /*
- * Main function that manages all the stop commands, i.e. creating stops,
- * listing all stops and printing specific stop coordinates.
+ * Main function that manages all the Stop commands, i.e. creating stops,
+ * listing all stops and printing specific Stop coordinates.
  */
-void stopCommand(char buffer[]) {
+void stopCommand(BusNetwork *sys, char buffer[]) {
 
-    char *s, *lat, *lon;
+    char *stop_name, *lat, *lon;
     int i;
 
-    s = readNextWord(buffer);
-    if (s == NULL) {
-        listStops();
+    if ((stop_name = readNextWord(sys, buffer)) == NULL) {
+        listStops(sys);
     } else {
-        if ((lat = readNextWord(buffer)) != NULL) {
-            if (isStop(s) == -1) {
-                lon = readNextWord(buffer);
-                createStop(s, lat, lon);
+        if ((lat = readNextWord(sys, buffer)) != NULL) {
+            if (isStop(sys, stop_name) == -1) {
+                lon = readNextWord(sys, buffer);
+                createStop(sys, stop_name, lat, lon);
             } else {
-                printf("%s: stop already exists.\n", s);
+                printf("%s: stop already exists.\n", stop_name);
                 return;
             }
         } else {
-            if ((i = isStop(s)) != -1) {
-                printStopCoords(i);
+            if ((i = isStop(sys, stop_name)) != -1) {
+                printStopCoords(sys, i);
             } else {
-                printf("%s: no such stop.\n", s);
+                printf("%s: no such stop.\n", stop_name);
                 return;
             }
         }
@@ -316,27 +301,21 @@ void stopCommand(char buffer[]) {
 
 /*
  * Function called only by isValidLink that checks whether the link attempted to
- * create is valid for the given line. Returns integers that represent link
- * types back to the isValidLink.
+ * create is valid for the given Line. Returns integers that represent link
+ * types back to isValidLink.
  */
-int isLinkLineCompatible(int line_index, int origin_index,
-                         int destination_index) {
+int isLinkLineCompatible(Line line, int origin_index, int destination_index) {
 
-    if (line_list[line_index].is_cycle == 1) {
+    if (line.is_cycle == 1) {
         printf("link cannot be associated with bus line.\n");
         return -1;
     }
 
-    if (strcmp(line_list[line_index]
-                   .course[line_list[line_index].nr_line_stops - 1]
-                   .stop_name,
-               stop_list[origin_index].stop_name) == 0) {
+    if (line.course[line.nr_line_stops - 1] == origin_index) {
         return 1;
     }
 
-    if (strcmp(line_list[line_index].course[0].stop_name,
-
-               stop_list[destination_index].stop_name) == 0) {
+    if (line.course[0] == destination_index) {
         return 0;
     }
 
@@ -347,167 +326,175 @@ int isLinkLineCompatible(int line_index, int origin_index,
 /*
  * Checks if the link attempted to create has valid arguments. Returns -1 if
  * it's invalid, 0 if it's an origin link, 1 if it's a destination link and 2 if
- * these are the first stops to be inserted in the line course.
+ * these are the first stops to be inserted in the Line course.
  */
-int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
-                double cost_pre, double duration_pre) {
+int isValidLink(BusNetwork *sys, char *line_name, char *origin_name,
+                char *destination_name, double cost, double duration) {
 
     int line_index, origin_index, destination_index;
 
-    line_index = isLine(line_pre);
-    origin_index = isStop(origin_pre);
-    destination_index = isStop(destination_pre);
+    line_index = isLine(sys, line_name);
+    origin_index = isStop(sys, origin_name);
+    destination_index = isStop(sys, destination_name);
 
     if (line_index == -1) {
-        printf("%s: no such line.\n", line_pre);
+        printf("%s: no such line.\n", line_name);
         return -1;
     }
 
     if (origin_index == -1) {
-        printf("%s: no such stop.\n", origin_pre);
+        printf("%s: no such stop.\n", origin_name);
         return -1;
     }
 
     if (destination_index == -1) {
-        printf("%s: no such stop.\n", destination_pre);
+        printf("%s: no such stop.\n", destination_name);
         return -1;
     }
 
-    if ((cost_pre < 0) || (duration_pre < 0)) {
+    if ((cost < 0) || (duration < 0)) {
         printf("negative cost or duration.\n");
         return -1;
     }
 
-    if (line_list[line_index].nr_line_stops == 0) {
+    if (sys->line_list[line_index].nr_line_stops == 0) {
         return 2;
     }
 
-    return isLinkLineCompatible(line_index, origin_index, destination_index);
+    return isLinkLineCompatible(sys->line_list[line_index], origin_index,
+                                destination_index);
 }
 
 /*
- * Function used to insert the first 2 stops in the line of index i in the
- * global line list.
+ * Function used to insert the first 2 stops in the Line of index i in the
+ * system Line list.
  */
-void createFirstStops(int line_index, int origin_index, int destination_index,
-                      double cost_pre, double duration_pre) {
+void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
+                   int destination_index, double cost, double duration) {
 
-    line_list[line_index].course[0] = stop_list[origin_index];
-    line_list[line_index].course[1] = stop_list[destination_index];
-    line_list[line_index].nr_line_stops = 2;
-    line_list[line_index].total_cost = cost_pre;
-    line_list[line_index].total_duration = duration_pre;
+    sys->line_list[line_index].course[0] = origin_index;
+    sys->line_list[line_index].course[1] = destination_index;
+    sys->line_list[line_index].nr_line_stops = 2;
+    sys->line_list[line_index].cost = cost;
+    sys->line_list[line_index].duration = duration;
+    sys->stop_list[origin_index].nr_lines++;
+    sys->stop_list[destination_index].nr_lines++;
+}
+
+void addMemoryToLineCourse(BusNetwork *sys, int line_index, int nr_line_stops) {
+
+    if (nr_line_stops == 0) {
+        sys->line_list[line_index].course =
+            (int *)malloc(CHUNK_SIZE * sizeof(int));
+    } else if (nr_line_stops % CHUNK_SIZE == 0) {
+        sys->line_list[line_index].course =
+            (int *)realloc(sys->line_list[line_index].course,
+                           (nr_line_stops + CHUNK_SIZE) * sizeof(int));
+    }
 }
 
 /*
  * Line course-plotting function. Based on the link type, adds new stops
- * to the course of the line of index i in the global line list .
+ * to the course of the Line of index i in the system Line list .
  */
-void createLink(system *sys, int line_index, int origin_index,
-                int destination_index, double cost_pre, double duration_pre,
+void createLink(BusNetwork *sys, int line_index, int origin_index,
+                int destination_index, double cost, double duration,
                 int link_type) {
-    int i, nr_line_index_stops = sys->line_list[line_index].nr_line_stops;
+    int i, nr_line_stops = sys->line_list[line_index].nr_line_stops;
 
+    addMemoryToLineCourse(sys, line_index, nr_line_stops);
     switch (link_type) {
 
-    /* Origin link. Stop is inserted in the begining of the line course. */
-    case 0: {
-        sys->line_list[line_index].course =
-            (stop *)realloc(sys->line_list[line_index].course,
-                            (nr_line_index_stops + 1) * sizeof(stop));
-
-        for (i = nr_line_index_stops - 1; i >= 0; i--) {
+    /* Origin link. Stop is inserted in the begining of the Line course. */
+    case 0:
+        for (i = nr_line_stops - 1; i >= 0; i--) {
             sys->line_list[line_index].course[i + 1] =
                 sys->line_list[line_index].course[i];
         }
         sys->line_list[line_index].course[0] = origin_index;
-    } break;
+        break;
 
-    /* Destination link. Stop is inserted at the end of the line course. */
-    case 1: {
-        line_list[line_index].course =
-            (stop *)realloc(line_list[line_index].course,
-                            (nr_line_index_stops + 1) * sizeof(stop));
-        line_list[line_index].course[nr_line_index_stops] =
-            stop_list[destination_index];
-    } break;
+    /* Destination link. Stop is inserted at the end of the Line course. */
+    case 1:
+        sys->line_list[line_index].course[nr_line_stops] = destination_index;
+        break;
 
     /* First stops. The mentioned link actually represents the first stops to be
-     * inserted in the line course. */
-    case 2: {
-        createFirstStops(line_index, origin_index, destination_index, cost_pre,
-                         duration_pre);
-    }
+     * inserted in the Line course. */
+    case 2:
+        addFirstStops(sys, line_index, origin_index, destination_index, cost,
+                      duration);
         return;
     }
 
-    nr_links++;
+    /* Updates the Line's information. */
+    sys->line_list[line_index].nr_line_stops++;
+    sys->line_list[line_index].cost += cost;
+    sys->line_list[line_index].duration += duration;
 
-    /* Updates the line's information. */
-    line_list[line_index].nr_line_stops++;
-    line_list[line_index].total_cost += cost_pre;
-    line_list[line_index].total_duration += duration_pre;
-
-    /* Final step to determine if the line becomes a cycle after adding the
+    /* Final step to determine if the Line becomes a cycle after adding the
      * link. */
-    if (line_list[line_index].course[0].stop_name ==
-        line_list[line_index]
-            .course[line_list[line_index].nr_line_stops - 1]
-            .stop_name) {
-        line_list[line_index].is_cycle = 1;
+    if (sys->line_list[line_index].course[0] ==
+        sys->line_list[line_index].course[nr_line_stops]) {
+        sys->line_list[line_index].is_cycle = 1;
+    }
+    /*printf("%d %d\n", sys->line_list[line_index].course[0],
+           sys->line_list[line_index].course[nr_line_stops - 1]);*/
+
+    if (sys->line_list[line_index].is_cycle == 0) {
+        switch (link_type) {
+        case 0:
+            sys->stop_list[origin_index].nr_lines++;
+            break;
+        case 1:
+            sys->stop_list[destination_index].nr_lines++;
+            break;
+        }
     }
 }
 
 /*
  * Main link function that manages all link commands. Analyzes the link type and
- * adds stops to the line accordingly.
+ * adds stops to the Line accordingly.
  */
-void linkCommand(char buffer[]) {
+void linkCommand(BusNetwork *sys, char buffer[]) {
 
     int line_index, origin_index, destination_index, link_type;
-    double cost_pre, duration_pre;
-    char *line_pre, *origin_pre, *destination_pre;
+    double cost, duration;
+    char *line_name, *origin_name, *destination_name;
 
-    if (nr_links == MAX_LINKS) {
-        return;
+    line_name = readNextWord(sys, buffer);
+    origin_name = readNextWord(sys, buffer);
+    destination_name = readNextWord(sys, buffer);
+
+    line_index = isLine(sys, line_name);
+    origin_index = isStop(sys, origin_name);
+    destination_index = isStop(sys, destination_name);
+    cost = atof(readNextWord(sys, buffer));
+    duration = atof(readNextWord(sys, buffer));
+
+    if ((link_type = isValidLink(sys, line_name, origin_name, destination_name,
+                                 cost, duration)) != -1) {
+        createLink(sys, line_index, origin_index, destination_index, cost,
+                   duration, link_type);
     }
-
-    line_pre = readNextWord(buffer);
-    origin_pre = readNextWord(buffer);
-    destination_pre = readNextWord(buffer);
-
-    line_index = isLine(line_pre);
-    origin_index = isStop(origin_pre);
-    destination_index = isStop(destination_pre);
-    cost_pre = atof(readNextWord(buffer));
-    duration_pre = atof(readNextWord(buffer));
-
-    if ((link_type = isValidLink(line_pre, origin_pre, destination_pre,
-                                 cost_pre, duration_pre)) != -1) {
-        createLink(line_index, origin_index, destination_index, cost_pre,
-                   duration_pre, link_type);
-    }
-    return;
 }
 
 /*
- * Intersection Command. Lists all the line intersections in the system.
+ * Intersection Command. Lists all the Line intersections in the system.
  */
-void intsecCommand(system *sys) {
+void intsecCommand(BusNetwork *sys) {
 
     int i, j, k;
-    char *stop_pre;
-    line *sorted_lines_list = sortLines(sys->nr_lines, sys->line_list);
+    Line *sorted_lines_list = sortLines(sys->nr_lines, sys->line_list);
 
     for (i = 0; i < sys->nr_stops; i++) {
-        stop_pre = sys->stop_list[i].stop_name;
-        if (nrStopLines(stop_pre) > 1) {
-            printf("%s %d:", stop_pre, nrStopLines(stop_pre));
+        if (sys->stop_list[i].nr_lines > 1) {
+            printf("%s %d:", sys->stop_list[i].stop_name,
+                   sys->stop_list[i].nr_lines);
             for (j = 0; j < sys->nr_lines; j++) {
                 for (k = 0; k < sorted_lines_list[j].nr_line_stops; k++) {
-                    if (strcmp(stop_pre,
-                               sorted_lines_list[j].course[k].stop_name) ==
-                        0) { /* SOLVE COURSE ARRAY TO INDICES */
+                    if (sorted_lines_list[j].course[k] == i) {
                         printf(" %s", sorted_lines_list[j].line_name);
                         break;
                     }
@@ -518,12 +505,11 @@ void intsecCommand(system *sys) {
     }
 }
 
-system *startSystem() {
-    system *sys = (system *)malloc(sizeof(system));
+BusNetwork *startSystem() {
+    BusNetwork *sys = (BusNetwork *)malloc(sizeof(BusNetwork));
 
     sys->buffer_index = 0;
     sys->nr_lines = 0;
-    sys->nr_links = 0;
     sys->nr_stops = 0;
 
     /* Memory is allocated to the arrays later when adding lines or stops. */
@@ -533,13 +519,13 @@ system *startSystem() {
     return sys;
 }
 
-char *getBuffer(system *main_sys) {
+char *getBuffer(BusNetwork *sys) {
     char c;
     char *buffer = (char *)malloc(BUFFER_SIZE * sizeof(char));
-    unsigned count;
+    int count;
 
     memset(buffer, 0, BUFFER_SIZE);
-    main_sys->buffer_index = 0;
+    sys->buffer_index = 0;
 
     for (count = 0; (c = getchar()) != '\n'; count++) {
         buffer[count] = c;
@@ -555,26 +541,25 @@ char *getBuffer(system *main_sys) {
 int main() {
 
     char *buffer;
-    system *main_sys;
+    BusNetwork *main_sys;
 
     main_sys = startSystem();
     while (1) {
         buffer = getBuffer(main_sys);
-
         switch (buffer[0]) {
         case 'q':
             return 0;
         case 'c':
-            lineCommand(buffer + 2);
+            lineCommand(main_sys, buffer + 2);
             break;
         case 'p':
-            stopCommand(buffer + 2);
+            stopCommand(main_sys, buffer + 2);
             break;
         case 'l':
-            linkCommand(buffer + 2);
+            linkCommand(main_sys, buffer + 2);
             break;
         case 'i':
-            intsecCommand(*main_sys);
+            intsecCommand(main_sys);
             break;
         }
     }
