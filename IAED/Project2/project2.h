@@ -10,7 +10,7 @@
 #define CHUNK_SIZE 32
 
 typedef struct Stop {
-    char *stop_name;
+    char *name;
     double lat, lon;
 } Stop;
 
@@ -23,9 +23,9 @@ typedef struct StopNode {
 
 typedef struct Line {
     char *line_name;
-    StopNode *course_origin;
+    StopNode *course_begin;
+    StopNode *course_end;
     int nr_line_stops;
-    int is_cycle;
     double cost, duration;
 } Line;
 
