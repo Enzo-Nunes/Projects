@@ -14,15 +14,21 @@ typedef struct Stop {
     double lat, lon;
 } Stop;
 
+typedef struct StopNode {
+    Stop *stop;
+    int cost_next, duration_next;
+    struct StopNode *next;
+    struct StopNode *prev;
+} StopNode;
+
 typedef struct Line {
     char *line_name;
-    int *course;
+    StopNode *course_origin;
     int nr_line_stops;
     int is_cycle;
     double cost, duration;
 } Line;
 
-/* System struct for holding global values needed. */
 typedef struct BusNetwork {
     int nr_lines, nr_stops, buffer_index;
     Line *line_list;
