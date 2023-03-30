@@ -31,7 +31,12 @@ char *readNextWord(BusNetwork *sys, char buffer[]) {
     }
     next_word[i] = '\0';
 
-    return (i == 0) ? NULL : next_word;
+    if (i == 0) {
+        free(next_word);
+        return NULL;
+    } else {
+        return next_word;
+    }
 }
 
 /*
@@ -67,11 +72,13 @@ Line *sortLines(int nr_lines, Line lines_list[]) {
  * Checks if the input is an existing Line in the system. Returns the Line's
  * corresponding index in the system Line list if it is, -1 otherwise.
  */
-int isLine(BusNetwork *sys, char l[]) {
+int isLine(BusNetwork *sys, char line_name[]) {
     int i;
 
+
+
     for (i = 0; i < sys->nr_lines; i++) {
-        if (strcmp(l, sys->line_list[i].line_name) == 0) {
+        if (strcmp(line_name, sys->line_list[i].line_name) == 0) {
             return i;
         }
     }
@@ -579,26 +586,26 @@ int main() {
         buffer = getBuffer(main_sys);
 
         switch (buffer[0]) {
-        case 'q':
-            freeSystem(main_sys);
-            free(buffer);
-            return 0;
-        case 'c':
-            lineCommand(main_sys, buffer + 2);
+        case 'l':
+            linkCommand(main_sys, buffer + 2);
             free(buffer);
             break;
         case 'p':
             stopCommand(main_sys, buffer + 2);
             free(buffer);
             break;
-        case 'l':
-            linkCommand(main_sys, buffer + 2);
+        case 'c':
+            lineCommand(main_sys, buffer + 2);
             free(buffer);
             break;
         case 'i':
             intsecCommand(main_sys);
             free(buffer);
             break;
+        case 'q':
+            freeSystem(main_sys);
+            free(buffer);
+            return 0;
         }
     }
 }
