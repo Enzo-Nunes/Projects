@@ -7,9 +7,7 @@
  */
 char *readNextWord(BusNetwork *sys, char buffer[]) {
     int i = 0;
-    char *next_word = malloc(BUFFER_SIZE);
-
-    sys->buffer_index = sys->buffer_index;
+    char *next_word = (char *)malloc(strlen(buffer) * sizeof(char));
 
     while (buffer[sys->buffer_index] == ' ' ||
            buffer[sys->buffer_index] == '\n') {
@@ -31,7 +29,6 @@ char *readNextWord(BusNetwork *sys, char buffer[]) {
             i++, sys->buffer_index++;
         }
     }
-
     next_word[i] = '\0';
 
     return (i == 0) ? NULL : next_word;
@@ -134,7 +131,7 @@ int isReverse(char flag[]) {
  * line list.
  */
 void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
-    int j, reverse = 0;
+    int i, reverse = 0;
     char *flag;
 
     if (line.nr_line_stops == 0) {
@@ -144,6 +141,7 @@ void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
     /* Checks if the command is reversed. */
     if ((flag = readNextWord(sys, buffer)) != NULL) {
         if (isReverse(flag) == 0) {
+            free(flag);
             reverse = 1;
         } else {
             printf("incorrect sort option.\n");
@@ -153,15 +151,15 @@ void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
 
     /* Print the stops. */
     if (reverse == 0) {
-        for (j = 0; j < line.nr_line_stops - 1; j++) {
-            printf("%s, ", sys->stop_list[line.course[j]].stop_name);
+        for (i = 0; i < line.nr_line_stops - 1; i++) {
+            printf("%s, ", sys->stop_list[line.course[i]].stop_name);
         }
     } else {
-        for (j = line.nr_line_stops - 1; j > 0; j--) {
-            printf("%s, ", sys->stop_list[line.course[j]].stop_name);
+        for (i = line.nr_line_stops - 1; i > 0; i--) {
+            printf("%s, ", sys->stop_list[line.course[i]].stop_name);
         }
     }
-    printf("%s\n", sys->stop_list[line.course[j]].stop_name);
+    printf("%s\n", sys->stop_list[line.course[i]].stop_name);
 }
 
 /*
@@ -183,6 +181,7 @@ void createLine(BusNetwork *sys, char *line_name) {
     new_line.cost = 0;
     new_line.duration = 0;
     new_line.is_cycle = 0;
+    new_line.course = NULL;
 
     sys->line_list[sys->nr_lines] = new_line;
     sys->nr_lines++;
@@ -193,18 +192,19 @@ void createLine(BusNetwork *sys, char *line_name) {
  */
 void lineCommand(BusNetwork *sys, char buffer[]) {
 
-    char *l;
+    char *line_name;
     int i;
 
-    if ((l = readNextWord(sys, buffer)) == NULL) {
+    if ((line_name = readNextWord(sys, buffer)) == NULL) {
         listLines(sys);
     } else {
-        if ((i = isLine(sys, l)) != -1) {
+        if ((i = isLine(sys, line_name)) != -1) {
             listLineStops(sys, sys->line_list[i], buffer);
         } else {
-            createLine(sys, l);
+            createLine(sys, line_name);
         }
     }
+    free(line_name);
 }
 
 /*
@@ -269,8 +269,8 @@ void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
 }
 
 /*
- * Main function that manages all the Stop commands, i.e. creating stops,
- * listing all stops and printing specific Stop coordinates.
+ * Main function that manages all Stop commands, i.e. creating stops, listing
+ * all stops and printing specific Stop coordinates.
  */
 void stopCommand(BusNetwork *sys, char buffer[]) {
 
@@ -284,18 +284,24 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
             if (isStop(sys, stop_name) == -1) {
                 lon = readNextWord(sys, buffer);
                 createStop(sys, stop_name, lat, lon);
+                free(lon);
             } else {
                 printf("%s: stop already exists.\n", stop_name);
+                free(lat);
+                free(stop_name);
                 return;
             }
+            free(lat);
         } else {
             if ((i = isStop(sys, stop_name)) != -1) {
                 printStopCoords(sys, i);
             } else {
                 printf("%s: no such stop.\n", stop_name);
+                free(stop_name);
                 return;
             }
         }
+        free(stop_name);
     }
 }
 
@@ -461,23 +467,30 @@ void linkCommand(BusNetwork *sys, char buffer[]) {
 
     int line_index, origin_index, destination_index, link_type;
     double cost, duration;
-    char *line_name, *origin_name, *destination_name;
+    char *line_name, *origin_name, *destination_name, *cost_pre, *duration_pre;
 
     line_name = readNextWord(sys, buffer);
     origin_name = readNextWord(sys, buffer);
     destination_name = readNextWord(sys, buffer);
+    cost_pre = readNextWord(sys, buffer);
+    duration_pre = readNextWord(sys, buffer);
 
     line_index = isLine(sys, line_name);
     origin_index = isStop(sys, origin_name);
     destination_index = isStop(sys, destination_name);
-    cost = atof(readNextWord(sys, buffer));
-    duration = atof(readNextWord(sys, buffer));
+    cost = atof(cost_pre);
+    duration = atof(duration_pre);
 
     if ((link_type = isValidLink(sys, line_name, origin_name, destination_name,
                                  cost, duration)) != -1) {
         createLink(sys, line_index, origin_index, destination_index, cost,
                    duration, link_type);
     }
+    free(line_name);
+    free(origin_name);
+    free(destination_name);
+    free(cost_pre);
+    free(duration_pre);
 }
 
 /*
@@ -503,6 +516,7 @@ void intsecCommand(BusNetwork *sys) {
             printf("\n");
         }
     }
+    free(sorted_lines_list);
 }
 
 BusNetwork *startSystem() {
@@ -534,6 +548,23 @@ char *getBuffer(BusNetwork *sys) {
     return buffer;
 }
 
+void freeSystem(BusNetwork *sys) {
+    int i;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        free(sys->line_list[i].line_name);
+        free(sys->line_list[i].course);
+    }
+    free(sys->line_list);
+
+    for (i = 0; i < sys->nr_stops; i++) {
+        free(sys->stop_list[i].stop_name);
+    }
+    free(sys->stop_list);
+
+    free(sys);
+}
+
 /*
  * Main function. Inserts the input into the buffer and calls all the other main
  * command functions. Inputs are asked indefinitely until the user inputs 'q'.
@@ -546,20 +577,27 @@ int main() {
     main_sys = startSystem();
     while (1) {
         buffer = getBuffer(main_sys);
+
         switch (buffer[0]) {
         case 'q':
+            freeSystem(main_sys);
+            free(buffer);
             return 0;
         case 'c':
             lineCommand(main_sys, buffer + 2);
+            free(buffer);
             break;
         case 'p':
             stopCommand(main_sys, buffer + 2);
+            free(buffer);
             break;
         case 'l':
             linkCommand(main_sys, buffer + 2);
+            free(buffer);
             break;
         case 'i':
             intsecCommand(main_sys);
+            free(buffer);
             break;
         }
     }
