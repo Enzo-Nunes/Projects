@@ -75,8 +75,6 @@ Line *sortLines(int nr_lines, Line lines_list[]) {
 int isLine(BusNetwork *sys, char line_name[]) {
     int i;
 
-
-
     for (i = 0; i < sys->nr_lines; i++) {
         if (strcmp(line_name, sys->line_list[i].line_name) == 0) {
             return i;
@@ -238,6 +236,25 @@ int isStop(BusNetwork *sys, char stop_name[]) {
 }
 
 /*
+ * Counts the number of lines that pass through the stop with the input name.
+ */
+int nrStopLines(BusNetwork *sys, int stop_index) {
+
+    int i, j, count = 0;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        for (j = 0; j < sys->line_list[i].nr_line_stops; j++) {
+            if (sys->line_list[i].course[j] == stop_index) {
+                count++;
+                break;
+            }
+        }
+    }
+
+    return count;
+}
+
+/*
  * Lists all the stops in the system.
  */
 void listStops(BusNetwork *sys) {
@@ -247,7 +264,7 @@ void listStops(BusNetwork *sys) {
     for (i = 0; i < sys->nr_stops; i++) {
         stop = sys->stop_list[i];
         printf("%s: %16.12f %16.12f %d\n", stop.stop_name, stop.lat, stop.lon,
-               stop.nr_lines);
+               nrStopLines(sys, i));
     }
 }
 
@@ -269,7 +286,6 @@ void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
     strcpy(new_stop.stop_name, stop_name);
     new_stop.lat = atof(lat);
     new_stop.lon = atof(lon);
-    new_stop.nr_lines = 0;
 
     sys->stop_list[sys->nr_stops] = new_stop;
     sys->nr_stops++;
@@ -390,8 +406,6 @@ void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
     sys->line_list[line_index].nr_line_stops = 2;
     sys->line_list[line_index].cost = cost;
     sys->line_list[line_index].duration = duration;
-    sys->stop_list[origin_index].nr_lines++;
-    sys->stop_list[destination_index].nr_lines++;
 }
 
 void addMemoryToLineCourse(BusNetwork *sys, int line_index, int nr_line_stops) {
@@ -451,19 +465,6 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
         sys->line_list[line_index].course[nr_line_stops]) {
         sys->line_list[line_index].is_cycle = 1;
     }
-    /*printf("%d %d\n", sys->line_list[line_index].course[0],
-           sys->line_list[line_index].course[nr_line_stops - 1]);*/
-
-    if (sys->line_list[line_index].is_cycle == 0) {
-        switch (link_type) {
-        case 0:
-            sys->stop_list[origin_index].nr_lines++;
-            break;
-        case 1:
-            sys->stop_list[destination_index].nr_lines++;
-            break;
-        }
-    }
 }
 
 /*
@@ -505,13 +506,12 @@ void linkCommand(BusNetwork *sys, char buffer[]) {
  */
 void intsecCommand(BusNetwork *sys) {
 
-    int i, j, k;
+    int i, j, k, nr_stop_lines;
     Line *sorted_lines_list = sortLines(sys->nr_lines, sys->line_list);
 
     for (i = 0; i < sys->nr_stops; i++) {
-        if (sys->stop_list[i].nr_lines > 1) {
-            printf("%s %d:", sys->stop_list[i].stop_name,
-                   sys->stop_list[i].nr_lines);
+        if ((nr_stop_lines = nrStopLines(sys, i)) > 1) {
+            printf("%s %d:", sys->stop_list[i].stop_name, nr_stop_lines);
             for (j = 0; j < sys->nr_lines; j++) {
                 for (k = 0; k < sorted_lines_list[j].nr_line_stops; k++) {
                     if (sorted_lines_list[j].course[k] == i) {
@@ -524,6 +524,107 @@ void intsecCommand(BusNetwork *sys) {
         }
     }
     free(sorted_lines_list);
+}
+
+void freeLine(BusNetwork *sys, int line_index) {
+    free(sys->line_list[line_index].line_name);
+    free(sys->line_list[line_index].course);
+    sys->nr_lines--;
+
+    memmove(sys->line_list + line_index, sys->line_list + line_index + 1,
+            (sys->nr_lines - line_index) * sizeof(Line));
+
+    sys->line_list =
+        (Line *)realloc(sys->line_list, sys->nr_lines * sizeof(Line));
+}
+
+void removeLineCommand(BusNetwork *main_sys, char buffer[]) {
+    int line_index;
+    char *line_name = readNextWord(main_sys, buffer);
+
+    if ((line_index = isLine(main_sys, line_name)) != -1) {
+        freeLine(main_sys, line_index);
+    } else {
+        printf("%s: no such line.\n", line_name);
+    }
+    free(line_name);
+}
+
+void freeSystem(BusNetwork *sys) {
+    int i;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        free(sys->line_list[i].line_name);
+        free(sys->line_list[i].course);
+    }
+    free(sys->line_list);
+
+    for (i = 0; i < sys->nr_stops; i++) {
+        free(sys->stop_list[i].stop_name);
+    }
+    free(sys->stop_list);
+
+    free(sys);
+}
+
+void adjustCourseIndices(BusNetwork *sys, int line_index, int stop_index) {
+    int i;
+    /*NEEDS CYCLE CONDITION*/
+    for (i = 0; i < sys->line_list[line_index].nr_line_stops; i++) {
+        if (sys->line_list[line_index].course[i] > stop_index) {
+            sys->line_list[line_index].course[i]--;
+        }
+    }
+}
+
+removeStopFromLineCourse(BusNetwork *sys, int line_index,
+                         int course_stop_index) {
+    sys->line_list[line_index].nr_line_stops--;
+
+    memmove(sys->line_list[line_index].course + course_stop_index,
+            sys->line_list[line_index].course + course_stop_index + 1,
+            (sys->line_list[line_index].nr_line_stops - course_stop_index) *
+                sizeof(int));
+
+    realloc(sys->line_list[line_index].course,
+            (sys->line_list[line_index].nr_line_stops) * sizeof(int));
+}
+
+void removeStopFromLines(BusNetwork *sys, int stop_index) {
+    int i, j;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        for (j = 0; j < sys->line_list[i].nr_line_stops; j++) {
+            if (sys->line_list[i].course[j] == stop_index) {
+                removeStopFromLineCourse(sys, i, j);
+                adjustCourseIndices(sys, i, stop_index);
+            }
+        }
+    }
+}
+
+void freeStop(BusNetwork *sys, int stop_index) {
+    removeStopFromLines(sys, stop_index);
+
+    free(sys->stop_list[stop_index].stop_name);
+    sys->nr_stops--;
+
+    memmove(sys->stop_list + stop_index, sys->stop_list + stop_index + 1,
+            (sys->nr_stops - stop_index) * sizeof(Stop));
+
+    sys->stop_list =
+        (Stop *)realloc(sys->stop_list, sys->nr_stops * sizeof(Stop));
+}
+
+void removeStopCommand(BusNetwork *main_sys, char buffer[]) {
+    int stop_index;
+    char *stop_name = readNextWord(main_sys, buffer);
+
+    if ((stop_index = isStop(main_sys, stop_name)) != -1) {
+        freeStop(main_sys, stop_index);
+    } else {
+        printf("%s: no such stop.\n", stop_name);
+    }
 }
 
 BusNetwork *startSystem() {
@@ -555,23 +656,6 @@ char *getBuffer(BusNetwork *sys) {
     return buffer;
 }
 
-void freeSystem(BusNetwork *sys) {
-    int i;
-
-    for (i = 0; i < sys->nr_lines; i++) {
-        free(sys->line_list[i].line_name);
-        free(sys->line_list[i].course);
-    }
-    free(sys->line_list);
-
-    for (i = 0; i < sys->nr_stops; i++) {
-        free(sys->stop_list[i].stop_name);
-    }
-    free(sys->stop_list);
-
-    free(sys);
-}
-
 /*
  * Main function. Inserts the input into the buffer and calls all the other main
  * command functions. Inputs are asked indefinitely until the user inputs 'q'.
@@ -588,24 +672,30 @@ int main() {
         switch (buffer[0]) {
         case 'l':
             linkCommand(main_sys, buffer + 2);
-            free(buffer);
             break;
         case 'p':
             stopCommand(main_sys, buffer + 2);
-            free(buffer);
             break;
         case 'c':
             lineCommand(main_sys, buffer + 2);
-            free(buffer);
             break;
         case 'i':
             intsecCommand(main_sys);
-            free(buffer);
+            break;
+        case 'a':
+            freeSystem(main_sys);
+            break;
+        case 'r':
+            removeLineCommand(main_sys, buffer + 2);
+            break;
+        case 'e':
+            removeStopCommand(main_sys, buffer + 2);
             break;
         case 'q':
             freeSystem(main_sys);
             free(buffer);
             return 0;
         }
+        free(buffer);
     }
 }

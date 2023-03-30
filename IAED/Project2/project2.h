@@ -11,7 +11,6 @@
 
 typedef struct Stop {
     char *stop_name;
-    int nr_lines;
     double lat, lon;
 } Stop;
 
