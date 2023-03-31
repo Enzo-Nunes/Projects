@@ -53,8 +53,8 @@ Line *sortLines(int nr_lines, Line lines_list[]) {
     for (i = 0; i < nr_lines - 1; i++) {
         min_index = i;
         for (j = i + 1; j < nr_lines; j++) {
-            if (strcmp(sorted_lines_list[j].line_name,
-                       sorted_lines_list[min_index].line_name) < 0) {
+            if (strcmp(sorted_lines_list[j].name,
+                       sorted_lines_list[min_index].name) < 0) {
                 min_index = j;
             }
         }
@@ -76,7 +76,7 @@ int isLine(BusNetwork *sys, char line_name[]) {
     int i;
 
     for (i = 0; i < sys->nr_lines; i++) {
-        if (strcmp(line_name, sys->line_list[i].line_name) == 0) {
+        if (strcmp(line_name, sys->line_list[i].name) == 0) {
             return i;
         }
     }
@@ -88,23 +88,16 @@ int isLine(BusNetwork *sys, char line_name[]) {
  * List all the lines in the system.
  */
 void listLines(BusNetwork *sys) {
-    int i, origin_index, destination_index;
-    Stop origin, destination;
+    int i;
     Line line;
 
     for (i = 0; i < sys->nr_lines; i++) {
         line = sys->line_list[i];
-
-        printf("%s ", line.line_name);
-
+        printf("%s ", line.name);
         if (line.nr_line_stops > 0) {
-            origin_index = line.course[0];
-            destination_index = line.course[line.nr_line_stops - 1];
-            origin = sys->stop_list[origin_index];
-            destination = sys->stop_list[destination_index];
-            printf("%s %s ", origin.stop_name, destination.stop_name);
+            printf("%s %s ", line.origin->stop->name,
+                   line.destination->stop->name);
         }
-
         printf("%d %.2f %.2f\n", line.nr_line_stops, line.cost, line.duration);
     }
 }
@@ -136,8 +129,9 @@ int isReverse(char flag[]) {
  * line list.
  */
 void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
-    int i, reverse = 0;
+    int reverse = 0;
     char *flag;
+    StopNode *node;
 
     if (line.nr_line_stops == 0) {
         return;
@@ -156,15 +150,15 @@ void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
 
     /* Print the stops. */
     if (reverse == 0) {
-        for (i = 0; i < line.nr_line_stops - 1; i++) {
-            printf("%s, ", sys->stop_list[line.course[i]].stop_name);
+        for (node = line.origin; node != line.destination; node = node->next) {
+            printf("%s, ", node->stop->name);
         }
     } else {
-        for (i = line.nr_line_stops - 1; i > 0; i--) {
-            printf("%s, ", sys->stop_list[line.course[i]].stop_name);
+        for (node = line.destination; node != line.origin; node = node->prev) {
+            printf("%s, ", node->stop->name);
         }
     }
-    printf("%s\n", sys->stop_list[line.course[i]].stop_name);
+    printf("%s\n", node->stop->name);
 }
 
 /*
@@ -180,8 +174,8 @@ void createLine(BusNetwork *sys, char *line_name) {
             sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(Line));
     }
 
-    new_line.line_name = malloc((strlen(line_name) + 1) * sizeof(char));
-    strcpy(new_line.line_name, line_name);
+    new_line.name = malloc((strlen(line_name) + 1) * sizeof(char));
+    strcpy(new_line.name, line_name);
     new_line.nr_line_stops = 0;
     new_line.cost = 0;
     new_line.duration = 0;
@@ -263,7 +257,7 @@ void listStops(BusNetwork *sys) {
     for (i = 0; i < sys->nr_stops; i++) {
         stop = sys->stop_list[i];
         printf("%s: %16.12f %16.12f %d\n", stop.name, stop.lat, stop.lon,
-               nrStopLines(sys, i));
+               nrStopLines(sys, stop.name));
     }
 }
 
@@ -297,7 +291,7 @@ void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
 void stopCommand(BusNetwork *sys, char buffer[]) {
 
     char *stop_name, *lat, *lon;
-    int i;
+    int stop_index;
 
     if ((stop_name = readNextWord(sys, buffer)) == NULL) {
         listStops(sys);
@@ -315,8 +309,8 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
             }
             free(lat);
         } else {
-            if ((i = isStop(sys, stop_name)) != -1) {
-                printStopCoords(sys, i);
+            if ((stop_index = isStop(sys, stop_name)) != -1) {
+                printStopCoords(sys, stop_index);
             } else {
                 printf("%s: no such stop.\n", stop_name);
                 free(stop_name);
@@ -332,18 +326,13 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
  * create is valid for the given Line. Returns integers that represent link
  * types back to isValidLink.
  */
-int isLinkLineCompatible(Line line, char *origin_name, char *destination_name) {
+int isLinkLineCompatible(Line line, Stop origin, Stop destination) {
 
-    if (line.origin->stop == line.destination->stop) {
-        printf("link cannot be associated with bus line.\n");
-        return -1;
-    }
-
-    if (line.destination->stop->name == origin_name) {
+    if (strcmp(line.destination->stop->name, origin.name) == 0) {
         return 1;
     }
 
-    if (line.origin->stop->name == destination_name) {
+    if (strcmp(line.origin->stop->name, destination.name) == 0) {
         return 0;
     }
 
@@ -356,23 +345,21 @@ int isLinkLineCompatible(Line line, char *origin_name, char *destination_name) {
  * it's invalid, 0 if it's an origin link, 1 if it's a destination link and 2 if
  * these are the first stops to be inserted in the Line course.
  */
-int isValidLink(BusNetwork *sys, char *line_name, char *origin_name,
-                char *destination_name, double cost, double duration) {
-
-    int line_index = isLine(sys, line_name), origin_index, destination_index;
+int isValidLink(BusNetwork *sys, int line_index, int origin_index,
+                int destination_index, double cost, double duration) {
 
     if (line_index == -1) {
-        printf("%s: no such line.\n", line_name);
+        printf("%s: no such line.\n", sys->line_list[line_index].name);
         return -1;
     }
 
-    if ((origin_index = isStop(sys, origin_name)) == -1) {
-        printf("%s: no such stop.\n", origin_name);
+    if (origin_index == -1) {
+        printf("%s: no such stop.\n", sys->stop_list[origin_index].name);
         return -1;
     }
 
-    if ((destination_index = isStop(sys, destination_name)) == -1) {
-        printf("%s: no such stop.\n", destination_name);
+    if (destination_index == -1) {
+        printf("%s: no such stop.\n", sys->stop_list[destination_index].name);
         return -1;
     }
 
@@ -385,8 +372,9 @@ int isValidLink(BusNetwork *sys, char *line_name, char *origin_name,
         return 2;
     }
 
-    return isLinkLineCompatible(sys->line_list[line_index], origin_name,
-                                destination_name);
+    return isLinkLineCompatible(sys->line_list[line_index],
+                                sys->stop_list[origin_index],
+                                sys->stop_list[destination_index]);
 }
 
 void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
@@ -471,8 +459,6 @@ void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
 void createLink(BusNetwork *sys, int line_index, int origin_index,
                 int destination_index, double cost, double duration,
                 int link_type) {
-    int i, nr_line_stops = sys->line_list[line_index].nr_line_stops;
-
     switch (link_type) {
     /* Origin link. Stop is inserted in the begining of the Line course. */
     case 0:
@@ -520,8 +506,8 @@ void linkCommand(BusNetwork *sys, char buffer[]) {
     cost = atof(cost_pre);
     duration = atof(duration_pre);
 
-    if ((link_type = isValidLink(sys, line_name, origin_name, destination_name,
-                                 cost, duration)) != -1) {
+    if ((link_type = isValidLink(sys, line_index, origin_index,
+                                 destination_index, cost, duration)) != -1) {
         createLink(sys, line_index, origin_index, destination_index, cost,
                    duration, link_type);
     }
@@ -536,17 +522,18 @@ void linkCommand(BusNetwork *sys, char buffer[]) {
  * Intersection Command. Lists all the Line intersections in the system.
  */
 void intsecCommand(BusNetwork *sys) {
-
-    int i, j, k, nr_stop_lines;
+    int i, j, nr_stop_lines;
     Line *sorted_lines_list = sortLines(sys->nr_lines, sys->line_list);
+    StopNode *node;
 
     for (i = 0; i < sys->nr_stops; i++) {
-        if ((nr_stop_lines = nrStopLines(sys, i)) > 1) {
-            printf("%s %d:", sys->stop_list[i].stop_name, nr_stop_lines);
+        if ((nr_stop_lines = nrStopLines(sys, sys->stop_list[i].name)) > 1) {
+            printf("%s %d:", sys->stop_list[i].name, nr_stop_lines);
             for (j = 0; j < sys->nr_lines; j++) {
-                for (k = 0; k < sorted_lines_list[j].nr_line_stops; k++) {
-                    if (sorted_lines_list[j].course[k] == i) {
-                        printf(" %s", sorted_lines_list[j].line_name);
+                for (node = sorted_lines_list[j].origin; node != NULL;
+                     node = node->next) {
+                    if (node->stop == &sys->stop_list[i]) {
+                        printf(" %s", sorted_lines_list[j].name);
                         break;
                     }
                 }
@@ -555,6 +542,21 @@ void intsecCommand(BusNetwork *sys) {
         }
     }
     free(sorted_lines_list);
+}
+
+void freeSystem(BusNetwork *sys) {
+    int i;
+    StopNode *node, *next;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        for (node = sys->line_list[i].origin; node != NULL; node = next) {
+            next = node->next;
+            free(node);
+        }
+    }
+    free(sys->line_list);
+    free(sys->stop_list);
+    free(sys);
 }
 
 BusNetwork *startSystem() {
@@ -611,6 +613,9 @@ int main() {
             break;
         case 'i':
             intsecCommand(main_sys);
+            break;
+        case 'a':
+            freeSystem(main_sys);
             break;
         case 'q':
             freeSystem(main_sys);
