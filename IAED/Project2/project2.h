@@ -22,7 +22,7 @@ typedef struct StopNode {
 } StopNode;
 
 typedef struct Line {
-    char *line_name;
+    char *name;
     StopNode *origin;
     StopNode *destination;
     int nr_line_stops;
