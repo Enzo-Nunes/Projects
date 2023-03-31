@@ -346,20 +346,21 @@ int isLinkLineCompatible(Line line, Stop origin, Stop destination) {
  * these are the first stops to be inserted in the Line course.
  */
 int isValidLink(BusNetwork *sys, int line_index, int origin_index,
-                int destination_index, double cost, double duration) {
+                int destination_index, char *line_name, char *origin_name,
+                char *destination_name, double cost, double duration) {
 
     if (line_index == -1) {
-        printf("%s: no such line.\n", sys->line_list[line_index].name);
+        printf("%s: no such line.\n", line_name);
         return -1;
     }
 
     if (origin_index == -1) {
-        printf("%s: no such stop.\n", sys->stop_list[origin_index].name);
+        printf("%s: no such stop.\n", origin_name);
         return -1;
     }
 
     if (destination_index == -1) {
-        printf("%s: no such stop.\n", sys->stop_list[destination_index].name);
+        printf("%s: no such stop.\n", destination_name);
         return -1;
     }
 
@@ -379,9 +380,8 @@ int isValidLink(BusNetwork *sys, int line_index, int origin_index,
 
 void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
                   double cost, double duration) {
-    StopNode *origin;
+    StopNode *origin = (StopNode *)malloc(sizeof(StopNode));
 
-    origin = (StopNode *)malloc(sizeof(StopNode));
     if (origin == NULL) {
         printf("No Memory\n");
         exit(1);
@@ -401,7 +401,7 @@ void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
                        double cost, double duration) {
     StopNode *destination;
 
-    destination = (StopNode *)malloc(sizeof(StopNode));
+    destination = (StopNode *)malloc(sizeof(*destination));
     if (destination == NULL) {
         printf("No Memory\n");
         exit(1);
@@ -411,9 +411,9 @@ void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
     destination->next = NULL;
     destination->prev = sys->line_list[line_index].destination;
 
-    sys->line_list[line_index].destination->next = destination;
     sys->line_list[line_index].destination->cost_next = cost;
     sys->line_list[line_index].destination->duration_next = duration;
+    sys->line_list[line_index].destination->next = destination;
     sys->line_list[line_index].destination = destination;
 }
 
@@ -507,7 +507,8 @@ void linkCommand(BusNetwork *sys, char buffer[]) {
     duration = atof(duration_pre);
 
     if ((link_type = isValidLink(sys, line_index, origin_index,
-                                 destination_index, cost, duration)) != -1) {
+                                 destination_index, line_name, origin_name,
+                                 destination_name, cost, duration)) != -1) {
         createLink(sys, line_index, origin_index, destination_index, cost,
                    duration, link_type);
     }
@@ -544,6 +545,113 @@ void intsecCommand(BusNetwork *sys) {
     free(sorted_lines_list);
 }
 
+void removeStopFromLine(BusNetwork *sys, int line_index, StopNode *node) {
+    if (node->prev == NULL) {
+        sys->line_list[line_index].origin = node->next;
+        sys->line_list[line_index].cost -= node->cost_next;
+        sys->line_list[line_index].duration -= node->duration_next;
+        sys->line_list[line_index].origin->prev = NULL;
+    } else if (node->next == NULL) {
+        sys->line_list[line_index].destination = node->prev;
+        sys->line_list[line_index].cost -= node->prev->cost_next;
+        sys->line_list[line_index].duration -= node->prev->duration_next;
+        sys->line_list[line_index].destination->next = NULL;
+    } else {
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+        node->prev->cost_next += node->cost_next;
+        node->prev->duration_next += node->duration_next;
+    }
+
+    sys->line_list[line_index].nr_line_stops--;
+    free(node);
+}
+
+void removeStopFromLines(BusNetwork *sys, int stop_index) {
+    int i;
+    StopNode *node;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        for (node = sys->line_list[i].origin; node != NULL; node = node->next) {
+            if (node->stop == &sys->stop_list[stop_index]) {
+                removeStopFromLine(sys, i, node);
+            }
+        }
+    }
+}
+
+void updateCoursePointers(BusNetwork *sys, int stop_index) {
+    int i;
+    StopNode *node;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        for (node = sys->line_list[i].origin; node != NULL; node = node->next) {
+            if (node->stop > &sys->stop_list[stop_index]) {
+                node->stop--;
+            }
+        }
+    }
+}
+
+void removeStopFromSys(BusNetwork *sys, int stop_index) {
+    int i;
+    removeStopFromLines(sys, stop_index);
+
+    sys->nr_stops--;
+    for (i = stop_index; i < sys->nr_stops; i++) {
+        sys->stop_list[i] = sys->stop_list[i + 1];
+    }
+
+    updateCoursePointers(sys, stop_index);
+
+    sys->stop_list =
+        (Stop *)realloc(sys->stop_list, sys->nr_stops * sizeof(Stop));
+}
+
+void removeStopCommand(BusNetwork *sys, char buffer[]) {
+    char *stop_name;
+    int stop_index;
+
+    stop_name = readNextWord(sys, buffer);
+    stop_index = isStop(sys, stop_name);
+
+    if (stop_index != -1) {
+        removeStopFromSys(sys, stop_index);
+    }
+    free(stop_name);
+}
+
+void removeLineFromSys(BusNetwork *sys, int line_index) {
+    StopNode *node, *next;
+
+    for (node = sys->line_list[line_index].origin; node != NULL; node = next) {
+        next = node->next;
+        free(node);
+    }
+
+    sys->nr_lines--;
+    memmove(sys->line_list + line_index, sys->line_list + line_index + 1,
+            (sys->nr_lines - line_index) * sizeof(Line));
+
+    sys->line_list =
+        (Line *)realloc(sys->line_list, sys->nr_lines * sizeof(Line));
+}
+
+void removeLineCommand(BusNetwork *sys, char buffer[]) {
+    char *line_name;
+    int line_index;
+
+    line_name = readNextWord(sys, buffer);
+    line_index = isLine(sys, line_name);
+
+    if (line_index != -1) {
+        removeLineFromSys(sys, line_index);
+    } else {
+        printf("%s: no such line.\n", line_name);
+    }
+    free(line_name);
+}
+
 void freeSystem(BusNetwork *sys) {
     int i;
     StopNode *node, *next;
@@ -554,6 +662,15 @@ void freeSystem(BusNetwork *sys) {
             free(node);
         }
     }
+
+    for (i = 0; i < sys->nr_stops; i++) {
+        free(sys->stop_list[i].name);
+    }
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        free(sys->line_list[i].name);
+    }
+
     free(sys->line_list);
     free(sys->stop_list);
     free(sys);
@@ -614,8 +731,15 @@ int main() {
         case 'i':
             intsecCommand(main_sys);
             break;
+        case 'e':
+            removeStopCommand(main_sys, buffer + 2);
+            break;
+        case 'r':
+            removeLineCommand(main_sys, buffer + 2);
+            break;
         case 'a':
             freeSystem(main_sys);
+            main_sys = startSystem();
             break;
         case 'q':
             freeSystem(main_sys);
