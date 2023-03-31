@@ -7,7 +7,7 @@
 
 #define BUFFER_SIZE 65536
 #define REVERSE_FLAG "inverso"
-#define CHUNK_SIZE 32
+#define CHUNK_SIZE 64
 
 typedef struct Stop {
     char *name;
