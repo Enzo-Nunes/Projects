@@ -23,8 +23,8 @@ typedef struct StopNode {
 
 typedef struct Line {
     char *line_name;
-    StopNode *course_begin;
-    StopNode *course_end;
+    StopNode *origin;
+    StopNode *destination;
     int nr_line_stops;
     double cost, duration;
 } Line;
