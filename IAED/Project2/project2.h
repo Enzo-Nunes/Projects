@@ -16,7 +16,7 @@ typedef struct Stop {
 
 typedef struct StopNode {
     Stop *stop;
-    int cost_next, duration_next;
+    double cost_next, duration_next;
     struct StopNode *next;
     struct StopNode *prev;
 } StopNode;
