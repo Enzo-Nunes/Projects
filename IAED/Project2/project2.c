@@ -185,8 +185,8 @@ void createLine(BusNetwork *sys, char *line_name) {
     new_line.nr_line_stops = 0;
     new_line.cost = 0;
     new_line.duration = 0;
-    new_line.is_cycle = 0;
-    new_line.course = NULL;
+    new_line.origin = NULL;
+    new_line.destination = NULL;
 
     sys->line_list[sys->nr_lines] = new_line;
     sys->nr_lines++;
@@ -227,7 +227,7 @@ int isStop(BusNetwork *sys, char stop_name[]) {
     int i;
 
     for (i = 0; i < sys->nr_stops; i++) {
-        if (strcmp(stop_name, sys->stop_list[i].stop_name) == 0) {
+        if (strcmp(stop_name, sys->stop_list[i].name) == 0) {
             return i;
         }
     }
@@ -238,19 +238,18 @@ int isStop(BusNetwork *sys, char stop_name[]) {
 /*
  * Counts the number of lines that pass through the stop with the input name.
  */
-int nrStopLines(BusNetwork *sys, int stop_index) {
-
-    int i, j, count = 0;
+int nrStopLines(BusNetwork *sys, char *stop_name) {
+    StopNode *node;
+    int i, count = 0;
 
     for (i = 0; i < sys->nr_lines; i++) {
-        for (j = 0; j < sys->line_list[i].nr_line_stops; j++) {
-            if (sys->line_list[i].course[j] == stop_index) {
+        for (node = sys->line_list[i].origin; node != NULL; node = node->next) {
+            if (strcmp(stop_name, node->stop->name) == 0) {
                 count++;
                 break;
             }
         }
     }
-
     return count;
 }
 
@@ -263,7 +262,7 @@ void listStops(BusNetwork *sys) {
 
     for (i = 0; i < sys->nr_stops; i++) {
         stop = sys->stop_list[i];
-        printf("%s: %16.12f %16.12f %d\n", stop.stop_name, stop.lat, stop.lon,
+        printf("%s: %16.12f %16.12f %d\n", stop.name, stop.lat, stop.lon,
                nrStopLines(sys, i));
     }
 }
@@ -282,8 +281,8 @@ void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
             sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(Stop));
     }
 
-    new_stop.stop_name = malloc((strlen(stop_name) + 1) * sizeof(char));
-    strcpy(new_stop.stop_name, stop_name);
+    new_stop.name = malloc((strlen(stop_name) + 1) * sizeof(char));
+    strcpy(new_stop.name, stop_name);
     new_stop.lat = atof(lat);
     new_stop.lon = atof(lon);
 
@@ -333,18 +332,18 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
  * create is valid for the given Line. Returns integers that represent link
  * types back to isValidLink.
  */
-int isLinkLineCompatible(Line line, int origin_index, int destination_index) {
+int isLinkLineCompatible(Line line, char *origin_name, char *destination_name) {
 
-    if (line.is_cycle == 1) {
+    if (line.origin->stop == line.destination->stop) {
         printf("link cannot be associated with bus line.\n");
         return -1;
     }
 
-    if (line.course[line.nr_line_stops - 1] == origin_index) {
+    if (line.destination->stop->name == origin_name) {
         return 1;
     }
 
-    if (line.course[0] == destination_index) {
+    if (line.origin->stop->name == destination_name) {
         return 0;
     }
 
@@ -360,23 +359,19 @@ int isLinkLineCompatible(Line line, int origin_index, int destination_index) {
 int isValidLink(BusNetwork *sys, char *line_name, char *origin_name,
                 char *destination_name, double cost, double duration) {
 
-    int line_index, origin_index, destination_index;
-
-    line_index = isLine(sys, line_name);
-    origin_index = isStop(sys, origin_name);
-    destination_index = isStop(sys, destination_name);
+    int line_index = isLine(sys, line_name), origin_index, destination_index;
 
     if (line_index == -1) {
         printf("%s: no such line.\n", line_name);
         return -1;
     }
 
-    if (origin_index == -1) {
+    if ((origin_index = isStop(sys, origin_name)) == -1) {
         printf("%s: no such stop.\n", origin_name);
         return -1;
     }
 
-    if (destination_index == -1) {
+    if ((destination_index = isStop(sys, destination_name)) == -1) {
         printf("%s: no such stop.\n", destination_name);
         return -1;
     }
@@ -390,8 +385,48 @@ int isValidLink(BusNetwork *sys, char *line_name, char *origin_name,
         return 2;
     }
 
-    return isLinkLineCompatible(sys->line_list[line_index], origin_index,
-                                destination_index);
+    return isLinkLineCompatible(sys->line_list[line_index], origin_name,
+                                destination_name);
+}
+
+void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
+                  double cost, double duration) {
+    StopNode *origin;
+
+    origin = (StopNode *)malloc(sizeof(StopNode));
+    if (origin == NULL) {
+        printf("No Memory\n");
+        exit(1);
+    }
+
+    origin->stop = &sys->stop_list[origin_index];
+    origin->next = sys->line_list[line_index].origin;
+    origin->prev = NULL;
+    origin->cost_next = cost;
+    origin->duration_next = duration;
+
+    sys->line_list[line_index].origin->prev = origin;
+    sys->line_list[line_index].origin = origin;
+}
+
+void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
+                       double cost, double duration) {
+    StopNode *destination;
+
+    destination = (StopNode *)malloc(sizeof(StopNode));
+    if (destination == NULL) {
+        printf("No Memory\n");
+        exit(1);
+    }
+
+    destination->stop = &sys->stop_list[destination_index];
+    destination->next = NULL;
+    destination->prev = sys->line_list[line_index].destination;
+
+    sys->line_list[line_index].destination->next = destination;
+    sys->line_list[line_index].destination->cost_next = cost;
+    sys->line_list[line_index].destination->duration_next = duration;
+    sys->line_list[line_index].destination = destination;
 }
 
 /*
@@ -400,24 +435,33 @@ int isValidLink(BusNetwork *sys, char *line_name, char *origin_name,
  */
 void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
                    int destination_index, double cost, double duration) {
+    StopNode *origin, *destination;
 
-    sys->line_list[line_index].course[0] = origin_index;
-    sys->line_list[line_index].course[1] = destination_index;
+    origin = (StopNode *)malloc(sizeof(StopNode));
+    destination = (StopNode *)malloc(sizeof(StopNode));
+
+    if (origin == NULL || destination == NULL) {
+        printf("No Memory\n");
+        exit(1);
+    }
+
+    origin->stop = &sys->stop_list[origin_index];
+    origin->next = destination;
+    origin->prev = NULL;
+    origin->cost_next = cost;
+    origin->duration_next = duration;
+
+    destination->stop = &sys->stop_list[destination_index];
+    destination->next = NULL;
+    destination->prev = origin;
+    destination->cost_next = 0;
+    destination->duration_next = 0;
+
+    sys->line_list[line_index].origin = origin;
+    sys->line_list[line_index].destination = destination;
     sys->line_list[line_index].nr_line_stops = 2;
     sys->line_list[line_index].cost = cost;
     sys->line_list[line_index].duration = duration;
-}
-
-void addMemoryToLineCourse(BusNetwork *sys, int line_index, int nr_line_stops) {
-
-    if (nr_line_stops == 0) {
-        sys->line_list[line_index].course =
-            (int *)malloc(CHUNK_SIZE * sizeof(int));
-    } else if (nr_line_stops % CHUNK_SIZE == 0) {
-        sys->line_list[line_index].course =
-            (int *)realloc(sys->line_list[line_index].course,
-                           (nr_line_stops + CHUNK_SIZE) * sizeof(int));
-    }
 }
 
 /*
@@ -429,21 +473,15 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
                 int link_type) {
     int i, nr_line_stops = sys->line_list[line_index].nr_line_stops;
 
-    addMemoryToLineCourse(sys, line_index, nr_line_stops);
     switch (link_type) {
-
     /* Origin link. Stop is inserted in the begining of the Line course. */
     case 0:
-        for (i = nr_line_stops - 1; i >= 0; i--) {
-            sys->line_list[line_index].course[i + 1] =
-                sys->line_list[line_index].course[i];
-        }
-        sys->line_list[line_index].course[0] = origin_index;
+        addNewOrigin(sys, line_index, origin_index, cost, duration);
         break;
 
     /* Destination link. Stop is inserted at the end of the Line course. */
     case 1:
-        sys->line_list[line_index].course[nr_line_stops] = destination_index;
+        addNewDestination(sys, line_index, destination_index, cost, duration);
         break;
 
     /* First stops. The mentioned link actually represents the first stops to be
@@ -458,13 +496,6 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
     sys->line_list[line_index].nr_line_stops++;
     sys->line_list[line_index].cost += cost;
     sys->line_list[line_index].duration += duration;
-
-    /* Final step to determine if the Line becomes a cycle after adding the
-     * link. */
-    if (sys->line_list[line_index].course[0] ==
-        sys->line_list[line_index].course[nr_line_stops]) {
-        sys->line_list[line_index].is_cycle = 1;
-    }
 }
 
 /*
