@@ -572,7 +572,12 @@ void intsecCommand(BusNetwork *sys) {
 }
 
 void removeStopFromLine(BusNetwork *sys, int line_index, StopNode *node) {
-    if (node->prev == NULL) {
+    if (node->prev == NULL && node->next == NULL) {
+        sys->line_list[line_index].origin = NULL;
+        sys->line_list[line_index].destination = NULL;
+        sys->line_list[line_index].cost = 0;
+        sys->line_list[line_index].duration = 0;
+    } else if (node->prev == NULL) {
         sys->line_list[line_index].origin = node->next;
         sys->line_list[line_index].cost -= node->cost_next;
         sys->line_list[line_index].duration -= node->duration_next;
