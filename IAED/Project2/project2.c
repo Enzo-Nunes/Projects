@@ -91,11 +91,11 @@ int isLine(BusNetwork *sys, char line_name[]) {
         }
     }
 
-    return -1;
+    return NOT_FOUND;
 }
 
 /*
- * List all the lines in the system.
+ * Lists all the lines in the system.
  */
 void listLines(BusNetwork *sys) {
     int i;
@@ -119,27 +119,26 @@ void listLines(BusNetwork *sys) {
 int isReverse(char flag[]) {
 
     int i = 0;
-    char reverse[8] = REVERSE_FLAG;
+    char reverse[REVERSE_FLAG_SIZE] = REVERSE_FLAG;
 
     while (flag[i] != '\0') {
         if (flag[i] != reverse[i]) {
-            return 1;
+            return FALSE;
         }
         i++;
     }
     if (i < 3) {
-        return 1;
+        return FALSE;
     }
 
-    return 0;
+    return TRUE;
 }
 
 /*
- * Prints all the stops in the line corresponding to the index i in the system
- * line list.
+ * Prints all the stops the Line passes through in order.
  */
 void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
-    int reverse = 0;
+    int reverse = FALSE;
     char *flag;
     StopNode *node;
 
@@ -149,17 +148,16 @@ void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
 
     /* Checks if the command is reversed. */
     if ((flag = readNextWord(sys, buffer)) != NULL) {
-        if (isReverse(flag) == 0) {
+        if ((reverse = isReverse(flag)) == FALSE) {
             free(flag);
-            reverse = 1;
-        } else {
             printf("incorrect sort option.\n");
             return;
         }
+        free(flag);
     }
 
     /* Print the stops. */
-    if (reverse == 0) {
+    if (reverse == FALSE) {
         for (node = line.origin; node != line.destination; node = node->next) {
             printf("%s, ", node->stop->name);
         }
@@ -207,7 +205,8 @@ void createLine(BusNetwork *sys, char *line_name) {
 }
 
 /*
- * Main function that manages all the Line commands.
+ * Main function that manages all the Line commands. Checks all argument options
+ * and validity, and calls the corresponding functions.
  */
 void lineCommand(BusNetwork *sys, char buffer[]) {
 
@@ -217,10 +216,10 @@ void lineCommand(BusNetwork *sys, char buffer[]) {
     if ((line_name = readNextWord(sys, buffer)) == NULL) {
         listLines(sys);
     } else {
-        if ((i = isLine(sys, line_name)) != -1) {
-            listLineStops(sys, sys->line_list[i], buffer);
-        } else {
+        if ((i = isLine(sys, line_name)) == NOT_FOUND) {
             createLine(sys, line_name);
+        } else {
+            listLineStops(sys, sys->line_list[i], buffer);
         }
     }
     free(line_name);
@@ -246,7 +245,7 @@ int isStop(BusNetwork *sys, char stop_name[]) {
         }
     }
 
-    return -1;
+    return NOT_FOUND;
 }
 
 /*
@@ -285,7 +284,7 @@ void listStops(BusNetwork *sys) {
  * Creates a new Stop with the input name, latitude and longitude and adds it to
  * the system Stop list.
  */
-void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
+void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
     Stop new_stop;
 
     if (sys->nr_stops == 0) {
@@ -306,16 +305,16 @@ void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
         exit(1);
     }
     strcpy(new_stop.name, stop_name);
-    new_stop.lat = atof(lat);
-    new_stop.lon = atof(lon);
+    new_stop.lat = lat;
+    new_stop.lon = lon;
 
     sys->stop_list[sys->nr_stops] = new_stop;
     sys->nr_stops++;
 }
 
 /*
- * Main function that manages all Stop commands, i.e. creating stops, listing
- * all stops and printing specific Stop coordinates.
+ * Main function that manages all Stop commands. Checks all argument options and
+ * validity, and calls the corresponding functions.
  */
 void stopCommand(BusNetwork *sys, char buffer[]) {
 
@@ -326,9 +325,9 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
         listStops(sys);
     } else {
         if ((lat = readNextWord(sys, buffer)) != NULL) {
-            if (isStop(sys, stop_name) == -1) {
+            if (isStop(sys, stop_name) == NOT_FOUND) {
                 lon = readNextWord(sys, buffer);
-                createStop(sys, stop_name, lat, lon);
+                createStop(sys, stop_name, atof(lat), atof(lon));
                 free(lon);
             } else {
                 printf("%s: stop already exists.\n", stop_name);
@@ -338,7 +337,7 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
             }
             free(lat);
         } else {
-            if ((stop_index = isStop(sys, stop_name)) != -1) {
+            if ((stop_index = isStop(sys, stop_name)) != NOT_FOUND) {
                 printStopCoords(sys, stop_index);
             } else {
                 printf("%s: no such stop.\n", stop_name);
@@ -351,22 +350,21 @@ void stopCommand(BusNetwork *sys, char buffer[]) {
 }
 
 /*
- * Function called only by isValidLink that checks whether the link attempted to
- * create is valid for the given Line. Returns integers that represent link
- * types back to isValidLink.
+ * Determines if the attempted link is compatible with the Line. Returns -1 if
+ * it isn't, returns link type otherwise.
  */
 int isLinkLineCompatible(Line line, Stop origin, Stop destination) {
 
     if (strcmp(line.destination->stop->name, origin.name) == 0) {
-        return 1;
+        return DESTINATION_LINK;
     }
 
     if (strcmp(line.origin->stop->name, destination.name) == 0) {
-        return 0;
+        return ORIGIN_LINK;
     }
 
     printf("link cannot be associated with bus line.\n");
-    return -1;
+    return INVALID_LINK;
 }
 
 /*
@@ -378,28 +376,28 @@ int isValidLink(BusNetwork *sys, int line_index, int origin_index,
                 int destination_index, char *line_name, char *origin_name,
                 char *destination_name, double cost, double duration) {
 
-    if (line_index == -1) {
+    if (line_index == NOT_FOUND) {
         printf("%s: no such line.\n", line_name);
-        return -1;
+        return INVALID_LINK;
     }
 
-    if (origin_index == -1) {
+    if (origin_index == NOT_FOUND) {
         printf("%s: no such stop.\n", origin_name);
-        return -1;
+        return INVALID_LINK;
     }
 
-    if (destination_index == -1) {
+    if (destination_index == NOT_FOUND) {
         printf("%s: no such stop.\n", destination_name);
-        return -1;
+        return INVALID_LINK;
     }
 
     if ((cost < 0) || (duration < 0)) {
         printf("negative cost or duration.\n");
-        return -1;
+        return INVALID_LINK;
     }
 
     if (sys->line_list[line_index].nr_line_stops == 0) {
-        return 2;
+        return FIRST_STOPS;
     }
 
     return isLinkLineCompatible(sys->line_list[line_index],
@@ -487,18 +485,18 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
                 int link_type) {
     switch (link_type) {
     /* Origin link. Stop is inserted in the begining of the Line course. */
-    case 0:
+    case ORIGIN_LINK:
         addNewOrigin(sys, line_index, origin_index, cost, duration);
         break;
 
     /* Destination link. Stop is inserted at the end of the Line course. */
-    case 1:
+    case DESTINATION_LINK:
         addNewDestination(sys, line_index, destination_index, cost, duration);
         break;
 
     /* First stops. The mentioned link actually represents the first stops to be
      * inserted in the Line course. */
-    case 2:
+    case FIRST_STOPS:
         addFirstStops(sys, line_index, origin_index, destination_index, cost,
                       duration);
         return;
@@ -532,9 +530,9 @@ void linkCommand(BusNetwork *sys, char buffer[]) {
     cost = atof(cost_pre);
     duration = atof(duration_pre);
 
-    if ((link_type = isValidLink(sys, line_index, origin_index,
-                                 destination_index, line_name, origin_name,
-                                 destination_name, cost, duration)) != -1) {
+    if ((link_type = isValidLink(
+             sys, line_index, origin_index, destination_index, line_name,
+             origin_name, destination_name, cost, duration)) != NOT_FOUND) {
         createLink(sys, line_index, origin_index, destination_index, cost,
                    duration, link_type);
     }
@@ -646,10 +644,10 @@ void removeStopCommand(BusNetwork *sys, char buffer[]) {
     stop_name = readNextWord(sys, buffer);
     stop_index = isStop(sys, stop_name);
 
-    if (stop_index != -1) {
-        removeStopFromSys(sys, stop_index);
-    } else {
+    if (stop_index == NOT_FOUND) {
         printf("%s: no such stop.\n", stop_name);
+    } else {
+        removeStopFromSys(sys, stop_index);
     }
     free(stop_name);
 }
@@ -678,10 +676,10 @@ void removeLineCommand(BusNetwork *sys, char buffer[]) {
     line_name = readNextWord(sys, buffer);
     line_index = isLine(sys, line_name);
 
-    if (line_index != -1) {
-        removeLineFromSys(sys, line_index);
-    } else {
+    if (line_index == NOT_FOUND) {
         printf("%s: no such line.\n", line_name);
+    } else {
+        removeLineFromSys(sys, line_index);
     }
     free(line_name);
 }
@@ -724,22 +722,16 @@ BusNetwork *startSystem() {
     sys->nr_lines = 0;
     sys->nr_stops = 0;
 
-    /* Memory is allocated to the arrays later when adding lines or stops. */
+    /* Memory is allocated later when adding first lines or stops. */
     sys->line_list = NULL;
     sys->stop_list = NULL;
 
     return sys;
 }
 
-char *getBuffer(BusNetwork *sys) {
+char *getBuffer(BusNetwork *sys, char buffer[]) {
     char c;
-    char *buffer;
     int count;
-
-    if ((buffer = (char *)malloc(BUFFER_SIZE * sizeof(char))) == NULL) {
-        printf("No memory.\n");
-        exit(1);
-    }
 
     memset(buffer, 0, BUFFER_SIZE);
     sys->buffer_index = 0;
@@ -757,31 +749,31 @@ char *getBuffer(BusNetwork *sys) {
  */
 int main() {
 
-    char *buffer;
+    char *buffer = malloc(BUFFER_SIZE * sizeof(char));
     BusNetwork *main_sys;
 
     main_sys = startSystem();
-    while (1) {
-        buffer = getBuffer(main_sys);
+    while (TRUE) {
+        buffer = getBuffer(main_sys, buffer);
 
         switch (buffer[0]) {
         case 'l':
-            linkCommand(main_sys, buffer + 2);
+            linkCommand(main_sys, buffer + 1);
             break;
         case 'p':
-            stopCommand(main_sys, buffer + 2);
+            stopCommand(main_sys, buffer + 1);
             break;
         case 'c':
-            lineCommand(main_sys, buffer + 2);
+            lineCommand(main_sys, buffer + 1);
             break;
         case 'i':
             intsecCommand(main_sys);
             break;
         case 'e':
-            removeStopCommand(main_sys, buffer + 2);
+            removeStopCommand(main_sys, buffer + 1);
             break;
         case 'r':
-            removeLineCommand(main_sys, buffer + 2);
+            removeLineCommand(main_sys, buffer + 1);
             break;
         case 'a':
             freeSystem(main_sys);
@@ -792,6 +784,5 @@ int main() {
             free(buffer);
             return 0;
         }
-        free(buffer);
     }
 }
