@@ -9,6 +9,11 @@ char *readNextWord(BusNetwork *sys, char buffer[]) {
     int i = 0;
     char *next_word = (char *)malloc(strlen(buffer) * sizeof(char));
 
+    if (next_word == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
+
     while (buffer[sys->buffer_index] == ' ' ||
            buffer[sys->buffer_index] == '\n') {
         sys->buffer_index++;
@@ -46,8 +51,13 @@ char *readNextWord(BusNetwork *sys, char buffer[]) {
 Line *sortLines(int nr_lines, Line lines_list[]) {
 
     int i, j, min_index;
+    Line *sorted_lines_list;
 
-    Line *sorted_lines_list = malloc(nr_lines * sizeof(Line));
+    if ((sorted_lines_list = malloc(nr_lines * sizeof(Line))) == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
+
     memcpy(sorted_lines_list, lines_list, nr_lines * sizeof(Line));
 
     for (i = 0; i < nr_lines - 1; i++) {
@@ -174,7 +184,17 @@ void createLine(BusNetwork *sys, char *line_name) {
             sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(Line));
     }
 
-    new_line.name = malloc((strlen(line_name) + 1) * sizeof(char));
+    if (sys->line_list == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
+
+    if ((new_line.name = malloc((strlen(line_name) + 1) * sizeof(char))) ==
+        NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
+
     strcpy(new_line.name, line_name);
     new_line.nr_line_stops = 0;
     new_line.cost = 0;
@@ -275,7 +295,16 @@ void createStop(BusNetwork *sys, char *stop_name, char *lat, char *lon) {
             sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(Stop));
     }
 
-    new_stop.name = malloc((strlen(stop_name) + 1) * sizeof(char));
+    if (sys->stop_list == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
+
+    if ((new_stop.name = malloc((strlen(stop_name) + 1) * sizeof(char))) ==
+        NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
     strcpy(new_stop.name, stop_name);
     new_stop.lat = atof(lat);
     new_stop.lon = atof(lon);
@@ -380,10 +409,10 @@ int isValidLink(BusNetwork *sys, int line_index, int origin_index,
 
 void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
                   double cost, double duration) {
-    StopNode *origin = (StopNode *)malloc(sizeof(StopNode));
+    StopNode *origin;
 
-    if (origin == NULL) {
-        printf("No Memory\n");
+    if ((origin = (StopNode *)malloc(sizeof(StopNode))) == NULL) {
+        printf("No memory.\n");
         exit(1);
     }
 
@@ -401,9 +430,8 @@ void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
                        double cost, double duration) {
     StopNode *destination;
 
-    destination = (StopNode *)malloc(sizeof(*destination));
-    if (destination == NULL) {
-        printf("No Memory\n");
+    if ((destination = (StopNode *)malloc(sizeof(*destination))) == NULL) {
+        printf("No memory.\n");
         exit(1);
     }
 
@@ -425,11 +453,9 @@ void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
                    int destination_index, double cost, double duration) {
     StopNode *origin, *destination;
 
-    origin = (StopNode *)malloc(sizeof(StopNode));
-    destination = (StopNode *)malloc(sizeof(StopNode));
-
-    if (origin == NULL || destination == NULL) {
-        printf("No Memory\n");
+    if (((origin = (StopNode *)malloc(sizeof(StopNode))) == NULL) ||
+        ((destination = (StopNode *)malloc(sizeof(StopNode))) == NULL)) {
+        printf("No memory.\n");
         exit(1);
     }
 
@@ -666,18 +692,25 @@ void freeSystem(BusNetwork *sys) {
     for (i = 0; i < sys->nr_stops; i++) {
         free(sys->stop_list[i].name);
     }
+    if (sys->stop_list != NULL)
+        free(sys->stop_list);
 
     for (i = 0; i < sys->nr_lines; i++) {
         free(sys->line_list[i].name);
     }
+    if (sys->line_list != NULL)
+        free(sys->line_list);
 
-    free(sys->line_list);
-    free(sys->stop_list);
     free(sys);
 }
 
 BusNetwork *startSystem() {
-    BusNetwork *sys = (BusNetwork *)malloc(sizeof(BusNetwork));
+    BusNetwork *sys;
+
+    if ((sys = (BusNetwork *)malloc(sizeof(BusNetwork))) == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
 
     sys->buffer_index = 0;
     sys->nr_lines = 0;
@@ -692,8 +725,13 @@ BusNetwork *startSystem() {
 
 char *getBuffer(BusNetwork *sys) {
     char c;
-    char *buffer = (char *)malloc(BUFFER_SIZE * sizeof(char));
+    char *buffer;
     int count;
+
+    if ((buffer = (char *)malloc(BUFFER_SIZE * sizeof(char))) == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
 
     memset(buffer, 0, BUFFER_SIZE);
     sys->buffer_index = 0;
