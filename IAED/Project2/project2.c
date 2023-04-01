@@ -620,13 +620,13 @@ void updateCoursePointers(BusNetwork *sys, int stop_index) {
 }
 
 void removeStopFromSys(BusNetwork *sys, int stop_index) {
-    int i;
+
     removeStopFromLines(sys, stop_index);
 
+    free(sys->stop_list[stop_index].name);
     sys->nr_stops--;
-    for (i = stop_index; i < sys->nr_stops; i++) {
-        sys->stop_list[i] = sys->stop_list[i + 1];
-    }
+    memmove(sys->stop_list + stop_index, sys->stop_list + stop_index + 1,
+            (sys->nr_stops - stop_index) * sizeof(Stop));
 
     updateCoursePointers(sys, stop_index);
 
@@ -643,6 +643,8 @@ void removeStopCommand(BusNetwork *sys, char buffer[]) {
 
     if (stop_index != -1) {
         removeStopFromSys(sys, stop_index);
+    } else {
+        printf("%s: no such stop.\n", stop_name);
     }
     free(stop_name);
 }
@@ -655,6 +657,7 @@ void removeLineFromSys(BusNetwork *sys, int line_index) {
         free(node);
     }
 
+    free(sys->line_list[line_index].name);
     sys->nr_lines--;
     memmove(sys->line_list + line_index, sys->line_list + line_index + 1,
             (sys->nr_lines - line_index) * sizeof(Line));
