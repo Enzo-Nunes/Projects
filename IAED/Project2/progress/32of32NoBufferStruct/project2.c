@@ -5,33 +5,33 @@
 /*
  * Returns the next word read in the buffer.
  */
-char *readNextWord(Buffer *buffer) {
+char *readNextWord(BusNetwork *sys, char buffer[]) {
     int i = 0;
-    char *next_word = (char *)malloc(strlen(buffer->buffer) * sizeof(char));
+    char *next_word = (char *)malloc(strlen(buffer) * sizeof(char));
 
     if (next_word == NULL) {
         printf("No memory.\n");
         exit(1);
     }
 
-    while (buffer->buffer[buffer->index] == ' ' ||
-           buffer->buffer[buffer->index] == '\n') {
-        buffer->index++;
+    while (buffer[sys->buffer_index] == ' ' ||
+           buffer[sys->buffer_index] == '\n') {
+        sys->buffer_index++;
     }
 
-    if (buffer->buffer[buffer->index] == '"') {
-        buffer->index++;
-        while (buffer->buffer[buffer->index] != '"') {
-            next_word[i] = buffer->buffer[buffer->index];
-            i++, buffer->index++;
+    if (buffer[sys->buffer_index] == '"') {
+        sys->buffer_index++;
+        while (buffer[sys->buffer_index] != '"') {
+            next_word[i] = buffer[sys->buffer_index];
+            i++, sys->buffer_index++;
         }
-        buffer->index++;
+        sys->buffer_index++;
     } else {
-        while (buffer->buffer[buffer->index] != ' ' &&
-               buffer->buffer[buffer->index] != '\n' &&
-               buffer->buffer[buffer->index] != '\0') {
-            next_word[i] = buffer->buffer[buffer->index];
-            i++, buffer->index++;
+        while (buffer[sys->buffer_index] != ' ' &&
+               buffer[sys->buffer_index] != '\n' &&
+               buffer[sys->buffer_index] != '\0') {
+            next_word[i] = buffer[sys->buffer_index];
+            i++, sys->buffer_index++;
         }
     }
     next_word[i] = '\0';
@@ -137,7 +137,7 @@ int isReverse(char flag[]) {
 /*
  * Prints all the stops the Line passes through in order.
  */
-void listLineStops(Line line, Buffer *buffer) {
+void listLineStops(BusNetwork *sys, Line line, char buffer[]) {
     int reverse = FALSE;
     char *flag;
     StopNode *node;
@@ -147,7 +147,7 @@ void listLineStops(Line line, Buffer *buffer) {
     }
 
     /* Checks if the command is reversed. */
-    if ((flag = readNextWord(buffer)) != NULL) {
+    if ((flag = readNextWord(sys, buffer)) != NULL) {
         if ((reverse = isReverse(flag)) == FALSE) {
             free(flag);
             printf("incorrect sort option.\n");
@@ -208,18 +208,18 @@ void createLine(BusNetwork *sys, char *line_name) {
  * Main function that manages all the Line commands. Checks all argument options
  * and validity, and calls the corresponding functions.
  */
-void lineCommand(BusNetwork *sys, Buffer *buffer) {
+void lineCommand(BusNetwork *sys, char buffer[]) {
 
     char *line_name;
     int i;
 
-    if ((line_name = readNextWord(buffer)) == NULL) {
+    if ((line_name = readNextWord(sys, buffer)) == NULL) {
         listLines(sys);
     } else {
         if ((i = isLine(sys, line_name)) == NOT_FOUND) {
             createLine(sys, line_name);
         } else {
-            listLineStops(sys->line_list[i], buffer);
+            listLineStops(sys, sys->line_list[i], buffer);
         }
     }
     free(line_name);
@@ -316,17 +316,17 @@ void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
  * Main function that manages all Stop commands. Checks all argument options and
  * validity, and calls the corresponding functions.
  */
-void stopCommand(BusNetwork *sys, Buffer *buffer) {
+void stopCommand(BusNetwork *sys, char buffer[]) {
 
     char *stop_name, *lat, *lon;
     int stop_index;
 
-    if ((stop_name = readNextWord(buffer)) == NULL) {
+    if ((stop_name = readNextWord(sys, buffer)) == NULL) {
         listStops(sys);
     } else {
-        if ((lat = readNextWord(buffer)) != NULL) {
+        if ((lat = readNextWord(sys, buffer)) != NULL) {
             if (isStop(sys, stop_name) == NOT_FOUND) {
-                lon = readNextWord(buffer);
+                lon = readNextWord(sys, buffer);
                 createStop(sys, stop_name, atof(lat), atof(lon));
                 free(lon);
             } else {
@@ -424,9 +424,6 @@ void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
     sys->line_list[line_index].origin = origin;
 }
 
-/*
- * Inserts a new destination in the Line of index i in the system Line list.
- */
 void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
                        double cost, double duration) {
     StopNode *destination;
@@ -515,17 +512,17 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
  * Main link function that manages all link commands. Analyzes the link type and
  * adds stops to the Line accordingly.
  */
-void linkCommand(BusNetwork *sys, Buffer *buffer) {
+void linkCommand(BusNetwork *sys, char buffer[]) {
 
     int line_index, origin_index, destination_index, link_type;
     double cost, duration;
     char *line_name, *origin_name, *destination_name, *cost_pre, *duration_pre;
 
-    line_name = readNextWord(buffer);
-    origin_name = readNextWord(buffer);
-    destination_name = readNextWord(buffer);
-    cost_pre = readNextWord(buffer);
-    duration_pre = readNextWord(buffer);
+    line_name = readNextWord(sys, buffer);
+    origin_name = readNextWord(sys, buffer);
+    destination_name = readNextWord(sys, buffer);
+    cost_pre = readNextWord(sys, buffer);
+    duration_pre = readNextWord(sys, buffer);
 
     line_index = isLine(sys, line_name);
     origin_index = isStop(sys, origin_name);
@@ -572,11 +569,6 @@ void intsecCommand(BusNetwork *sys) {
     free(sorted_lines_list);
 }
 
-/*
- * Removes a stop from a Line. Alalyzes every possible case: if the stop is the
- * only one in the Line, if it is the origin or the destination, or if it is
- * in the middle of the Line.
- */
 void removeStopFromLine(BusNetwork *sys, int line_index, StopNode *node) {
     if (node->prev == NULL && node->next == NULL) {
         sys->line_list[line_index].origin = NULL;
@@ -604,9 +596,6 @@ void removeStopFromLine(BusNetwork *sys, int line_index, StopNode *node) {
     free(node);
 }
 
-/*
- * Removes a stop from a all Lines in the system.
- */
 void removeStopFromLines(BusNetwork *sys, int stop_index) {
     int i;
     StopNode *node;
@@ -620,11 +609,6 @@ void removeStopFromLines(BusNetwork *sys, int stop_index) {
     }
 }
 
-/*
- * Updates all StopNode pointers of all lines in the system after a stop is
- * removed. Essenctial to make sure all pointers point to the correct stop after
- * all stops to the right of the removed stop are shifted to the left.
- */
 void updateCoursePointers(BusNetwork *sys, int stop_index) {
     int i;
     StopNode *node;
@@ -638,10 +622,6 @@ void updateCoursePointers(BusNetwork *sys, int stop_index) {
     }
 }
 
-/*
- * Completely removes a stop from the system by first removing it from all the
- * lines that pass through it and then removing it from the stop list.
- */
 void removeStopFromSys(BusNetwork *sys, int stop_index) {
 
     removeStopFromLines(sys, stop_index);
@@ -657,15 +637,11 @@ void removeStopFromSys(BusNetwork *sys, int stop_index) {
         (Stop *)realloc(sys->stop_list, sys->nr_stops * sizeof(Stop));
 }
 
-/*
- * Manages removing stops from the system. Prints an error message if the stop
- * does not exist.
- */
-void removeStopCommand(BusNetwork *sys, Buffer *buffer) {
+void removeStopCommand(BusNetwork *sys, char buffer[]) {
     char *stop_name;
     int stop_index;
 
-    stop_name = readNextWord(buffer);
+    stop_name = readNextWord(sys, buffer);
     stop_index = isStop(sys, stop_name);
 
     if (stop_index == NOT_FOUND) {
@@ -676,9 +652,6 @@ void removeStopCommand(BusNetwork *sys, Buffer *buffer) {
     free(stop_name);
 }
 
-/*
- * Removes a line from the system by freeing all the memory allocated for it.
- */
 void removeLineFromSys(BusNetwork *sys, int line_index) {
     StopNode *node, *next;
 
@@ -696,15 +669,11 @@ void removeLineFromSys(BusNetwork *sys, int line_index) {
         (Line *)realloc(sys->line_list, sys->nr_lines * sizeof(Line));
 }
 
-/*
- * Manages removing lines from the system. If the line does not exist, prints an
- * error message.
- */
-void removeLineCommand(BusNetwork *sys, Buffer *buffer) {
+void removeLineCommand(BusNetwork *sys, char buffer[]) {
     char *line_name;
     int line_index;
 
-    line_name = readNextWord(buffer);
+    line_name = readNextWord(sys, buffer);
     line_index = isLine(sys, line_name);
 
     if (line_index == NOT_FOUND) {
@@ -715,9 +684,6 @@ void removeLineCommand(BusNetwork *sys, Buffer *buffer) {
     free(line_name);
 }
 
-/*
- * Frees all memory allocated for the BusNetwork system, reseting it.
- */
 void freeSystem(BusNetwork *sys) {
     int i;
     StopNode *node, *next;
@@ -732,26 +698,27 @@ void freeSystem(BusNetwork *sys) {
     for (i = 0; i < sys->nr_stops; i++) {
         free(sys->stop_list[i].name);
     }
-    if (sys->stop_list != NULL) {
+    if (sys->stop_list != NULL)
         free(sys->stop_list);
-    }
 
     for (i = 0; i < sys->nr_lines; i++) {
         free(sys->line_list[i].name);
     }
-    if (sys->line_list != NULL) {
+    if (sys->line_list != NULL)
         free(sys->line_list);
-    }
 
     free(sys);
 }
 
-/*
- * Creates a new BusNetwork system and returns a pointer to it.
- */
 BusNetwork *startSystem() {
-    BusNetwork *sys = (BusNetwork *)malloc(sizeof(BusNetwork));
+    BusNetwork *sys;
 
+    if ((sys = (BusNetwork *)malloc(sizeof(BusNetwork))) == NULL) {
+        printf("No memory.\n");
+        exit(1);
+    }
+
+    sys->buffer_index = 0;
     sys->nr_lines = 0;
     sys->nr_stops = 0;
 
@@ -762,18 +729,15 @@ BusNetwork *startSystem() {
     return sys;
 }
 
-/*
- * Reads the input from the user and inserts it into the buffer.
- */
-Buffer *getBuffer(Buffer *buffer) {
+char *getBuffer(BusNetwork *sys, char buffer[]) {
     char c;
     int count;
 
-    memset(buffer->buffer, 0, BUFFER_SIZE);
-    buffer->index = 0;
+    memset(buffer, 0, BUFFER_SIZE);
+    sys->buffer_index = 0;
 
     for (count = 0; (c = getchar()) != '\n'; count++) {
-        buffer->buffer[count] = c;
+        buffer[count] = c;
     }
 
     return buffer;
@@ -784,44 +748,39 @@ Buffer *getBuffer(Buffer *buffer) {
  * command functions. Inputs are asked indefinitely until the user inputs 'q'.
  */
 int main() {
-    Buffer *buffer = (Buffer *)malloc(sizeof(Buffer));
-    BusNetwork *sys;
-    buffer->buffer = (char *)malloc(BUFFER_SIZE);
 
-    sys = startSystem();
+    char *buffer = malloc(BUFFER_SIZE * sizeof(char));
+    BusNetwork *main_sys;
+
+    main_sys = startSystem();
     while (TRUE) {
-        buffer = getBuffer(buffer);
+        buffer = getBuffer(main_sys, buffer);
 
-        switch (buffer->buffer[0]) {
+        switch (buffer[0]) {
         case 'l':
-            buffer->index = 2;
-            linkCommand(sys, buffer);
+            linkCommand(main_sys, buffer + 1);
             break;
         case 'p':
-            buffer->index = 2;
-            stopCommand(sys, buffer);
+            stopCommand(main_sys, buffer + 1);
             break;
         case 'c':
-            buffer->index = 2;
-            lineCommand(sys, buffer);
-            break;
-        case 'e':
-            buffer->index = 2;
-            removeStopCommand(sys, buffer);
-            break;
-        case 'r':
-            buffer->index = 2;
-            removeLineCommand(sys, buffer);
+            lineCommand(main_sys, buffer + 1);
             break;
         case 'i':
-            intsecCommand(sys);
+            intsecCommand(main_sys);
+            break;
+        case 'e':
+            removeStopCommand(main_sys, buffer + 1);
+            break;
+        case 'r':
+            removeLineCommand(main_sys, buffer + 1);
             break;
         case 'a':
-            freeSystem(sys);
-            sys = startSystem();
+            freeSystem(main_sys);
+            main_sys = startSystem();
             break;
         case 'q':
-            freeSystem(sys);
+            freeSystem(main_sys);
             free(buffer);
             return 0;
         }
