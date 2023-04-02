@@ -14,7 +14,7 @@
 #define FALSE 0
 #define NOT_FOUND -1
 
-/*
+/* 
  * Link types.
  */
 #define INVALID_LINK -1
@@ -23,7 +23,7 @@
 #define FIRST_STOPS 2
 
 /*
- * Stop structure.
+ * Stop structure. Defined by name and coordinates only.
  */
 typedef struct Stop {
     char *name;
@@ -31,8 +31,8 @@ typedef struct Stop {
 } Stop;
 
 /*
- * StopNode structure. Used in the line structure as a doubly linked list of
- * stops to represent it's course.
+ * StopNode structure. Defined by a pointer to a Stop, the cost and duration
+ * to the next stop, and pointers to the next and previous nodes.
  */
 typedef struct StopNode {
     Stop *stop;
@@ -42,8 +42,9 @@ typedef struct StopNode {
 } StopNode;
 
 /*
- * Line structure. Has pointers to the origin and destination of it's course,
- * represented by a doubly linked list of stops.
+ * Line structure. Defined by name, pointers to origin and destination stop
+ * nodes, the number of stops in the line, and the total cost and duration of
+ * the line.
  */
 typedef struct Line {
     char *name;
@@ -54,15 +55,12 @@ typedef struct Line {
 } Line;
 
 /*
- * BusNetwork system structure. 'Brain' of the program.
+ * BusNetwork system structure. Defined by the number of lines and stops, a
+ * buffer index for the readNextWord function, and pointers to the line and stop
+ * lists.
  */
 typedef struct BusNetwork {
-    int nr_lines, nr_stops;
+    int nr_lines, nr_stops, buffer_index;
     Line *line_list;
     Stop *stop_list;
 } BusNetwork;
-
-typedef struct Buffer {
-    char *buffer;
-    int index;
-} Buffer;
