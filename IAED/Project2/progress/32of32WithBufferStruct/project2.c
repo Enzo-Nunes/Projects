@@ -48,7 +48,7 @@ char *readNextWord(Buffer *buffer) {
  * Receives a list of lines and returns a new, alphabetically sorted list of
  * lines.
  */
-Line *sortLines(int nr_lines, Line *lines_list) {
+Line *sortLines(int nr_lines, Line lines_list[]) {
 
     int i, j, min_index;
     Line *sorted_lines_list;
@@ -82,7 +82,7 @@ Line *sortLines(int nr_lines, Line *lines_list) {
  * Checks if the input is an existing Line in the system. Returns the Line's
  * corresponding index in the system Line list if it is, -1 otherwise.
  */
-int isLine(BusNetwork *sys, char *line_name) {
+int isLine(BusNetwork *sys, char line_name[]) {
     int i;
 
     for (i = 0; i < sys->nr_lines; i++) {
@@ -116,7 +116,7 @@ void listLines(BusNetwork *sys) {
  * Checks if the flag is "inverso" or any of its up to 3 character
  * abbreviations. Returns 0 if it is, 1 otherwise.
  */
-int isReverse(char *flag) {
+int isReverse(char flag[]) {
 
     int i = 0;
     char reverse[REVERSE_FLAG_SIZE] = REVERSE_FLAG;
@@ -236,7 +236,7 @@ void printStopCoords(BusNetwork *sys, int i) {
  * Checks if the input is an existing Stop in the system. Returns the Stop's
  * corresponding index in the system Stop list if it is, -1 otherwise.
  */
-int isStop(BusNetwork *sys, char *stop_name) {
+int isStop(BusNetwork *sys, char stop_name[]) {
     int i;
 
     for (i = 0; i < sys->nr_stops; i++) {
@@ -612,11 +612,10 @@ void removeStopFromLine(BusNetwork *sys, int line_index, StopNode *node) {
  */
 void removeStopFromLines(BusNetwork *sys, int stop_index) {
     int i;
-    StopNode *node, *next;
+    StopNode *node;
 
     for (i = 0; i < sys->nr_lines; i++) {
-        for (node = sys->line_list[i].origin; node != NULL; node = next) {
-            next = node->next;
+        for (node = sys->line_list[i].origin; node != NULL; node = node->next) {
             if (node->stop == &sys->stop_list[stop_index]) {
                 removeStopFromLine(sys, i, node);
             }
@@ -629,7 +628,7 @@ void removeStopFromLines(BusNetwork *sys, int stop_index) {
  * removed. Essenctial to make sure all pointers point to the correct stop after
  * all stops to the right of the removed stop are shifted to the left.
  */
-void updateLinePointers(BusNetwork *sys, int stop_index) {
+void updateCoursePointers(BusNetwork *sys, int stop_index) {
     int i;
     StopNode *node;
 
@@ -655,7 +654,10 @@ void removeStopFromSys(BusNetwork *sys, int stop_index) {
     memmove(sys->stop_list + stop_index, sys->stop_list + stop_index + 1,
             (sys->nr_stops - stop_index) * sizeof(Stop));
 
-    updateLinePointers(sys, stop_index);
+    updateCoursePointers(sys, stop_index);
+
+    sys->stop_list =
+        (Stop *)realloc(sys->stop_list, sys->nr_stops * sizeof(Stop));
 }
 
 /*
@@ -692,6 +694,9 @@ void removeLineFromSys(BusNetwork *sys, int line_index) {
     sys->nr_lines--;
     memmove(sys->line_list + line_index, sys->line_list + line_index + 1,
             (sys->nr_lines - line_index) * sizeof(Line));
+
+    sys->line_list =
+        (Line *)realloc(sys->line_list, sys->nr_lines * sizeof(Line));
 }
 
 /*
@@ -820,7 +825,6 @@ int main() {
             break;
         case 'q':
             freeSystem(sys);
-            free(buffer->buffer);
             free(buffer);
             return 0;
         }
