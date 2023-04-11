@@ -69,3 +69,53 @@ typedef struct Buffer {
     char *buffer;
     int index;
 } Buffer;
+
+/*
+ * Buffer function.
+ */
+char *readNextWord(Buffer *buffer);
+
+/*
+ * Line functions.
+ */
+Line *sortLines(int nr_lines, Line *lines_list);
+int isLine(BusNetwork *sys, char *line_name);
+void listLines(BusNetwork *sys);
+int isReverse(char *flag);
+void listLineStops(Line line, Buffer *buffer);
+void createLine(BusNetwork *sys, char *line_name);
+
+/*
+ * Stop functions.
+ */
+void printStopCoords(BusNetwork *sys, int i);
+int isStop(BusNetwork *sys, char *stop_name);
+int nrStopLines(BusNetwork *sys, char *stop_name);
+void listStops(BusNetwork *sys);
+void createStop(BusNetwork *sys, char *stop_name, double lat, double lon);
+
+/*
+ * Link functions.
+ */
+int isLinkLineCompatible(Line line, Stop origin, Stop destination);
+int isValidLink(BusNetwork *sys, int line_index, int origin_index,
+                int destination_index, char *line_name, char *origin_name,
+                char *destination_name, double cost, double duration);
+void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
+                  double cost, double duration);
+void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
+                       double cost, double duration);
+void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
+                   int destination_index, double cost, double duration);
+void createLink(BusNetwork *sys, int line_index, int origin_index,
+                int destination_index, double cost, double duration,
+                int link_type);
+
+/*
+ * Remove functions.
+ */
+void removeStopFromLine(BusNetwork *sys, int line_index, StopNode *node);
+void removeStopFromLines(BusNetwork *sys, int stop_index);
+void updateLinePointers(BusNetwork *sys, int stop_index);
+void removeStopFromSys(BusNetwork *sys, int stop_index);
+void removeLineFromSys(BusNetwork *sys, int line_index);
