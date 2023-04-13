@@ -1,4 +1,7 @@
-/* iaed-23 - ist1106336 - project2 */
+/*
+ * iaed-23 - ist1106336 - project2
+ * Header file with all contants, structs and aux function prototypes.
+ */
 
 #include <ctype.h>
 #include <stdio.h>
