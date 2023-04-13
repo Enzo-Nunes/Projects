@@ -153,7 +153,7 @@ void listLineStops(Line line, Buffer *buffer) {
     if ((flag = readNextWord(buffer)) != NULL) {
         if ((reverse = isReverse(flag)) == FALSE) {
             free(flag);
-            printf(ERR_INVAL_SORT);
+            printf(ERR_INVALID_SORT);
             return;
         }
         free(flag);
