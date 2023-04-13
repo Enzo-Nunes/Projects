@@ -23,6 +23,17 @@
 #define FIRST_STOPS 2
 
 /*
+ * Error strings.
+ */
+#define ERR_NO_MEMORY "No memory.\n"
+#define ERR_NO_STOP "%s: no such stop.\n"
+#define ERR_ALREADY_STOP "%s: stop already exists.\n"
+#define ERR_NO_LINE "%s: no such line.\n"
+#define ERR_INVAL_SORT "incorrect sort option.\n"
+#define ERR_INVALID_LINK "link cannot be associated with bus line.\n"
+#define ERR_NEG_COST_OR_DURATION "negative cost or duration.\n"
+
+/*
  * Stop structure.
  */
 typedef struct Stop {
