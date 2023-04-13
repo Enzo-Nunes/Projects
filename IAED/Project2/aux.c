@@ -10,7 +10,7 @@ Line *sortLines(int nr_lines, Line *lines_list) {
     Line *sorted_lines_list;
 
     if ((sorted_lines_list = malloc(nr_lines * sizeof(Line))) == NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
@@ -70,7 +70,7 @@ void listLines(BusNetwork *sys) {
 
 /*
  * Checks if the flag is "inverso" or any of its up to 3 character
- * abbreviations. Returns 0 if it is, 1 otherwise.
+ * abbreviations.
  */
 int isReverse(char *flag) {
 
@@ -106,7 +106,7 @@ void listLineStops(Line line, Buffer *buffer) {
     if ((flag = readNextWord(buffer)) != NULL) {
         if ((reverse = isReverse(flag)) == FALSE) {
             free(flag);
-            printf("incorrect sort option.\n");
+            printf(ERR_INVAL_SORT);
             return;
         }
         free(flag);
@@ -139,13 +139,13 @@ void createLine(BusNetwork *sys, char *line_name) {
     }
 
     if (sys->line_list == NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
     if ((new_line.name = malloc((strlen(line_name) + 1) * sizeof(char))) ==
         NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
@@ -230,13 +230,13 @@ void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
     }
 
     if (sys->stop_list == NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
     if ((new_stop.name = malloc((strlen(stop_name) + 1) * sizeof(char))) ==
         NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
     strcpy(new_stop.name, stop_name);
@@ -248,8 +248,8 @@ void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
 }
 
 /*
- * Determines if the attempted link is compatible with the Line. Returns -1 if
- * it isn't, returns link type otherwise.
+ * Determines if the attempted link with the input stops is compatible with the
+ * input Line.
  */
 int isLinkLineCompatible(Line line, Stop origin, Stop destination) {
 
@@ -261,7 +261,7 @@ int isLinkLineCompatible(Line line, Stop origin, Stop destination) {
         return ORIGIN_LINK;
     }
 
-    printf("link cannot be associated with bus line.\n");
+    printf(ERR_INVALID_LINK);
     return INVALID_LINK;
 }
 
@@ -274,22 +274,22 @@ int isValidLink(BusNetwork *sys, int line_index, int origin_index,
                 char *destination_name, double cost, double duration) {
 
     if (line_index == NOT_FOUND) {
-        printf("%s: no such line.\n", line_name);
+        printf(ERR_NO_LINE, line_name);
         return INVALID_LINK;
     }
 
     if (origin_index == NOT_FOUND) {
-        printf("%s: no such stop.\n", origin_name);
+        printf(ERR_NO_STOP, origin_name);
         return INVALID_LINK;
     }
 
     if (destination_index == NOT_FOUND) {
-        printf("%s: no such stop.\n", destination_name);
+        printf(ERR_NO_STOP, destination_name);
         return INVALID_LINK;
     }
 
     if ((cost < 0) || (duration < 0)) {
-        printf("negative cost or duration.\n");
+        printf(ERR_NEG_COST_OR_DURATION);
         return INVALID_LINK;
     }
 
@@ -310,7 +310,7 @@ void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
     StopNode *origin;
 
     if ((origin = (StopNode *)malloc(sizeof(StopNode))) == NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
@@ -332,7 +332,7 @@ void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
     StopNode *destination;
 
     if ((destination = (StopNode *)malloc(sizeof(*destination))) == NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
@@ -356,7 +356,7 @@ void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
 
     if (((origin = (StopNode *)malloc(sizeof(StopNode))) == NULL) ||
         ((destination = (StopNode *)malloc(sizeof(StopNode))) == NULL)) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
@@ -387,18 +387,18 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
                 int destination_index, double cost, double duration,
                 int link_type) {
     switch (link_type) {
-    /* Origin link. Stop is inserted in the begining of the Line course. */
+    /* Stop is inserted in the begining of the Line course. */
     case ORIGIN_LINK:
         addNewOrigin(sys, line_index, origin_index, cost, duration);
         break;
 
-    /* Destination link. Stop is inserted at the end of the Line course. */
+    /* Stop is inserted at the end of the Line course. */
     case DESTINATION_LINK:
         addNewDestination(sys, line_index, destination_index, cost, duration);
         break;
 
-    /* First stops. The mentioned link actually represents the first stops to be
-     * inserted in the Line course. */
+    /* The mentioned link actually represents the first stops to be inserted in
+     * the Line course. */
     case FIRST_STOPS:
         addFirstStops(sys, line_index, origin_index, destination_index, cost,
                       duration);
@@ -462,7 +462,7 @@ void removeStopFromLines(BusNetwork *sys, int stop_index) {
 
 /*
  * Updates all StopNode pointers of all lines in the system after a stop is
- * removed. Essenctial to make sure all pointers point to the correct stop after
+ * removed. Essential to make sure all pointers point to the correct stop after
  * all stops to the right of the removed stop are shifted to the left.
  */
 void updateLinePointers(BusNetwork *sys, int stop_index) {

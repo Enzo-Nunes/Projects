@@ -10,7 +10,7 @@ char *readNextWord(Buffer *buffer) {
     char *next_word = (char *)malloc(strlen(buffer->buffer) * sizeof(char));
 
     if (next_word == NULL) {
-        printf("No memory.\n");
+        printf(ERR_NO_MEMORY);
         exit(1);
     }
 
@@ -45,8 +45,8 @@ char *readNextWord(Buffer *buffer) {
 }
 
 /*
- * Main function that manages all the Line commands. Checks all argument options
- * and validity, and calls the corresponding functions.
+ * Manages all the Line commands. Checks all argument options and validity, and
+ * calls the corresponding functions.
  */
 void lineCommand(BusNetwork *sys, Buffer *buffer) {
 
@@ -66,8 +66,8 @@ void lineCommand(BusNetwork *sys, Buffer *buffer) {
 }
 
 /*
- * Main function that manages all Stop commands. Checks all argument options and
- * validity, and calls the corresponding functions.
+ * Manages all Stop commands. Checks all argument options and validity, and
+ * calls the corresponding functions.
  */
 void stopCommand(BusNetwork *sys, Buffer *buffer) {
 
@@ -83,7 +83,7 @@ void stopCommand(BusNetwork *sys, Buffer *buffer) {
                 createStop(sys, stop_name, atof(lat), atof(lon));
                 free(lon);
             } else {
-                printf("%s: stop already exists.\n", stop_name);
+                printf(ERR_ALREADY_STOP, stop_name);
                 free(lat);
                 free(stop_name);
                 return;
@@ -93,7 +93,7 @@ void stopCommand(BusNetwork *sys, Buffer *buffer) {
             if ((stop_index = isStop(sys, stop_name)) != NOT_FOUND) {
                 printStopCoords(sys, stop_index);
             } else {
-                printf("%s: no such stop.\n", stop_name);
+                printf(ERR_NO_STOP, stop_name);
                 free(stop_name);
                 return;
             }
@@ -103,8 +103,8 @@ void stopCommand(BusNetwork *sys, Buffer *buffer) {
 }
 
 /*
- * Main link function that manages all link commands. Analyzes the link type and
- * adds stops to the Line accordingly.
+ * Manages all link commands. Analyzes the link type and adds stops to the Line
+ * accordingly.
  */
 void linkCommand(BusNetwork *sys, Buffer *buffer) {
 
@@ -138,7 +138,7 @@ void linkCommand(BusNetwork *sys, Buffer *buffer) {
 }
 
 /*
- * Intersection Command. Lists all the Line intersections in the system.
+ * Lists all the Line intersections in the system.
  */
 void intsecCommand(BusNetwork *sys) {
     int i, j, nr_stop_lines;
@@ -175,7 +175,7 @@ void removeStopCommand(BusNetwork *sys, Buffer *buffer) {
     stop_index = isStop(sys, stop_name);
 
     if (stop_index == NOT_FOUND) {
-        printf("%s: no such stop.\n", stop_name);
+        printf(ERR_NO_STOP, stop_name);
     } else {
         removeStopFromSys(sys, stop_index);
     }
@@ -183,8 +183,8 @@ void removeStopCommand(BusNetwork *sys, Buffer *buffer) {
 }
 
 /*
- * Manages removing lines from the system. If the line does not exist, prints an
- * error message.
+ * Manages removing lines from the system. Prints an error message if the stop
+ * does not exist.
  */
 void removeLineCommand(BusNetwork *sys, Buffer *buffer) {
     char *line_name;
@@ -194,7 +194,7 @@ void removeLineCommand(BusNetwork *sys, Buffer *buffer) {
     line_index = isLine(sys, line_name);
 
     if (line_index == NOT_FOUND) {
-        printf("%s: no such line.\n", line_name);
+        printf(ERR_NO_LINE, line_name);
     } else {
         removeLineFromSys(sys, line_index);
     }
@@ -202,7 +202,7 @@ void removeLineCommand(BusNetwork *sys, Buffer *buffer) {
 }
 
 /*
- * Frees all memory allocated for the BusNetwork system, reseting it.
+ *  Resets the system by freeing all memory allocated to it.
  */
 void freeSystem(BusNetwork *sys) {
     int i;
@@ -233,7 +233,7 @@ void freeSystem(BusNetwork *sys) {
 }
 
 /*
- * Creates a new BusNetwork system and returns a pointer to it.
+ * Starts a new BusNetwork system and returns a pointer to it.
  */
 BusNetwork *startSystem() {
     BusNetwork *sys = (BusNetwork *)malloc(sizeof(BusNetwork));
