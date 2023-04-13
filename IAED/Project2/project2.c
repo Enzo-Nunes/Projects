@@ -1,48 +1,9 @@
-/* iaed-23 - ist1106336 - project2 */
+/*
+ * iaed-23 - ist1106336 - project2
+ * Main source file with main functions.
+ */
 
 #include "project2.h"
-
-/*
- * Returns the next word read in the buffer.
- */
-char *readNextWord(Buffer *buffer) {
-    int i = 0;
-    char *next_word = (char *)malloc(strlen(buffer->buffer) * sizeof(char));
-
-    if (next_word == NULL) {
-        printf(ERR_NO_MEMORY);
-        exit(1);
-    }
-
-    while (buffer->buffer[buffer->index] == ' ' ||
-           buffer->buffer[buffer->index] == '\n') {
-        buffer->index++;
-    }
-
-    if (buffer->buffer[buffer->index] == '"') {
-        buffer->index++;
-        while (buffer->buffer[buffer->index] != '"') {
-            next_word[i] = buffer->buffer[buffer->index];
-            i++, buffer->index++;
-        }
-        buffer->index++;
-    } else {
-        while (buffer->buffer[buffer->index] != ' ' &&
-               buffer->buffer[buffer->index] != '\n' &&
-               buffer->buffer[buffer->index] != '\0') {
-            next_word[i] = buffer->buffer[buffer->index];
-            i++, buffer->index++;
-        }
-    }
-    next_word[i] = '\0';
-
-    if (i == 0) {
-        free(next_word);
-        return NULL;
-    } else {
-        return next_word;
-    }
-}
 
 /*
  * Manages all the Line commands. Checks all argument options and validity, and
