@@ -98,6 +98,40 @@ void linkCommand(BusNetwork *sys, Buffer *buffer) {
     free(duration_pre);
 }
 
+void findLines(BusNetwork *sys, int stop_index) {
+    int i, count = 0;
+
+    for (i = 0; i < sys->nr_lines; i++) {
+        if (sys->line_list[i].destination != NULL &&
+            strcmp(sys->line_list[i].destination->stop->name,
+                   sys->stop_list[stop_index].name) == 0) {
+            if (count != 0) {
+                printf(" ");
+            }
+            printf("%s", sys->line_list[i].name);
+            count++;
+        }
+    }
+    if (count != 0) {
+        printf("\n");
+    }
+}
+
+void findLineCommand(BusNetwork *sys, Buffer *buffer) {
+    char *stop_name;
+    int stop_index;
+
+    stop_name = readNextWord(buffer);
+    stop_index = isStop(sys, stop_name);
+
+    if (stop_index == NOT_FOUND) {
+        printf(ERR_NO_STOP, stop_name);
+    } else {
+        findLines(sys, stop_index);
+    }
+    free(stop_name);
+}
+
 /*
  * Lists all the Line intersections in the system.
  */
@@ -259,6 +293,10 @@ int main() {
         case 'r':
             buffer->index = 2;
             removeLineCommand(sys, buffer);
+            break;
+        case 'f':
+            buffer->index = 2;
+            findLineCommand(sys, buffer);
             break;
         case 'i':
             intsecCommand(sys);
