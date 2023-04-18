@@ -106,12 +106,15 @@ void listLines(BusNetwork *sys) {
 
     for (i = 0; i < sys->nr_lines; i++) {
         line = sys->line_list[i];
-        printf("%s ", line.name);
-        if (line.nr_line_stops > 0) {
-            printf("%s %s ", line.origin->stop->name,
-                   line.destination->stop->name);
+        if (strlen(line.name) < 6) {
+            printf("%s ", line.name);
+            if (line.nr_line_stops > 0) {
+                printf("%s %s ", line.origin->stop->name,
+                       line.destination->stop->name);
+            }
+            printf("%d %.2f %.2f\n", line.nr_line_stops, line.cost,
+                   line.duration);
         }
-        printf("%d %.2f %.2f\n", line.nr_line_stops, line.cost, line.duration);
     }
 }
 
@@ -268,6 +271,11 @@ void listStops(BusNetwork *sys) {
  */
 void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
     Stop new_stop;
+
+    if (((lat < -90) || (lat > 90)) || ((lon < -180) || (lon > 180))) {
+        printf("invalid location.\n");
+        return;
+    }
 
     if (sys->nr_stops == 0) {
         sys->stop_list = (Stop *)malloc(CHUNK_SIZE * sizeof(Stop));
