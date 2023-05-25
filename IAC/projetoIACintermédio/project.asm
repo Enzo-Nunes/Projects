@@ -9,7 +9,7 @@
 
 
 ; ******************************************************************************
-; * Constantes
+; * CONSTANTES
 ; ******************************************************************************
 
 DISPLAYS					EQU 0A000H			; endereço dos displays de 7 segmentos (periférico POUT-1)
@@ -32,9 +32,9 @@ DEFINE_COLUNA   	 	 	EQU 600CH			; endereço do comando para definir a coluna
 DEFINE_PIXEL    	 	 	EQU 6012H			; endereço do comando para escrever um pixel
 APAGA_AVISO     		 	EQU 6040H			; endereço do comando para apagar o aviso de nenhum cenário selecionado
 SELECIONA_CENARIO_FUNDO		EQU 6042H			; endereço do comando para selecionar uma imagem de fundo
-	CENARIO_JOGO			EQU 0
+	CENARIO_JOGO			EQU 0				; cenário de jogo
 TOCA_SOM					EQU 605AH			; endereço do comando para tocar um som
-	SFX_AK_47				EQU 0
+	SFX_AK_47				EQU 0				; audio de disparo
 
 ; Dimensões Objetos
 
@@ -64,7 +64,7 @@ VERDE						EQU 0F5F0H			; cor do pixel: verde
 LARANJA						EQU 0FF50H			; cor do pixel: laranja
 
 ; ******************************************************************************
-; * Stacks
+; * STACKS
 ; ******************************************************************************
 
 PLACE 1000H
@@ -73,43 +73,51 @@ PLACE 1000H
 	STACK 100H									; espaço reservado para a pilha do processo "programa principal"
 SP_inicial:										; este é o endereço com que o SP deste processo deve ser inicializado
 
+
 ; ******************************************************************************
-; * Tabelas
+; * DADOS
 ; ******************************************************************************
 
-VALOR_DISPLAYS: WORD 0
+VALOR_DISPLAYS: WORD 0							; "variável global" do valor dos displays
 
-DEF_ASTEROIDE:									; objeto do asteroide
-	WORD		ALTURA_ASTEROIDE, LARGURA_ASTEROIDE	; dimensões do asteroide
-	WORD		VERMELHO , 0		, VERMELHO , 0		  , VERMELHO
-	WORD		0		 , VERMELHO , VERMELHO , VERMELHO , 0
-	WORD		VERMELHO , VERMELHO , 0		   , VERMELHO , VERMELHO
-	WORD		0		 , VERMELHO , VERMELHO , VERMELHO , 0
-	WORD		VERMELHO , 0		, VERMELHO , 0		  , VERMELHO
-	
+; ******************************************************************************
+; * Pixeis de referência dos objetos, i.e. onde começam a ser desenhados
+; ******************************************************************************
 REF_ASTEROIDE:									; pixel de referencia do asteroide
-	WORD LIN_ASTEROIDE_INIC, COL_ASTEROIDE_INIC
-
-DEF_SONDA:										; objeto da sonda
-	WORD ALTURA_SONDA, LARGURA_SONDA			; dimensões da sonda
-	WORD LARANJA
+	WORD 	LIN_ASTEROIDE_INIC, COL_ASTEROIDE_INIC
 
 REF_SONDA:										; pixel de referencia da sonda
-	WORD LIN_SONDA_INIC, COL_SONDA_INIC
+	WORD 	LIN_SONDA_INIC, COL_SONDA_INIC
 	
-DEF_PAINEL:										; tabela que define o objeto (cor, largura, pixels)
-	WORD        ALTURA_PAINEL, LARGURA_PAINEL
-	WORD		0		 , 0		, VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , 0        , 0
-	WORD		0		 , VERMELHO , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , VERMELHO , 0
-	WORD		VERMELHO , BRANCO	, BRANCO   , BRANCO	  , LARANJA  , VERDE    , VERMELHO , LARANJA  , VERDE    , VERMELHO , LARANJA  , BRANCO   , BRANCO   , BRANCO   , VERMELHO
-    WORD		VERMELHO , BRANCO	, BRANCO   , BRANCO   , VERMELHO , LARANJA  , VERDE    , VERMELHO , LARANJA  , VERDE    , VERMELHO , BRANCO   , BRANCO   , BRANCO   , VERMELHO
-	WORD        VERMELHO , BRANCO	, BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , VERMELHO
-
 REF_PAINEL:										; pixel de referencia do painel
-	WORD LIN_PAINEL_INIC, COL_PAINEL_INIC
+	WORD 	LIN_PAINEL_INIC, COL_PAINEL_INIC
 
 ; ******************************************************************************
-; * Código Principal
+; * Tabelas de desenhos dos objetos
+; ******************************************************************************
+DEF_ASTEROIDE:									; tabela do asteroide
+	WORD	ALTURA_ASTEROIDE, LARGURA_ASTEROIDE	; dimensões do asteroide
+	WORD	VERMELHO , 0		, VERMELHO , 0		  , VERMELHO
+	WORD	0		 , VERMELHO , VERMELHO , VERMELHO , 0
+	WORD	VERMELHO , VERMELHO , 0		   , VERMELHO , VERMELHO
+	WORD	0		 , VERMELHO , VERMELHO , VERMELHO , 0
+	WORD	VERMELHO , 0		, VERMELHO , 0		  , VERMELHO
+
+DEF_SONDA:										; tabela da sonda. (1 pixel apenas)
+	WORD 	ALTURA_SONDA, LARGURA_SONDA			; dimensões da sonda
+	WORD 	LARANJA
+
+DEF_PAINEL:										; tabela do painel de instrumentos
+	WORD	ALTURA_PAINEL, LARGURA_PAINEL		; dimensões do painel
+	WORD	0		 , 0		, VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , 0        , 0
+	WORD	0		 , VERMELHO , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , VERMELHO , 0
+	WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO	  , LARANJA  , VERDE    , VERMELHO , LARANJA  , VERDE    , VERMELHO , LARANJA  , BRANCO   , BRANCO   , BRANCO   , VERMELHO
+    WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO   , VERMELHO , LARANJA  , VERDE    , VERMELHO , LARANJA  , VERDE    , VERMELHO , BRANCO   , BRANCO   , BRANCO   , VERMELHO
+	WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , VERMELHO
+
+
+; ******************************************************************************
+; * CÓDIGO PRINCIPAL
 ; ******************************************************************************
 
 PLACE	   0
@@ -118,7 +126,7 @@ inicializacoes:
     MOV [APAGA_AVISO], R1						; apaga o aviso de nenhum cenário selecionado (R1 não é relevante)
     MOV [APAGA_ECRA], R1						; apaga todos os pixels já desenhados (R1 não é relevante)
 	MOV R1, CENARIO_JOGO
-	MOV [SELECIONA_CENARIO_FUNDO], R1			; coloca o cenário de fundo
+	MOV [SELECIONA_CENARIO_FUNDO], R1			; coloca o cenário de fundo de jogo
 	MOV R1, 0
 	MOV [DISPLAYS], R1							; escreve linha e coluna a zero nos displays
 
@@ -126,7 +134,7 @@ CALL desenha_asteroide							; desenha o asteroide
 CALL desenha_sonda								; desenha a sonda
 CALL desenha_painel								; desenha o painel da nave
 
-ciclo_teclado:
+ciclo_teclado:									; ciclo que vai repetidamente esperar uma ação no teclado
 	CALL inicio_teclado
 	JMP verifica_tecla
 
@@ -134,7 +142,12 @@ fim:
 	JMP fim
 
 ; ******************************************************************************
-; * Teclado
+; * FUNÇÕES DO TECLADO
+; ******************************************************************************
+
+; ******************************************************************************
+; * inicio_teclado - 	Função que lê do perférico e codifica em hexadecimal a
+; *						tecla premida pelo utilizador.
 ; ******************************************************************************
 
 inicio_teclado:
@@ -151,36 +164,33 @@ inicio_teclado:
     MOV  R4, DISPLAYS							; endereço do periférico dos displays
     MOV  R5, MASCARA							; para isolar os 4 bits de menor peso, ao ler as colunas do teclado
 	MOV  R6, 8									; constante para usar no CMP
-	MOV  R7, 0						
+	MOV  R7, 0									; onde é armazenada a linha da tecla premida
 	MOV  R8, 0									; onde é armazenada a tecla premida, entre 0 e FH
 	MOV  R9, 0									; contador que vai ligar aos displays
-ciclo:						
-    MOV  R1, 0									; inicializa a linha
-	MOV  R0, 0									; inicializa a coluna
-	MOV  R1, LINHA								; testar a linha 1
-
-espera_tecla:									; neste ciclo espera-se até uma tecla ser premida
-    MOVB [R2], R1								; escrever no periférico de saída (linhas)
-    MOVB R0, [R3]								; ler do periférico de entrada (colunas)
-    AND  R0, R5									; elimina bits para além dos bits 0-3
-    CMP  R0, 0									; há tecla premida?
-    JZ   muda_linha								; se nenhuma tecla premida na linha, muda de linha
-	MOV  R7, R1									; guarda a linha no R7 porque o R1 vai ser alterado 
-	JMP  converte_num							; caso contrário converte a tecla para um n�mero hexadecimal
-	
-muda_linha:
-	CMP  R1, R6									; testa se a linha atual é a linha 4
-	JZ   ciclo									; repete o ciclo
-	SHL  R1, 1									; muda de linha
-	JMP  espera_tecla							; testar a proxima linha
-
-converte_num:									; converte a tecla premida para um n�mero hexadecimal entre 0 e FH
+	ciclo:
+		MOV  R1, 0								; inicializa a linha
+		MOV  R0, 0								; inicializa a coluna
+		MOV  R1, LINHA							; testar a linha 1
+		espera_tecla:							; neste ciclo espera-se até uma tecla ser premida
+			MOVB [R2], R1						; escrever no periférico de saída (linhas)
+			MOVB R0, [R3]						; ler do periférico de entrada (colunas)
+			AND  R0, R5							; elimina bits para além dos bits 0-3
+			CMP  R0, 0							; há tecla premida?
+			JZ   muda_linha						; se nenhuma tecla premida na linha, muda de linha
+			MOV  R7, R1							; guarda a linha no R7 porque o R1 vai ser alterado 
+			JMP  converte_num					; caso contrário converte a tecla para um n�mero hexadecimal
+		muda_linha:
+			CMP  R1, R6							; testa se a linha atual é a linha 4
+			JZ   ciclo							; repete o ciclo
+			SHL  R1, 1							; muda de linha
+			JMP  espera_tecla					; testar a proxima linha
+converte_num:									; converte a tecla premida para um número hexadecimal entre 0 e FH
 	MOV  R8, 0									; resultado final
 	CALL converte_num_ciclo						; converte a linha        
 	SHL  R8, 2									; multiplica o número correspondente à linha por quatro
 	MOV  R1, R0         
 	CALL converte_num_ciclo						; converte a coluna
-	POP		R9
+	POP R9
 	POP R6
 	POP R5
 	POP R4
@@ -189,37 +199,41 @@ converte_num:									; converte a tecla premida para um n�mero hexadecimal en
 	POP R1
 	POP R0
 	RET
-
-converte_num_ciclo:								; acumula o número de SHR feitos at� o valor da linha/coluna ser 0    
-	SHR  R1, 1
+converte_num_ciclo:								; acumula o número de SHR feitos até o valor da linha/coluna ser 0    
+	SHR  R1, 1									
 	CMP  R1, 0									; se o número já for 0
 	JZ   converte_num_ret						; termina o ciclo
 	ADD  R8, 1									; adiciona ao resultado final
 	JMP  converte_num_ciclo						; repete ciclo
-	
 converte_num_ret:
 	RET
-	
+
 ; ******************************************************************************
-; * Funções das teclas do teclado
+; * verifica_tecla - 	Função que determina qual foi a tecla premida pelo
+; * 					utilizador através do seu valor hexadecimal.
 ; ******************************************************************************
 
-verifica_tecla:									; verifica a tecla que foi premids para incrementar ou decrementar os displays
+verifica_tecla:									; determina qual deve ser a ação consoante a tecla premida
 	MOV	R1, INCREMENT
-	CMP	R8, R1									; verifica se a tecla � a tecla que incrementa
+	CMP	R8, R1									; verifica se a tecla premida é a tecla que incrementa os displays
 	JZ	incrementa_display
 	MOV	R1, DECREMENT
-	CMP	R8, R1									; verifica se a tecla � a tecla que decrementa
+	CMP	R8, R1									; verifica se a tecla premida é a tecla que decrementa os displays
 	JZ	decrementa_display
 	MOV	R1, MEXE_ASTEROIDE
-	CMP	R8, R1
+	CMP	R8, R1									; verifica se a tecla premida é a tecla que move o asteroide
 	JZ	mexer_asteroide
 	MOV	R1, MEXE_SONDA
-	CMP	R8, R1
+	CMP	R8, R1									; verifica se a tecla premida é a tecla que move a sonda
 	JZ	mexer_sonda
 	JMP	ha_tecla								; aguarda que a tecla deixe de ser premida
-	
-ha_tecla:										; neste ciclo espera-se at� NENHUMA tecla estar premida
+
+; ******************************************************************************
+; * ha_tecla - 			Função que espera que o utilizador deixe de premir a
+; * 					tecla.
+; ******************************************************************************
+
+ha_tecla:										; neste ciclo espera-se até NENHUMA tecla estar premida
 	PUSH R0
 	PUSH R1
 	PUSH R2
@@ -230,20 +244,20 @@ ha_tecla:										; neste ciclo espera-se at� NENHUMA tecla estar premida
 		MOV R2, TEC_LIN
 		MOV R3, TEC_COL
 		MOV R4, MASCARA
-		MOVB [R2], R1							; escrever no perif�rico de sa�da (linhas)
-		MOVB R0, [R3]							; ler do perif�rico de entrada (colunas)
-		AND  R0, R4								; elimina bits para al�m dos bits 0-3
-		CMP  R0, 0 								; h� tecla premida?
-		JNZ  ciclo_ha_tecla 					; se ainda houver uma tecla premida, espera at� n�o haver
+		MOVB [R2], R1							; escrever no periférico de saída (linhas)
+		MOVB R0, [R3]							; ler do periférico de entrada (colunas)
+		AND  R0, R4								; elimina bits para além dos bits 0-3
+		CMP  R0, 0 								; há tecla premida?
+		JNZ  ciclo_ha_tecla 					; se ainda houver uma tecla premida, espera até não haver
 	POP R4
 	POP R3
 	POP R2
 	POP R1
 	POP R0
-	JMP ciclo_teclado
+	JMP ciclo_teclado							; volta ao ciclo inicial do programa
 
 ; ******************************************************************************
-; * Rotinas
+; * ROTINAS - funções gerais que são chamadas por outras funções.
 ; ******************************************************************************
 
 ; ******************************************************************************
@@ -253,27 +267,27 @@ ha_tecla:										; neste ciclo espera-se at� NENHUMA tecla estar premida
 incrementa_display:
 	PUSH R9
 	MOV R9, [VALOR_DISPLAYS]					; valor atual dos displays
-	ADD R9, 1
+	ADD R9, 1									; incrementa o valor em 1
 	MOV [DISPLAYS], R9							; atualiza os displays
 	MOV [VALOR_DISPLAYS], R9					; atualiza a variável do valor dos displays
 	POP R9
 	JMP ha_tecla								; aguarda que a tecla deixe de ser premida
 	
 ; ******************************************************************************
-; * decrementa_display- decrementa o valor dos displays por 1
+; * decrementa_display - decrementa o valor dos displays por 1
 ; ******************************************************************************
 
 decrementa_display:
 	PUSH R9
 	MOV R9, [VALOR_DISPLAYS]					; valor atual dos displays
-	SUB R9, 1
+	SUB R9, 1									; decrementa o valor em 1
 	MOV [DISPLAYS], R9							; atualiza os displays
 	MOV [VALOR_DISPLAYS], R9					; atualiza a variável do valor dos displays
 	POP R9
 	JMP ha_tecla								; aguarda que a tecla deixe de ser premida
 
 ; ******************************************************************************
-; * mexer_asteroide- avança o asteroide para a próxima posição
+; * mexer_asteroide - 	avança o asteroide para a próxima posição
 ; ******************************************************************************
 
 mexer_asteroide:
@@ -297,8 +311,8 @@ mexer_asteroide:
 	JMP ha_tecla								; aguarda que a tecla deixe de ser premida
 	
 ; ******************************************************************************
-; * mexer_sonda- apaga a sonda, decrementa por 1 a lin do pixel de referencia
-;					e desenha-a outra vez
+; * mexer_sonda - 		apaga a sonda, decrementa por 1 a lin do pixel de
+; *						referencia e desenha-a outra vez
 ; ******************************************************************************
 
 mexer_sonda:
@@ -318,11 +332,10 @@ mexer_sonda:
 	JMP ha_tecla								; aguarda que a tecla deixe de ser premida
 
 
-; **********************************************************************
-; desenha_asteroide - chama a funcao desenha_objeto com os argumentos
-;                   necessarios para que esta desenhe o asteroide
-;
-; **********************************************************************
+; ******************************************************************************
+; * desenha_asteroide - chama a funcao desenha_objeto com os argumentos
+; *                 	para desenhar o asteroide.
+; ******************************************************************************
 
 desenha_asteroide:
 	PUSH R1
@@ -337,11 +350,10 @@ desenha_asteroide:
 	POP R1
 	RET
 	
-; **********************************************************************
-; desenha_sonda - chama a funcao desenha_objeto com os argumentos
-;                   necessarios para que esta desenhe a sonda
-;
-; **********************************************************************
+; ******************************************************************************
+; * desenha_sonda - 	chama a funcao desenha_objeto com os argumentos
+; *						necessarios para desenhar a sonda.
+; ******************************************************************************
 
 desenha_sonda:
 	PUSH R1
@@ -356,11 +368,10 @@ desenha_sonda:
 	POP R1
 	RET
 	
-; **********************************************************************
-; desenha_painel - chama a funcao desenha_objeto com os argumentos
-;                   necessarios para que esta desenhe o painel
-;
-; **********************************************************************
+; ******************************************************************************
+; * desenha_painel - 	chama a funcao desenha_objeto com os argumentos
+; *                 	necessarios para desenhar o painel da nave.
+; ******************************************************************************
 
 desenha_painel:
 	PUSH R1
@@ -376,12 +387,12 @@ desenha_painel:
 	RET
 
 
-; **********************************************************************
-; desenha_objeto - desenha um objeto respeitando os argumentos
-; argumentos - 		R1 - linha
-;					R2 - coluna
-;					R3 - tabela
-; **********************************************************************
+; ******************************************************************************
+; * desenha_objeto - 	desenha um objeto respeitando os argumentos:
+; *						R1 - linha do pixel de referência
+; *						R2 - coluna do pixel de referência
+; *						R3 - tabela do objeto
+; ******************************************************************************
 
 desenha_objeto:									; desenha o objeto a partir da tabela
     PUSH R1
@@ -422,12 +433,12 @@ desenha_objeto:									; desenha o objeto a partir da tabela
 	POP  R1
 	RET
 	
-; **********************************************************************
-; apaga_objeto - apaaga um objeto respeitando os argumentos
-; argumentos - 		R1 - linha
-;					R2 - coluna
-;					R3 - tabela
-; **********************************************************************	
+; ******************************************************************************
+; *	apaga_objeto - 		apaga um objeto respeitando os argumentos:
+; *						R1 - linha do pixel de referência
+; *						R2 - coluna do pixel de referência
+; *						R3 - tabela do objeto
+; ******************************************************************************
 	
 apaga_objeto:									; apaga o objeto a partir da tabela
     PUSH R1
