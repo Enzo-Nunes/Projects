@@ -22,10 +22,9 @@ MASCARA						EQU 0FH				; para isolar os 4 bits de menor peso, ao ler as colunas
 INCREMENT					EQU 0AH				; tecla que incrementa o valor dos displays
 DECREMENT					EQU 0BH				; tecla que decrementa o valor dos displays
 MEXE_ASTEROIDE				EQU 0EH				; tecla que mexe o asteroide
-MEXE_SONDA					EQU 0FH
+MEXE_SONDA					EQU 0FH				; tecla que mexe a sonda
 
 ; MediaCenter
-
 APAGA_ECRA	 				EQU 6002H			; endereço do comando para apagar todos os pixels já desenhados
 DEFINE_LINHA				EQU 600AH			; endereço do comando para definir a linha
 DEFINE_COLUNA				EQU 600CH			; endereço do comando para definir a coluna
@@ -36,8 +35,7 @@ SELECIONA_CENARIO_FUNDO		EQU 6042H			; endereço do comando para selecionar uma 
 TOCA_SOM					EQU 605AH			; endereço do comando para tocar um som
 	SFX_AK_47				EQU 0				; audio de disparo
 
-; Dimensões Objetos
-
+; Dimensões dos Objetos
 ALTURA_ASTEROIDE			EQU 5				; altura do objeto asteroide
 LARGURA_ASTEROIDE			EQU 5				; largura do objeto asteroide
 LIN_ASTEROIDE_INIC			EQU 0				; linha referencia do asteroide
@@ -54,7 +52,6 @@ LIN_PAINEL_INIC				EQU 27				; linha referencia do painel
 COL_PAINEL_INIC				EQU 25				; linha referencia do painel
 
 ; Cores
-
 AMARELO						EQU 0FFE0H			; cor do pixel: amarelo
 VERMELHO					EQU 0FF00H			; cor do pixel: vermelho
 PRETO						EQU 0F000H			; cor do pixel: preto
@@ -62,6 +59,7 @@ BRANCO						EQU 0FFFFH			; cor do pixel: branco
 CINZENTO					EQU 0FCCCH			; cor do pixel: cinzento
 VERDE						EQU 0F5F0H			; cor do pixel: verde
 LARANJA						EQU 0FF50H			; cor do pixel: laranja
+AZUL						EQU 0F00FH			; cor do pixel: azul
 
 ; ******************************************************************************
 ; * STACKS
@@ -105,14 +103,14 @@ DEF_ASTEROIDE:									; tabela do asteroide
 
 DEF_SONDA:										; tabela da sonda. (1 pixel apenas)
 	WORD 	ALTURA_SONDA, LARGURA_SONDA			; dimensões da sonda
-	WORD 	LARANJA
+	WORD 	AZUL
 
 DEF_PAINEL:										; tabela do painel de instrumentos
 	WORD	ALTURA_PAINEL, LARGURA_PAINEL		; dimensões do painel
 	WORD	0		 , 0		, VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , VERMELHO , 0        , 0
 	WORD	0		 , VERMELHO , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , VERMELHO , 0
-	WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO	  , LARANJA  , VERDE    , VERMELHO , LARANJA  , VERDE    , VERMELHO , LARANJA  , BRANCO   , BRANCO   , BRANCO   , VERMELHO
-    WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO   , VERMELHO , LARANJA  , VERDE    , VERMELHO , LARANJA  , VERDE    , VERMELHO , BRANCO   , BRANCO   , BRANCO   , VERMELHO
+	WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO	  , AZUL     , VERDE    , VERMELHO , AZUL     , VERDE    , VERMELHO , AZUL     , BRANCO   , BRANCO   , BRANCO   , VERMELHO
+    WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO   , VERMELHO , AZUL     , VERDE    , VERMELHO , AZUL     , VERDE    , VERMELHO , BRANCO   , BRANCO   , BRANCO   , VERMELHO
 	WORD	VERMELHO , BRANCO	, BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , BRANCO   , VERMELHO
 
 
