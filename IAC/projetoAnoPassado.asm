@@ -138,6 +138,7 @@ DEF_METEORO_MAU_5:                          ; desenho do meteoro mau 5x5
     WORD          BRANCO,      BRANCO,      PRETO,       BRANCO,      BRANCO
     WORD          BRANCO,      0,           BRANCO,      0,           BRANCO
     WORD          0,           0,           0,           0,           0
+	
 DEF_EXPLOSAO_BOM:                           ; desenho da explosao 5x5
     WORD LARGURA_MET_MAU_5, ALTURA_MET_MAU_5
     WORD          0,      0,      AMARELO,      0,      0

@@ -3,7 +3,7 @@
 ; * Alunos: Enzo Nunes 		ist1106336
 ;			João Ribeiro 	ist1107251
 ;			David Antunes	ist1107061
-; * PROJETO
+; * Grupo 03
 ; * Descrição: Parte intermédia do projeto "Beyond Mars".
 ; ******************************************************************************
 

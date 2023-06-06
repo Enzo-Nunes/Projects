@@ -772,7 +772,7 @@
       "pinConnectionID" : -1,
       "pinValueFixed" : "1"
     },
-    "programFilePathName" : "project.asm",
+    "programFilePathName" : "grupo03.asm",
     "nTabSpaces" : 4,
     "bus interface" : {
       "className" : "ModuleExtensionMasterBusReadWrite",
@@ -1534,15 +1534,15 @@
     "windowScreenWidthPixels" : 1024,
     "windowScreenHeightixels" : 512,
     "defaultPenColor" : 65280,
-    "image paths" : [ "black-hole-space-digital-art-hd-wallpaper-uhdpaper.com-1020i.jpg" ],
+    "image paths" : [ "cenario.jpg" ],
     "sounds/videos settings" : [ {
-      "filePathName" : "X2Download_mp3cut.net.mp3",
+      "filePathName" : "disparo.mp3",
       "relative sound volume" : 1.0,
       "relative start time" : 0.0,
       "relative stop time" : 1.0,
       "playAsClip" : false
     }, {
-      "filePathName" : "one_beep-99630.mp3",
+      "filePathName" : "beep.mp3",
       "relative sound volume" : 1.0,
       "relative start time" : 0.0,
       "relative stop time" : 1.0,
