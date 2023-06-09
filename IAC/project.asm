@@ -64,7 +64,7 @@ MASCARA_0AH					EQU 0AH				; Mascaras para a conversão de hex para decimal
 MASCARA_0A0H				EQU 0A0H
 MASCARA_0FH					EQU 0FH
 MASCARA_0F0H				EQU 0F0H
-MASCARA_ALEATORIO			EQU 3H				; para isolar os 2 bits de menor peso, ao ler o periférico PIN
+MASCARA_ALEATORIO			EQU 3H				; Mascara para isolar os 2 bits de menor peso, ao ler o periférico PIN
 
 ; Dimensões, coordenadas e movimento dos Objetos
 ALTURA_ASTEROIDE			EQU 5				; altura do objeto asteroide
@@ -772,8 +772,8 @@ converte_num:									; converte a tecla premida para um número hexadecimal ent
 	converte_num_ciclo_ret:
 		RET
 converte_num_ret:
-	POP R1
-	POP R0
+	POP  R1
+	POP  R0
 	RET
 
 ; ******************************************************************************
