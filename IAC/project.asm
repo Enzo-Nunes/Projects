@@ -284,28 +284,28 @@ DEF_ASTEROIDE_MAU:								; tabela do asteroide
 	WORD	0, CINZENTO, VERMELHO, CINZENTO, 0
 	
 DEF_ASTEROIDE_BOM:								; tabela do asteroide bom
-    WORD    ALTURA_ASTEROIDE, LARGURA_ASTEROIDE
-    WORD	0, CINZENTO, CINZENTO, VERDE, 0 
+	WORD	ALTURA_ASTEROIDE, LARGURA_ASTEROIDE
+	WORD	0, CINZENTO, CINZENTO, VERDE, 0 
 	WORD	CINZENTO, VERDE, CINZENTO, CINZENTO, CINZENTO
 	WORD	CINZENTO, CINZENTO, VERDE, CINZENTO, VERDE
 	WORD	VERDE, CINZENTO, CINZENTO, CINZENTO, CINZENTO
 	WORD	0, CINZENTO, VERDE, CINZENTO, 0
 	
 DEF_ESPLOSAO_ASTEROIDE_MAU:						; tabela da explosão do asteroide mau
-    WORD	ALTURA_ASTEROIDE, LARGURA_ASTEROIDE
-    WORD	0, 0, AMARELO, 0, CINZENTO 
-    WORD	AMARELO, LARANJA, 0, AMARELO, 0
-    WORD	0, CINZENTO, LARANJA, 0, 0
-    WORD	AMARELO, 0, LARANJA, CINZENTO, AMARELO
-    WORD	0, 0, AMARELO, 0, 0
+	WORD	ALTURA_ASTEROIDE, LARGURA_ASTEROIDE
+	WORD	0, 0, AMARELO, 0, CINZENTO 
+	WORD	AMARELO, LARANJA, 0, AMARELO, 0
+	WORD	0, CINZENTO, LARANJA, 0, 0
+	WORD	AMARELO, 0, LARANJA, CINZENTO, AMARELO
+	WORD	0, 0, AMARELO, 0, 0
 
 DEF_EXPLOSAO_ASTEROIDE_BOM:						; tabela da explosão do asteroide bom
-    WORD	ALTURA_ASTEROIDE, LARGURA_ASTEROIDE
-    WORD	0 , 0     , 0     , 0     , 0
-    WORD	0 , 0     , VERDE , 0     , 0
-    WORD	0 , VERDE , VERDE , VERDE , 0
-    WORD	0 , 0     , VERDE , 0     , 0
-    WORD	0 , 0     , 0     , 0     , 0
+	WORD	ALTURA_ASTEROIDE, LARGURA_ASTEROIDE
+	WORD	0 , 0     , 0     , 0     , 0
+	WORD	0 , 0     , VERDE , 0     , 0
+	WORD	0 , VERDE , VERDE , VERDE , 0
+	WORD	0 , 0     , VERDE , 0     , 0
+	WORD	0 , 0     , 0     , 0     , 0
 
 DEF_SONDA:										; tabela da sonda. (1 pixel apenas)
 	WORD 	ALTURA_SONDA, LARGURA_SONDA
@@ -316,7 +316,7 @@ DEF_PAINEL:										; tabela do painel de instrumentos
 	WORD	0	 , 0        , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , ROXO     , 0        , 0
 	WORD	0    , ROXO     , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , ROXO     , 0
 	WORD	ROXO , CINZENTO	, CINZENTO , CINZENTO , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , CINZENTO , CINZENTO , CINZENTO , ROXO
-    WORD	ROXO , CINZENTO	, CINZENTO , CINZENTO , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , CINZENTO , CINZENTO , CINZENTO , ROXO
+	WORD	ROXO , CINZENTO	, CINZENTO , CINZENTO , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , PRETO    , CINZENTO , CINZENTO , CINZENTO , ROXO
 	WORD	ROXO , CINZENTO	, CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , CINZENTO , ROXO
 
 
@@ -326,16 +326,16 @@ DEF_PAINEL:										; tabela do painel de instrumentos
 
 PLACE	   0
 inicializacoes:
-    MOV SP, SP_inicial_prog_princ				; inicialização do Stack Pointer
-    MOV [APAGA_AVISO], R1						; apaga o aviso de nenhum cenário selecionado (R1 não é relevante)
-    MOV [APAGA_ECRA], R1						; apaga todos os pixels já desenhados (R1 não é relevante)
+	MOV SP, SP_inicial_prog_princ				; inicialização do Stack Pointer
+	MOV [APAGA_AVISO], R1						; apaga o aviso de nenhum cenário selecionado (R1 não é relevante)
+	MOV [APAGA_ECRA], R1						; apaga todos os pixels já desenhados (R1 não é relevante)
 	MOV R1, ENERGIA_INICIAL						; energia inicial em R1
 	MOV [DISPLAYS], R1							; atualiza os displays
 	MOV [VALOR_DISPLAYS], R1					; atualiza o valor dos displays
 	MOV BTE, tab_interrupcoes					; inicialização da BTE
 	EI0											; permite interrupções 0
 	EI1											; permite interrupções 1
-    EI2											; permite interrupções 2
+	EI2											; permite interrupções 2
 	EI3											; permite interrupções 3
 	EI											; permite interrupções (geral)
 
@@ -500,9 +500,9 @@ controlo:
 PROCESS SP_inicial_teclado						; indicação que aqui começa um processo
 inicio_teclado:
 	MOV R2, TEC_LIN								; endereço do periférico das linhas
-    MOV R3, TEC_COL								; endereço do periférico das colunas
-    MOV R4, DISPLAYS							; endereço do periférico dos displays
-    MOV R5, MASCARA								; para isolar os 4 bits de menor peso, ao ler as colunas do teclado
+	MOV R3, TEC_COL								; endereço do periférico das colunas
+	MOV R4, DISPLAYS							; endereço do periférico dos displays
+	MOV R5, MASCARA								; para isolar os 4 bits de menor peso, ao ler as colunas do teclado
 	MOV R6, 8									; constante para usar no CMP
 	MOV R7, 0									; onde é armazenada a linha da tecla premida
 	MOV R8, 0									; onde é armazenada a tecla premida, entre 0 e FH
@@ -527,12 +527,12 @@ inicio_teclado:
 				MOV R1, 3						; estado estiver pausado
 				MOV [GAME_OVER], R1				; atualiza o estado do jogo
 				JMP ha_tecla					; verifica se a tecla ainda está a ser premida
-        verificar_se_terminou:
-            MOV  R1, TECLA_QUIT
-            CMP  R8, R1							; verifica se a tecla quit foi premida 
-            JNZ  ha_tecla						; se nao, salta para ha_tecla
-            MOV  R1, 4							; estado para terminar o jogo
-            MOV  [GAME_OVER], R1
+		verificar_se_terminou:
+			MOV  R1, TECLA_QUIT
+			CMP  R8, R1							; verifica se a tecla quit foi premida 
+			JNZ  ha_tecla						; se nao, salta para ha_tecla
+			MOV  R1, 4							; estado para terminar o jogo
+			MOV  [GAME_OVER], R1
 			JMP  ha_tecla						; verifica se a tecla ainda está a ser premida
 		muda_linha:
 			CMP  R1, R6							; testa se a linha atual é a linha 4
@@ -603,9 +603,9 @@ PROCESS SP_inicial_asteroide_0
 	asteroide:
 		MOV  R0, [START]
 		MOV  R10, R11							; cópia do nº de instância do processo
-	    SHL  R10, 1								; multiplica por 2 porque as tabelas são de WORDS
-	    MOV  R9, tab_stack_asteroides			; tabela com os SPs iniciais das várias instâncias deste processo
-	    MOV	 SP, [R9+R10]						; re-inicializa o SP deste processo, de acordo com o nº de instância
+		SHL  R10, 1								; multiplica por 2 porque as tabelas são de WORDS
+		MOV  R9, tab_stack_asteroides			; tabela com os SPs iniciais das várias instâncias deste processo
+		MOV	 SP, [R9+R10]						; re-inicializa o SP deste processo, de acordo com o nº de instância
 		MOV  R4, ESTADO_COLISAO_ASTEROIDE		; tabela com o estado de colisão do asteroide
 		ADD  R4, R10							; ajustar o endereço segundo a instancia do processo
 		SHL  R10, 1								; tabela de referencia tem 2 words para cada instancia (linha, coluna)
@@ -686,16 +686,16 @@ PROCESS SP_inicial_asteroide_0
 
 PROCESS SP_inicial_sonda_0
 	sonda:
-		MOV  R0, [START]							; verifica se o jogo já começou
-		MOV  R10, R11       						; cópia do nº de instância do processo
-	    SHL  R10, 1     							; multiplica por 2 porque as tabelas são de WORDS
-	    MOV  R9, tab_stack_sondas	        	; tabela com os SPs iniciais das várias instâncias deste processo
-	    MOV	 SP, [R9+R10]        				; re-inicializa o SP deste processo, de acordo com o nº de instância
+		MOV  R0, [START]						; verifica se o jogo já começou
+		MOV  R10, R11							; cópia do nº de instância do processo
+	    SHL  R10, 1								; multiplica por 2 porque as tabelas são de WORDS
+	    MOV  R9, tab_stack_sondas				; tabela com os SPs iniciais das várias instâncias deste processo
+	    MOV	 SP, [R9+R10]						; re-inicializa o SP deste processo, de acordo com o nº de instância
 		SHL  R10, 1								; tabela de referencia tem 2 words para cada instancia (linha, coluna)
 		MOV  R0, TECLA_DISPARAR					; tabela com as teclas para disparar cada sonda	
-		MOV  R10, R11       						; cópia do nº de instância do processo
-		SHL  R10, 1     							; multiplica por 2 porque as tabelas são de WORDS
-		ADD  R0, R10								; acertar a tabela da tecla de disparar
+		MOV  R10, R11							; cópia do nº de instância do processo
+		SHL  R10, 1								; multiplica por 2 porque as tabelas são de WORDS
+		ADD  R0, R10							; acertar a tabela da tecla de disparar
 		MOV  R6, [R0]							; tecla para disparar a sonda
 	reset_sonda:
 		MOV  R0, [TECLA_CARREGADA]				; tecla pressionada no teclado
