@@ -6,7 +6,7 @@ public class Spreadsheet {
 	CutBuffer	_cutBuffer;
 
 	public Spreadsheet(User owner, int width, int height) {
-		_owners = owner;
+		_owners = new User[] { owner };
 		// FIXME implement cell creation
 	}
 
@@ -17,6 +17,4 @@ public class Spreadsheet {
 	public void removeOwner(User owner) {
 		// FIXME implement method
 	}
-
-	public void 
 }
