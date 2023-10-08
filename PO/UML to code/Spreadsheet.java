@@ -1,5 +1,3 @@
-package xxl.UMLracisms;
-
 public class Spreadsheet {
 	User[]		_owners;
 	Cell[]		_cells;
