@@ -5,19 +5,16 @@ public class Cell {
 	Cell[] _dependants;
 	CellValue _content;
 
-	public Cell(int x, int y)
-	{
+	public Cell(int x, int y) {
 		_x = x; _y = y;
 	}
 
-	public void update(CellValue value)
-	{
+	public void update(CellValue value) {
 		_content = value;
 		//Update dependants
 	}
 
-	public ValueWrapper getValue()
-	{
+	public ValueWrapper getValue() throws Exception {
 		return _content.getValue();
 	}
 }
