@@ -1,17 +1,21 @@
 package xxl.core;
 
 public class Cell {
-	int _x, _y;
+	Position _position;
 	Cell[] _dependants;
 	CellValue _content;
 
-	public Cell(int x, int y) {
-		_x = x; _y = y;
+	public Cell(int posX, int posY) {
+		_position = new Position(posX, posY);
+	}
+
+	public Cell(Position pos){
+		_position = pos;
 	}
 
 	public void update(CellValue value) {
 		_content = value;
-		//Update dependants
+		//TODO: Update dependants
 	}
 
 	public ValueWrapper getValue() throws Exception {
