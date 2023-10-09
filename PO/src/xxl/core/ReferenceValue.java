@@ -1,16 +1,18 @@
 package xxl.core;
 
 public class ReferenceValue extends CellValue {
-	Cell _refCell;
+	private Position _referencedPos;
+	private Spreadsheet _sheet;
 
-	public ReferenceValue(Cell referencedCell)
+	public ReferenceValue(Position referencedPosition, Spreadsheet containingSheet)
 	{
-		_refCell = referencedCell;
+		_referencedPos = referencedPosition;
+		_sheet = containingSheet;
 	}
 
-	public ValueWrapper getValue()
+	public ValueWrapper getValue() throws Exception
 	{
-		return _refCell.getValue();
+		return _sheet.getCellContent(_referencedPos);
 	}
 
 	public void recalculate()
@@ -20,6 +22,6 @@ public class ReferenceValue extends CellValue {
 
 	public CellValue deepCopy()
 	{
-		return new ReferenceValue(_refCell);
+		return new ReferenceValue(_referencedPos, _sheet);
 	}
 }

@@ -2,23 +2,25 @@ package xxl.core;
 
 public class BinaryArgument {
 	private int _literal;
-	private Cell _refrence;
+	private Position _referencedPos;
+	private Spreadsheet _sheet;
 
 	public BinaryArgument(int literal)
 	{
 		_literal = literal;
 	}
 
-	public BinaryArgument(Cell reference)
+	public BinaryArgument(Position referencedPosition, Spreadsheet containingSheet)
 	{
-		_refrence = reference;
+		_referencedPos = referencedPosition;
+		_sheet = containingSheet;
 	}
 
 	public int getValue() throws Exception
 	{
-		if (_refrence == null)
+		if (_referencedPos == null)
 			return _literal;
 
-		return _refrence.getValue().getInt();
+		return _sheet.getCellContent(_referencedPos).getInt();
 	}
 }

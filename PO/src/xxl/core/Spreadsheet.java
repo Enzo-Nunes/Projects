@@ -1,39 +1,47 @@
 package xxl.core;
 
-// FIXME import classes
+import java.nio.channels.ClosedSelectorException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import java.io.Serial;
-import java.io.Serializable;
+public class Spreadsheet {
+	ArrayList<User> _owners;
+	HashMap<Position, Cell> _cells;
+	CutBuffer _cutBuffer;
+	Parser _parser;
 
-import xxl.core.exception.UnrecognizedEntryException;
 
-/**
- * Class representing a spreadsheet.
- */
-public class Spreadsheet implements Serializable {
-  @Serial
-  private static final long serialVersionUID = 202308312359L;
-  
-//   User[]	_owners;
-//   Cell[][]	_cells;
-//   CutBuffer	_cutBuffer;
 
-  // FIXME define contructor(s)
+	public Spreadsheet(User owner, int width, int height) {
+		_owners = new ArrayList<User>();
+		_owners.add(owner);
 
-  public Spreadsheet(int numRows, int numCols) {
-	// FIXME implement constructor
-  }
-  // FIXME define methods
-  
-  /**
-   * Insert specified content in specified address.
-   *
-   * @param row the row of the cell to change 
-   * param column the column of the cell to change
-   * @param contentSpecification the specification in a string format of the content to put
-   *        in the specified cell.
-   */
-  public void insertContent(int row, int column, String contentSpecification) throws UnrecognizedEntryException /* FIXME maybe add exceptions */ {
-    //FIXME implement method
-  }
+		_cells = new HashMap<Position, Cell>();
+
+		_parser = new Parser(this);
+	}
+
+	public void addOwner(User owner) {
+		_owners.add(owner);
+	}
+	
+	public void removeOwner(User owner) {
+		_owners.add(owner);
+	}
+
+	public void setCellContent(Position position, CellValue content)
+	{
+		if (!_cells.containsKey(position))
+			_cells.put(position, new Cell(position)).update(content);
+		else
+			_cells.get(position).update(content);
+	}
+
+	public ValueWrapper getCellContent(Position position) throws Exception
+	{
+		if (_cells.containsKey(position))
+			return _cells.get(position).getValue();
+
+		return null;
+	}
 }

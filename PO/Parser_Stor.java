@@ -111,7 +111,7 @@ class Parser {
   private Content parseBinaryFunction(String functionName, String args) throws UnrecognizedEntryException /* , more Exceptions */ {
     String[] arguments = args.split(",");
     Content arg0 = parseArgumentExpression(arguments[0]);
-    Content arg1 = parseArgumentExpression(argarguments[1]);
+    Content arg1 = parseArgumentExpression(arguments[1]);
     
     return switch (functionName) {
       case "ADD" -> new Add function with (arg0, arg1);

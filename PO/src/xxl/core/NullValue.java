@@ -1,6 +1,8 @@
 package xxl.core;
 
 public class NullValue extends CellValue {
+	//TODO: Reconsider. Might not be needed due to hashmap
+
 	public NullValue()
 	{
 
