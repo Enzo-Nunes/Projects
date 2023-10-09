@@ -1,4 +1,4 @@
-package xxl.UMLracisms;
+package xxl.core;
 
 public class ReferenceValue extends CellValue {
 	Cell _refCell;
@@ -15,7 +15,7 @@ public class ReferenceValue extends CellValue {
 
 	public void recalculate()
 	{
-
+		return; //Unnecessary
 	}
 
 	public CellValue deepCopy()

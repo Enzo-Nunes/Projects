@@ -1,4 +1,4 @@
-package xxl.UMLracisms;
+package xxl.core;
 
 public class IntegerLiteral extends LiteralValue {
 	private int _value;
@@ -15,7 +15,7 @@ public class IntegerLiteral extends LiteralValue {
 
 	public void recalculate()
 	{
-		
+		return;
 	}
 
 	public CellValue deepCopy()
