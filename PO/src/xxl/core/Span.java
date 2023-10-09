@@ -1,4 +1,4 @@
-package xxl.UMLracisms;
+package xxl.core;
 
 public class Span {
 	
