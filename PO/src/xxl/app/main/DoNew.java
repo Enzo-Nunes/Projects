@@ -14,13 +14,12 @@ class DoNew extends Command<Calculator> {
 
 	DoNew(Calculator receiver) {
 		super(Label.NEW, receiver);
+		addIntegerField("numRows", Message.lines());
+		addIntegerField("numColumns", Message.columns());
 	}
 
 	@Override
 	protected final void execute() throws CommandException {
-		int numRows = Form.requestInteger(Message.lines());
-		int numCols = Form.requestInteger(Message.columns());
-
-		_receiver.setSpreadsheet(new Spreadsheet(numRows, numCols));
+		_receiver.createNewSpreadsheet(integerField("numRows"), integerField("numColumns"));
 	}
 }
