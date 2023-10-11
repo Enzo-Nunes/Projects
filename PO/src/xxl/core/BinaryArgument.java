@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.IncorrectValueTypeException;
+
 public class BinaryArgument {
 	private int _literal;
 	private Position _referencedPos;
@@ -16,7 +18,7 @@ public class BinaryArgument {
 		_sheet = containingSheet;
 	}
 
-	public int getValue() throws Exception
+	public int getValue() throws IncorrectValueTypeException
 	{
 		if (_referencedPos == null)
 			return _literal;

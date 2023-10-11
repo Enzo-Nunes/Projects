@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.IncorrectValueTypeException;
+
 public class Cell {
 	Position _position;
 	Cell[] _dependants;
@@ -18,7 +20,7 @@ public class Cell {
 		//TODO: Update dependants
 	}
 
-	public ValueWrapper getValue() throws Exception {
+	public ValueWrapper getValue() throws IncorrectValueTypeException {
 		return _content.getValue();
 	}
 }

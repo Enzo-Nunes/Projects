@@ -4,27 +4,38 @@ import java.util.Iterator;
 
 public class SpanIterator implements Iterator<Cell> {
 	private Position _start;
+	private boolean _isRowSpan;
+	private int _offset, _length;
 	private Spreadsheet _sheet;
-	private Position _current;
 
-	public SpanIterator(Position start, Position end, Spreadsheet containingSheet) {
+	public SpanIterator(Position start, boolean isRowSpan, int length, Spreadsheet containingSheet) {
 		_start = start;
-		_end = end;
+		_isRowSpan = isRowSpan;
+		_length = length;
+		_offset = 0;
 		_sheet = containingSheet;
-		_current = _start;
 	}
 
 	public boolean hasNext() {
-		return _current.compareTo(_end) <= 0;
+		return _offset < _length;
 	}
 
 	public Cell next() {
-		Cell result = _sheet.getCell(_current);
-		_current = _current.next();
+		Position pos = getPositionFromOffset();
+		Cell result = _sheet.getCell(pos);
+		_offset++;
 		return result;
 	}
 
 	public void remove() {
 		throw new UnsupportedOperationException();
+	}
+
+	private Position getPositionFromOffset()
+	{
+		if (_isRowSpan)
+			return new Position(_start.getX() + _offset, _start.getY());
+		else
+			return new Position(_start.getX(), _start.getY() + _offset);
 	}
 }

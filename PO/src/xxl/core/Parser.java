@@ -9,6 +9,10 @@ class Parser {
 		_sheet = spreadsheet;
 	}
 
+	private Cell parseCellLine(String cellLine) throws UnrecognizedEntryException, NumberFormatException {
+		
+	}
+
 	private CellValue parseCellValue(String cellValue) throws UnrecognizedEntryException, NumberFormatException {
 		if (cellValue.startsWith("="))
 			return parseExpression(cellValue);
