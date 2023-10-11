@@ -1,14 +1,38 @@
 package xxl.core;
 
-public class Span {
-	private Position _start, _end;
+import java.util.Iterator;
+
+public class Span implements Iterable<Cell> {
+	private Position _start;
+	private int _length;
 	private Spreadsheet _sheet;
+	private boolean _isRowSpan;
 
 	public Span(Position start, Position end, Spreadsheet containingSheet) {
 		_start = start;
-		_end = end;
+		_length = end.getX() - start.getX() + 1;
 		_sheet = containingSheet;
+		_isRowSpan = isRowSpan(start, end);
 	}
 
-	//TODO: Implement rest
+	private Span(Position start, int length, Spreadsheet containingSheet, boolean isRowSpan) {
+		_start = start;
+		_length = length;
+		_sheet = containingSheet;
+		_isRowSpan = isRowSpan;
+	}
+
+	public Span deepCopy() {
+		return new Span(_start, _length, _sheet, _isRowSpan);
+	}
+
+	private static boolean isRowSpan(Position start, Position end) {
+		return start.getY() == end.getY();
+	}
+
+	public Iterator<Cell> iterator() {
+
+	}
+
+	// TODO: Implement rest
 }

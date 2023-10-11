@@ -14,6 +14,6 @@ public class AddFunction extends BinaryFunction {
 
 	@Override
 	CellValue deepCopy() {
-		return new AddFunction(_arg1, _arg2);
+		return new AddFunction(_arg1.deepCopy(), _arg2.deepCopy());
 	}
 }
