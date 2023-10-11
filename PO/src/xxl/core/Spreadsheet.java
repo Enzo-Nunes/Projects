@@ -12,9 +12,9 @@ public class Spreadsheet {
 
 
 
-	public Spreadsheet(User owner, int width, int height) {
+	public Spreadsheet(int width, int height) {
 		_owners = new ArrayList<User>();
-		_owners.add(owner);
+		// _owners.add(owner);
 
 		_cells = new HashMap<Position, Cell>();
 
