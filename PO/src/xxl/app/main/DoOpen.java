@@ -16,12 +16,12 @@ class DoOpen extends Command<Calculator> {
 
 	@Override
 	protected final void execute() throws CommandException {
-		/*
-		 * try {
-		 * //FIXME implement command
-		 * } catch (UnavailableFileException e) {
-		 * throw new FileOpenFailedException(e);
-		 * }
-		 */
+
+		try {
+			// FIXME implement command
+		} catch (UnavailableFileException e) {
+			throw new FileOpenFailedException(e);
+		}
+
 	}
 }
