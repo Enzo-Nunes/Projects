@@ -1,11 +1,13 @@
 package xxl.core;
 
+import xxl.core.exception.IncorrectValueTypeException;
+
 public abstract class FunctionValue extends CellValue {
 	protected ValueWrapper _bufferedResult;
 	protected boolean _resultIsBuffered;
 
 	@Override
-	ValueWrapper getValue() throws Exception {
+	ValueWrapper getValue() throws IncorrectValueTypeException {
 		if (_resultIsBuffered)
 			return _bufferedResult;
 		

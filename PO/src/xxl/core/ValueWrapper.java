@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.IncorrectValueTypeException;
+
 public class ValueWrapper {
 	private int _int;
 	private String _string;
@@ -14,18 +16,18 @@ public class ValueWrapper {
 		_string = string;
 	}
 
-	public String getString() throws Exception
+	public String getString() throws IncorrectValueTypeException
 	{
 		if (_string == null)
-			throw new Exception(); //TODO: Replace with better exception
+			throw new IncorrectValueTypeException();
 
 		return _string;
 	}
 
-	public int getInt() throws Exception
+	public int getInt() throws IncorrectValueTypeException
 	{
 		if (_string != null)
-			throw new Exception(); //TODO: Replace with better exception
+			throw new IncorrectValueTypeException();
 
 		return _int;
 	}

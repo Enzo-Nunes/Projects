@@ -1,5 +1,7 @@
 package xxl.core;
 
+import xxl.core.exception.IncorrectValueTypeException;
+
 public class DivFunction extends BinaryFunction {
 	
 	public DivFunction(BinaryArgument firstArg, BinaryArgument secondArg)
@@ -8,7 +10,7 @@ public class DivFunction extends BinaryFunction {
 	}
 
 	@Override
-	void recalculate() throws Exception {
+	void recalculate() throws IncorrectValueTypeException {
 		_bufferedResult = new ValueWrapper(_arg1.getValue() / _arg2.getValue());
 	}
 

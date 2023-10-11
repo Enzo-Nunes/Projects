@@ -26,13 +26,16 @@ public class Span implements Iterable<Cell> {
 		return new Span(_start, _length, _sheet, _isRowSpan);
 	}
 
+	public int getLength()
+	{
+		return _length;
+	}
+
 	private static boolean isRowSpan(Position start, Position end) {
 		return start.getY() == end.getY();
 	}
 
 	public Iterator<Cell> iterator() {
-
+		return new SpanIterator(_start, _isRowSpan, _length, _sheet);
 	}
-
-	// TODO: Implement rest
 }
