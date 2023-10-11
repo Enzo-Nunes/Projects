@@ -27,7 +27,7 @@ public class Spreadsheet {
 	}
 	
 	public void removeOwner(User owner) {
-		_owners.add(owner);
+		_owners.remove(owner);
 	}
 
 	public Cell getCell(Position position)
