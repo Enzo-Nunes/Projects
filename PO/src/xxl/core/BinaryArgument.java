@@ -23,4 +23,12 @@ public class BinaryArgument {
 
 		return _sheet.getCellContent(_referencedPos).getInt();
 	}
+
+	public BinaryArgument deepCopy()
+	{
+		if (_referencedPos == null)
+			return new BinaryArgument(_literal);
+
+		return new BinaryArgument(_referencedPos, _sheet);
+	}
 }
