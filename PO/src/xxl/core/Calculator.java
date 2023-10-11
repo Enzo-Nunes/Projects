@@ -16,6 +16,7 @@ import xxl.core.exception.UnrecognizedEntryException;
 public class Calculator {
 	/** The current spreadsheet. */
 	private Spreadsheet _spreadsheet;
+	private User _currentUser;
 
 	// FIXME add more fields and methods if needed
 

@@ -5,6 +5,7 @@ import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import xxl.core.Calculator;
 import xxl.core.Spreadsheet;
+import xxl.core.User;
 
 /**
  * Open a new file.
