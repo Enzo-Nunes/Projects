@@ -14,8 +14,6 @@ import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.UnavailableFileException;
 import xxl.core.exception.UnrecognizedEntryException;
 
-// FIXME import classes
-
 /**
  * Class representing a spreadsheet application.
  */
@@ -40,9 +38,9 @@ public class Calculator {
 		_spreadsheet = spreadsheet;
 	}
 
-	public void createNewSpreadsheet(int width, int height) {
-		//TODO: Verify current open is not modified
-		setSpreadsheet(new Spreadsheet(width, height));
+	public Spreadsheet createNewSpreadsheet(int width, int height) {
+		// TODO: Verify current open is not modified
+		return new Spreadsheet(width, height);
 	}
 
 	/**
@@ -93,7 +91,7 @@ public class Calculator {
 	 *                                  an error while processing this file.
 	 */
 	public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
-		//TODO: Verify current open is not modified
+		// TODO: Verify current open is not modified
 		try (ObjectInputStream obIn = new ObjectInputStream(new FileInputStream(filename));) {
 			Object temp = obIn.readObject();
 			_spreadsheet = (Spreadsheet) temp;
@@ -110,7 +108,7 @@ public class Calculator {
 		try {
 			_spreadsheet = new Parser().parseFromFile(filename);
 		} catch (IOException | UnrecognizedEntryException | NumberFormatException
-			| IncorrectValueTypeException | PositionOutOfRangeException e) {
+				| IncorrectValueTypeException | PositionOutOfRangeException e) {
 			throw new ImportFileException(filename, e);
 		}
 	}
