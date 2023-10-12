@@ -9,7 +9,7 @@ public class Cell {
 	public Cell(Position pos){
 		_position = pos;
 	}
-	public void update(CellValue value) throws IncorrectValueTypeException {
+	public void update(CellValue value) {
 		_content = value;
 	}
 
