@@ -7,11 +7,12 @@ import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
 
 public class Spreadsheet {
-	ArrayList<User> _owners;
-	HashMap<Position, Cell> _cells;
-	CutBuffer _cutBuffer;
-	Position _botLeftCorner; // aka size
-	String _filename;
+	private ArrayList<User> _owners;
+	private HashMap<Position, Cell> _cells;
+	//private CutBuffer _cutBuffer;
+	private Position _botLeftCorner; // aka size
+	private String _filename;
+	private boolean _dirty;
 
 	public Spreadsheet(int width, int height) {
 		_owners = new ArrayList<User>();
@@ -19,6 +20,7 @@ public class Spreadsheet {
 
 		_cells = new HashMap<Position, Cell>();
 		_botLeftCorner = new Position(width, height);
+		_dirty = false;
 	}
 
 	public void addOwner(User owner) {
@@ -44,6 +46,8 @@ public class Spreadsheet {
 		if (!posInSpace(position))
 			throw new PositionOutOfRangeException();
 
+		_dirty = true;
+
 		if (!_cells.containsKey(position))
 			_cells.put(position, new Cell(position)).update(content);
 		else
@@ -54,6 +58,8 @@ public class Spreadsheet {
 			throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!posInSpace(position))
 			throw new PositionOutOfRangeException();
+
+		_dirty = true;
 
 		if (_cells.containsKey(position))
 			return _cells.get(position).getValue();
@@ -72,5 +78,15 @@ public class Spreadsheet {
 
 	public String getFilename() {
 		return _filename;
+	}
+
+	public void markAsClean()
+	{
+		_dirty = false;
+	}
+
+	public boolean isDirty()
+	{
+		return _dirty;
 	}
 }

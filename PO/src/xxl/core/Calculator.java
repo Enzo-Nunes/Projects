@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
 import xxl.core.exception.ImportFileException;
+import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.MissingFileAssociationException;
+import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.UnavailableFileException;
 import xxl.core.exception.UnrecognizedEntryException;
 
@@ -36,6 +38,11 @@ public class Calculator {
 
 	public void setSpreadsheet(Spreadsheet spreadsheet) {
 		_spreadsheet = spreadsheet;
+	}
+
+	public void createNewSpreadsheet(int width, int height) {
+		//TODO: Verify current open is not modified
+		setSpreadsheet(new Spreadsheet(width, height));
 	}
 
 	/**
@@ -86,6 +93,7 @@ public class Calculator {
 	 *                                  an error while processing this file.
 	 */
 	public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
+		//TODO: Verify current open is not modified
 		try (ObjectInputStream obIn = new ObjectInputStream(new FileInputStream(filename));) {
 			Object temp = obIn.readObject();
 			_spreadsheet = (Spreadsheet) temp;
@@ -100,11 +108,9 @@ public class Calculator {
 	 */
 	public void importFile(String filename) throws ImportFileException {
 		try {
-			_spreadsheet = new Parser().parse(filename);
-		} catch (IOException | UnrecognizedEntryException /*
-															 * FIXME maybe other
-															 * exceptions
-															 */ e) {
+			_spreadsheet = new Parser().parseFromFile(filename);
+		} catch (IOException | UnrecognizedEntryException | NumberFormatException
+			| IncorrectValueTypeException | PositionOutOfRangeException e) {
 			throw new ImportFileException(filename, e);
 		}
 	}

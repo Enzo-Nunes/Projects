@@ -1,6 +1,9 @@
 package xxl.core;
 
-import java.text.ParsePosition;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
@@ -12,24 +15,30 @@ class Parser {
 	public Parser() {
 	}
 
-	private Spreadsheet parseData(String data) throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, PositionOutOfRangeException {
+	public Spreadsheet parseFromFile(String filename) throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, PositionOutOfRangeException, FileNotFoundException, IOException {
+		BufferedReader reader = new BufferedReader(new FileReader(filename));
+		return parseData(reader);
+	}
+
+	private Spreadsheet parseData(BufferedReader reader) throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, PositionOutOfRangeException, IOException {
 		int lineC = 0, colC = 0;
-		String[] lines = data.split("\n");
+		String line;
 
 		//TODO: Check length
 		for (int i = 0; i < 2; i++)
 		{
-			if (lines[i].startsWith("linhas="))
-				lineC = Integer.parseInt(lines[i].substring(7));
+			line = reader.readLine();
+			if (line.startsWith("linhas="))
+				lineC = Integer.parseInt(line.substring(7));
 			else //assume colunas=
-				colC = Integer.parseInt(lines[i].substring(8));
+				colC = Integer.parseInt(line.substring(8));
 		}
 
 		_sheet = new Spreadsheet(colC, lineC);
 
-		for (int i = 2; i < lines.length; i++)
+		while ((line = reader.readLine()) != null)
 		{
-			Cell cell = parseCellLine(lines[i]);
+			Cell cell = parseCellLine(line);
 			_sheet.setCellContent(cell._position, cell._content); //TODO: Make better
 		}
 
