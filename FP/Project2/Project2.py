@@ -173,7 +173,7 @@ def obtem_coordenadas_vizinhas(c):
     baixo_dir   = cria_coordenada(col_seg, lin_seg)         if col_seg != "" and lin_seg != 100 else ()
     baixo       = cria_coordenada(obtem_coluna(c), lin_seg) if                   lin_seg != 100 else ()
     baixo_esq   = cria_coordenada(col_ant, lin_seg)         if col_ant != "" and lin_seg != 100 else ()
-    esquerda    = cria_coordenada(col_ant, obtem_linha(c)) if col_ant != ""                     else ()
+    esquerda    = cria_coordenada(col_ant, obtem_linha(c))	if col_ant != ""                    else ()
 
     return tuple(x for x in (cima_esq, cima, cima_dir, direita, baixo_dir, baixo, baixo_esq, esquerda) if x != ())
 
