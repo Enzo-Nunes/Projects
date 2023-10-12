@@ -1,6 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class AddFunction extends BinaryFunction {
 
@@ -9,7 +10,7 @@ public class AddFunction extends BinaryFunction {
 	}
 
 	@Override
-	void recalculate() throws IncorrectValueTypeException {
+	void recalculate() throws IncorrectValueTypeException, PositionOutOfRangeException {
 		_bufferedResult = new ValueWrapper(_arg1.getValue() + _arg2.getValue());
 	}
 

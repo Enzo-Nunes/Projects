@@ -1,6 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class AverageFunction extends SpanFunction {
 	public AverageFunction(Span argument) {
@@ -12,7 +13,7 @@ public class AverageFunction extends SpanFunction {
 		return new AverageFunction(_argument.deepCopy());
 	}
 
-	public void recalculate() {
+	public void recalculate() throws PositionOutOfRangeException {
 		int total = 0;
 
 		for (Cell cell : _argument) {

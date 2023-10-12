@@ -1,5 +1,7 @@
 package xxl.app.main;
 
+import java.io.IOException;
+
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import xxl.app.exception.FileOpenFailedException;
@@ -20,7 +22,7 @@ class DoOpen extends Command<Calculator> {
 	protected final void execute() throws CommandException {
 		try {
 			_receiver.load(stringField("filename"));
-		} catch (UnavailableFileException e) {
+		} catch (UnavailableFileException | IOException | ClassNotFoundException e) {
 			throw new FileOpenFailedException(e);
 		}
 

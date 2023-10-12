@@ -1,6 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class BinaryArgument {
 	private int _literal;
@@ -16,7 +17,7 @@ public class BinaryArgument {
 		_sheet = containingSheet;
 	}
 
-	public int getValue() throws IncorrectValueTypeException {
+	public int getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (_referencedPos == null)
 			return _literal;
 
