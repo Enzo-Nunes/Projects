@@ -21,8 +21,9 @@ public class Calculator {
 	/** The current spreadsheet. */
 	private Spreadsheet _spreadsheet;
 	private User _currentUser;
-
-	// FIXME add more fields and methods if needed
+	private User[] _users;
+	private static User _root;
+	//TODO: mess with users stuff. Maybe create root when creating calculator? When to add new users?
 
 	/**
 	 * Return the current spreadsheet.
@@ -34,13 +35,12 @@ public class Calculator {
 		return _spreadsheet;
 	}
 
-	public void setSpreadsheet(Spreadsheet spreadsheet) {
-		_spreadsheet = spreadsheet;
-	}
+	// public void setSpreadsheet(Spreadsheet spreadsheet) {
+	// _spreadsheet = spreadsheet;
+	// }
 
-	public Spreadsheet createNewSpreadsheet(int width, int height) {
-		// TODO: Verify current open is not modified
-		return new Spreadsheet(width, height);
+	public void createNewSpreadsheet(int rows, int columns) {
+		_spreadsheet = new Spreadsheet(rows, columns);
 	}
 
 	/**
@@ -91,7 +91,6 @@ public class Calculator {
 	 *                                  an error while processing this file.
 	 */
 	public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
-		// TODO: Verify current open is not modified
 		try (ObjectInputStream obIn = new ObjectInputStream(new FileInputStream(filename));) {
 			Object temp = obIn.readObject();
 			_spreadsheet = (Spreadsheet) temp;

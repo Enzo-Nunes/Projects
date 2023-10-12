@@ -21,7 +21,12 @@ class DoOpen extends Command<Calculator> {
 	@Override
 	protected final void execute() throws CommandException {
 		try {
+			//TODO: ask teacher. Is this supposed to be verified this way? Where is readBoolean()?
+			if (_receiver.getSpreadsheet() == null || !_receiver.getSpreadsheet().isDirty()) {
 			_receiver.load(stringField("filename"));
+		} else {
+			addBooleanField("saveBeforeExit", Message.saveBeforeExit());
+		}
 		} catch (UnavailableFileException | IOException | ClassNotFoundException e) {
 			throw new FileOpenFailedException(e);
 		}

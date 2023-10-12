@@ -1,14 +1,11 @@
 package xxl.app.main;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import xxl.core.Calculator;
 import xxl.core.exception.MissingFileAssociationException;
-import xxl.core.exception.UnavailableFileException;
 
 /**
  * Save to file under current name (if unnamed, query for name).

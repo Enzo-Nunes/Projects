@@ -1,11 +1,8 @@
 package xxl.app.main;
 
-import pt.tecnico.uilib.forms.Form;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import xxl.core.Calculator;
-import xxl.core.Spreadsheet;
-import xxl.core.User;
 
 /**
  * Open a new file.
@@ -20,6 +17,11 @@ class DoNew extends Command<Calculator> {
 
 	@Override
 	protected final void execute() throws CommandException {
-		_receiver.createNewSpreadsheet(integerField("numRows"), integerField("numColumns"));
+		//TODO: ask teacher. Is this supposed to be verified this way? Where is readBoolean()?
+		if (_receiver.getSpreadsheet() == null || !_receiver.getSpreadsheet().isDirty()) {
+			_receiver.createNewSpreadsheet(integerField("numRows"), integerField("numColumns"));
+		} else {
+			addBooleanField("saveBeforeExit", Message.saveBeforeExit());
+		}
 	}
 }
