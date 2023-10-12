@@ -1,6 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class ProdFunction extends SpanFunction {
 	public ProdFunction(Span argument) {
@@ -12,7 +13,8 @@ public class ProdFunction extends SpanFunction {
 		return new ProdFunction(_argument.deepCopy());
 	}
 
-	public void recalculate() {
+	@Override
+	protected void recalculate() throws PositionOutOfRangeException {
 		int total = 1;
 
 		for (Cell cell : _argument) {
@@ -24,5 +26,19 @@ public class ProdFunction extends SpanFunction {
 		}
 
 		_bufferedResult = new ValueWrapper(total);
+	}
+
+	@Override
+	public String visualize() {
+		String resultStr;
+		try
+		{
+			recalculate(); //TODO: Avoid repetition
+			resultStr = _bufferedResult.visualize();
+		} catch (PositionOutOfRangeException e) {
+			resultStr = "#VALUE";
+		}
+		
+		return resultStr + "=PRODUCT(" + _argument.visualize() + ")";
 	}
 }
