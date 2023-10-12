@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 import xxl.core.exception.ImportFileException;
 import xxl.core.exception.IncorrectValueTypeException;
@@ -21,9 +22,16 @@ public class Calculator {
 	/** The current spreadsheet. */
 	private Spreadsheet _spreadsheet;
 	private User _currentUser;
-	private User[] _users;
+	private ArrayList<User> _users;
 	private static User _root;
 	//TODO: mess with users stuff. Maybe create root when creating calculator? When to add new users?
+
+	public Calculator() {
+		_root = new User("root");
+		_users = new ArrayList<User>();
+		_users.add(_root);
+		_currentUser = _root;
+	}
 
 	/**
 	 * Return the current spreadsheet.
