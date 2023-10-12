@@ -1,11 +1,13 @@
 alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
-def eh_território(arg):
+def eh_territorio(arg):
 	if not isinstance(arg, tuple):
 		return False
 	for x in arg:
 		if not isinstance(x, tuple):
+			return False
+		if len(x) != len(arg[0]):
 			return False
 		for y in x:
 			if not isinstance(y, int):
@@ -26,11 +28,15 @@ def eh_intersecao(arg):
 		return False
 	if not isinstance(arg[1], int):
 		return False
+	if arg[0] not in alfabeto:
+		return False
+	if not (1 <= arg[1] <= 99):
+		return False
 	return True
 
 
 def eh_intersecao_valida(t, i):
-	if not eh_território(t):
+	if not eh_territorio(t):
 		return False
 	if not eh_intersecao(i):
 		return False
@@ -73,27 +79,28 @@ def ordena_intersecoes(tup):
 	return tuple(sorted(tup, key=lambda x: (x[1], x[0])))
 
 def territorio_para_str(t):
-	if not eh_território(t):
+	if not eh_territorio(t):
 		raise ValueError('territorio_para_str: argumento invalido')
 	
 	cols = len(t)
 	rows = len(t[0])
-	field = " "
+	field = "  "
 
 	for i in range(cols):
 		field += " " + alfabeto[i]
 	field += "\n"
 
 	for i in range(rows, 0, -1):
+		field += " " if i < 10 else ""
 		field += str(i) + " "
 		for j in range(cols):
 			field += ". " if eh_intersecao_livre(t, (alfabeto[j], i)) else "X "
+		field += " " if i < 10 else ""
 		field += str(i) + "\n"
 
-	field += " "
+	field += "  "
 	for i in range(cols):
 		field += " " + alfabeto[i]
-	field += "\n"
 
 	return field
 
@@ -136,7 +143,7 @@ def verifica_conexao(t, i1, i2):
 	return i2 in obtem_cadeia(t, i1) and eh_intersecao_livre(t, i1) == eh_intersecao_livre(t, i2)
 
 def calcula_numero_montanhas(t):
-	if not eh_território(t):
+	if not eh_territorio(t):
 		raise ValueError('calcula_numero_montanhas: argumento invalido')
 	res = 0
 	for x in t:
@@ -153,7 +160,7 @@ def getMontanhas(t):
 	return res
 
 def calcula_numero_cadeias_montanhas(t):
-	if not eh_território(t):
+	if not eh_territorio(t):
 		raise ValueError('calcula_numero_cadeias_montanhas: argumento invalido')
 	
 	res = 0
@@ -172,7 +179,7 @@ def calcula_numero_cadeias_montanhas(t):
 	return res
 
 def calcula_tamanho_vales(t):
-	if not eh_território(t):
+	if not eh_territorio(t):
 		raise ValueError('calcula_tamanho_vales: argumento invalido')
 	
 	toCheck = getMontanhas(t)
