@@ -26,8 +26,7 @@ public class Span implements Iterable<Cell> {
 		return new Span(_start, _length, _sheet, _isRowSpan);
 	}
 
-	public int getLength()
-	{
+	public int getLength() {
 		return _length;
 	}
 

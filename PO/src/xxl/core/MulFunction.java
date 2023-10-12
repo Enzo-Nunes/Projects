@@ -3,9 +3,8 @@ package xxl.core;
 import xxl.core.exception.IncorrectValueTypeException;
 
 public class MulFunction extends BinaryFunction {
-	
-	public MulFunction(BinaryArgument firstArg, BinaryArgument secondArg)
-	{
+
+	public MulFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 	}
 

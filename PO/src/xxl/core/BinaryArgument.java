@@ -7,27 +7,23 @@ public class BinaryArgument {
 	private Position _referencedPos;
 	private Spreadsheet _sheet;
 
-	public BinaryArgument(int literal)
-	{
+	public BinaryArgument(int literal) {
 		_literal = literal;
 	}
 
-	public BinaryArgument(Position referencedPosition, Spreadsheet containingSheet)
-	{
+	public BinaryArgument(Position referencedPosition, Spreadsheet containingSheet) {
 		_referencedPos = referencedPosition;
 		_sheet = containingSheet;
 	}
 
-	public int getValue() throws IncorrectValueTypeException
-	{
+	public int getValue() throws IncorrectValueTypeException {
 		if (_referencedPos == null)
 			return _literal;
 
 		return _sheet.getCellContent(_referencedPos).getInt();
 	}
 
-	public BinaryArgument deepCopy()
-	{
+	public BinaryArgument deepCopy() {
 		if (_referencedPos == null)
 			return new BinaryArgument(_literal);
 

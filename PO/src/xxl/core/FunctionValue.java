@@ -10,7 +10,7 @@ public abstract class FunctionValue extends CellValue {
 	ValueWrapper getValue() throws IncorrectValueTypeException {
 		if (_resultIsBuffered)
 			return _bufferedResult;
-		
+
 		recalculate();
 		return _bufferedResult;
 	}

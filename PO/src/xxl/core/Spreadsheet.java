@@ -10,7 +10,8 @@ public class Spreadsheet {
 	ArrayList<User> _owners;
 	HashMap<Position, Cell> _cells;
 	CutBuffer _cutBuffer;
-	Position _botLeftCorner; //aka size
+	Position _botLeftCorner; // aka size
+	String _filename;
 
 	public Spreadsheet(int width, int height) {
 		_owners = new ArrayList<User>();
@@ -23,7 +24,7 @@ public class Spreadsheet {
 	public void addOwner(User owner) {
 		_owners.add(owner);
 	}
-	
+
 	public void removeOwner(User owner) {
 		_owners.remove(owner);
 	}
@@ -38,17 +39,19 @@ public class Spreadsheet {
 		return null;
 	}
 
-	public void setCellContent(Position position, CellValue content) throws IncorrectValueTypeException, PositionOutOfRangeException {
+	public void setCellContent(Position position, CellValue content)
+			throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!posInSpace(position))
 			throw new PositionOutOfRangeException();
-		
+
 		if (!_cells.containsKey(position))
 			_cells.put(position, new Cell(position)).update(content);
 		else
 			_cells.get(position).update(content);
 	}
 
-	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException, PositionOutOfRangeException {
+	public ValueWrapper getCellContent(Position position)
+			throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!posInSpace(position))
 			throw new PositionOutOfRangeException();
 
@@ -58,9 +61,16 @@ public class Spreadsheet {
 		return null;
 	}
 
-	private boolean posInSpace(Position pos)
-	{
+	private boolean posInSpace(Position pos) {
 		return (pos.getX() >= 0 && pos.getX() < _botLeftCorner.getX())
-			&& (pos.getY() >= 0 && pos.getY() < _botLeftCorner.getY());
+				&& (pos.getY() >= 0 && pos.getY() < _botLeftCorner.getY());
+	}
+
+	public void setFilename(String filename) {
+		_filename = filename;
+	}
+
+	public String getFilename() {
+		return _filename;
 	}
 }

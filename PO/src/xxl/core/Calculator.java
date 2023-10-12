@@ -2,6 +2,10 @@ package xxl.core;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 import xxl.core.exception.ImportFileException;
 import xxl.core.exception.MissingFileAssociationException;
@@ -47,7 +51,9 @@ public class Calculator {
 	 *                                         to disk.
 	 */
 	public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
-		// FIXME implement serialization method
+		try (ObjectOutputStream obOut = new ObjectOutputStream(new FileOutputStream(_spreadsheet.getFilename()));) {
+			obOut.writeObject(_spreadsheet);
+		}
 	}
 
 	/**
@@ -65,7 +71,10 @@ public class Calculator {
 	 *                                         to disk.
 	 */
 	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
-		// FIXME implement serialization method
+		try (ObjectOutputStream obOut = new ObjectOutputStream(new FileOutputStream(filename));) {
+			obOut.writeObject(_spreadsheet);
+			_spreadsheet.setFilename(filename);
+		}
 	}
 
 	/**
@@ -76,8 +85,11 @@ public class Calculator {
 	 *                                  there is
 	 *                                  an error while processing this file.
 	 */
-	public void load(String filename) throws UnavailableFileException {
-		// FIXME implement serialization method
+	public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
+		try (ObjectInputStream obIn = new ObjectInputStream(new FileInputStream(filename));) {
+			Object temp = obIn.readObject();
+			_spreadsheet = (Spreadsheet) temp;
+		}
 	}
 
 	/**
@@ -87,14 +99,13 @@ public class Calculator {
 	 * @throws ImportFileException
 	 */
 	public void importFile(String filename) throws ImportFileException {
-		// try {
-		// // FIXME open import file and feed entries to new spreadsheet (in a cycle)
-		// // each entry is inserted using insertContent of Spreadsheet. Set new
-		// // spreadsheet as the active one.
-		// // ....
-		// } catch (IOException | UnrecognizedEntryException /* FIXME maybe other
-		// exceptions */ e) {
-		// throw new ImportFileException(filename, e);
-		// }
+		try {
+			_spreadsheet = new Parser().parse(filename);
+		} catch (IOException | UnrecognizedEntryException /*
+															 * FIXME maybe other
+															 * exceptions
+															 */ e) {
+			throw new ImportFileException(filename, e);
+		}
 	}
 }
