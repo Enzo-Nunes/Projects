@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class Spreadsheet {
 	ArrayList<User> _owners;
 	HashMap<Position, Cell> _cells;
 	CutBuffer _cutBuffer;
-	Parser _parser;
+	Position _botLeftCorner; //aka size
 
 	public Spreadsheet(int width, int height) {
 		_owners = new ArrayList<User>();
 		// _owners.add(owner);
 
 		_cells = new HashMap<Position, Cell>();
-
-		_parser = new Parser(this);
+		_botLeftCorner = new Position(width, height);
 	}
 
 	public void addOwner(User owner) {
@@ -28,24 +28,39 @@ public class Spreadsheet {
 		_owners.remove(owner);
 	}
 
-	public Cell getCell(Position position) {
+	public Cell getCell(Position position) throws PositionOutOfRangeException {
+		if (!posInSpace(position))
+			throw new PositionOutOfRangeException();
+
 		if (_cells.containsKey(position))
 			return _cells.get(position);
 
 		return null;
 	}
 
-	public void setCellContent(Position position, CellValue content) throws IncorrectValueTypeException {
+	public void setCellContent(Position position, CellValue content) throws IncorrectValueTypeException, PositionOutOfRangeException {
+		if (!posInSpace(position))
+			throw new PositionOutOfRangeException();
+		
 		if (!_cells.containsKey(position))
 			_cells.put(position, new Cell(position)).update(content);
 		else
 			_cells.get(position).update(content);
 	}
 
-	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException {
+	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException, PositionOutOfRangeException {
+		if (!posInSpace(position))
+			throw new PositionOutOfRangeException();
+
 		if (_cells.containsKey(position))
 			return _cells.get(position).getValue();
 
 		return null;
+	}
+
+	private boolean posInSpace(Position pos)
+	{
+		return (pos.getX() >= 0 && pos.getX() < _botLeftCorner.getX())
+			&& (pos.getY() >= 0 && pos.getY() < _botLeftCorner.getY());
 	}
 }

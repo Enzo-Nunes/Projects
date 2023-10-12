@@ -1,16 +1,50 @@
 package xxl.core;
 
+import java.text.ParsePosition;
+
+import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 class Parser {
 	Spreadsheet _sheet;
 
-	public Parser(Spreadsheet spreadsheet) {
-		_sheet = spreadsheet;
+	public Parser() {
+	}
+
+	private Spreadsheet parseData(String data) throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, PositionOutOfRangeException {
+		int lineC = 0, colC = 0;
+		String[] lines = data.split("\n");
+
+		//TODO: Check length
+		for (int i = 0; i < 2; i++)
+		{
+			if (lines[i].startsWith("linhas="))
+				lineC = Integer.parseInt(lines[i].substring(7));
+			else //assume colunas=
+				colC = Integer.parseInt(lines[i].substring(8));
+		}
+
+		_sheet = new Spreadsheet(colC, lineC);
+
+		for (int i = 2; i < lines.length; i++)
+		{
+			Cell cell = parseCellLine(lines[i]);
+			_sheet.setCellContent(cell._position, cell._content); //TODO: Make better
+		}
+
+		return _sheet;
 	}
 
 	private Cell parseCellLine(String cellLine) throws UnrecognizedEntryException, NumberFormatException {
-		
+		//Format: X;Y|content
+		String[] parts = cellLine.split("|");
+		//TODO: Validate length
+		Position pos = parsePosition(parts[0]);
+		CellValue value = parseCellValue(parts[1]);
+		Cell cell = new Cell(pos);
+		cell.update(value);
+		return cell;
 	}
 
 	private CellValue parseCellValue(String cellValue) throws UnrecognizedEntryException, NumberFormatException {
