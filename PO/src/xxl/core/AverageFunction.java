@@ -29,4 +29,18 @@ public class AverageFunction extends SpanFunction {
 
 		_bufferedResult = new ValueWrapper(average);
 	}
+
+	@Override
+	public String visualize() {
+		String resultStr;
+		try
+		{
+			recalculate(); //TODO: Avoid repetition
+			resultStr = _bufferedResult.visualize();
+		} catch (PositionOutOfRangeException e) {
+			resultStr = "#VALUE";
+		}
+		
+		return resultStr + "=AVERAGE(" + _argument.visualize() + ")";
+	}
 }
