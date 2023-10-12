@@ -8,7 +8,7 @@ public class ProdFunction extends SpanFunction {
 	}
 
 	@Override
-	CellValue deepCopy() {
+	public CellValue deepCopy() {
 		return new ProdFunction(_argument.deepCopy());
 	}
 

@@ -13,18 +13,32 @@ public class ReferenceValue extends CellValue {
 		_sheet = containingSheet;
 	}
 
+	@Override
 	public ValueWrapper getValue() throws PositionOutOfRangeException, IncorrectValueTypeException
 	{
 		return _sheet.getCellContent(_referencedPos);
 	}
 
-	public void recalculate()
-	{
-		return; //Unnecessary
-	}
+	@Override
+	protected void recalculate() { }
 
+	@Override
 	public CellValue deepCopy()
 	{
 		return new ReferenceValue(_referencedPos, _sheet);
+	}
+
+	@Override
+	public String visualize()
+	{
+		String resultStr;
+		try
+		{
+			resultStr = getValue().visualize();
+		} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
+			resultStr = "#VALUE";
+		}
+		
+		return resultStr + "=" + _referencedPos.visualize();
 	}
 }

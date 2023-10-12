@@ -9,11 +9,12 @@ public class AverageFunction extends SpanFunction {
 	}
 
 	@Override
-	CellValue deepCopy() {
+	public CellValue deepCopy() {
 		return new AverageFunction(_argument.deepCopy());
 	}
 
-	public void recalculate() throws PositionOutOfRangeException {
+	@Override
+	protected void recalculate() throws PositionOutOfRangeException {
 		int total = 0;
 
 		for (Cell cell : _argument) {

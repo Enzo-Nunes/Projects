@@ -8,7 +8,7 @@ public abstract class FunctionValue extends CellValue {
 	protected boolean _resultIsBuffered;
 
 	@Override
-	ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
+	public ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (_resultIsBuffered)
 			return _bufferedResult;
 

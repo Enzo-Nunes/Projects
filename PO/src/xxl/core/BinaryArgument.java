@@ -30,4 +30,12 @@ public class BinaryArgument {
 
 		return new BinaryArgument(_referencedPos, _sheet);
 	}
+
+	public String visualize()
+	{
+		if (_referencedPos == null)
+			return "" + _literal;
+
+		return _referencedPos.visualize();
+	}
 }
