@@ -7,15 +7,22 @@ public class IntegerLiteral extends LiteralValue {
 		_value = value;
 	}
 
+	@Override
 	public ValueWrapper getValue() {
 		return new ValueWrapper(_value);
 	}
 
-	public void recalculate() {
-		return;
-	}
+	@Override
+	protected void recalculate() { }
 
+	@Override
 	public CellValue deepCopy() {
 		return new IntegerLiteral(_value);
+	}
+
+	@Override
+	public String visualize()
+	{
+		return "" + _value;
 	}
 }

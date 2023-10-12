@@ -15,4 +15,9 @@ class Position {
 	public int getY() {
 		return _posY;
 	}
+
+	public String visualize()
+	{
+		return _posX + ";" + _posY;
+	}
 }

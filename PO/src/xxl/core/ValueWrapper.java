@@ -31,4 +31,10 @@ public class ValueWrapper {
 
 		return _int;
 	}
+
+	public String visualize()
+	{
+		if (_string != null) return _string;
+		return "" + _int;
+	}
 }
