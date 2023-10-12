@@ -1,25 +1,21 @@
 package xxl.core;
 
 public class NullValue extends CellValue {
-	//TODO: Reconsider. Might not be needed due to hashmap
+	// TODO: Reconsider. Might not be needed due to hashmap
 
-	public NullValue()
-	{
+	public NullValue() {
 
 	}
 
-	public ValueWrapper getValue()
-	{
+	public ValueWrapper getValue() {
 		return null;
 	}
 
-	public void recalculate()
-	{
+	public void recalculate() {
 
 	}
 
-	public CellValue deepCopy()
-	{
+	public CellValue deepCopy() {
 		return new NullValue();
 	}
 }

@@ -4,8 +4,7 @@ import xxl.core.exception.IncorrectValueTypeException;
 
 public class SubFunction extends BinaryFunction {
 
-	public SubFunction(BinaryArgument firstArg, BinaryArgument secondArg)
-	{
+	public SubFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 	}
 

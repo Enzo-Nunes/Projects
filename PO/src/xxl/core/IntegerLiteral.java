@@ -3,23 +3,19 @@ package xxl.core;
 public class IntegerLiteral extends LiteralValue {
 	private int _value;
 
-	public IntegerLiteral(int value)
-	{
+	public IntegerLiteral(int value) {
 		_value = value;
 	}
 
-	public ValueWrapper getValue()
-	{
+	public ValueWrapper getValue() {
 		return new ValueWrapper(_value);
 	}
 
-	public void recalculate()
-	{
+	public void recalculate() {
 		return;
 	}
 
-	public CellValue deepCopy()
-	{
+	public CellValue deepCopy() {
 		return new IntegerLiteral(_value);
 	}
 }

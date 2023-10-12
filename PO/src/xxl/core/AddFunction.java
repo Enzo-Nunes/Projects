@@ -3,9 +3,8 @@ package xxl.core;
 import xxl.core.exception.IncorrectValueTypeException;
 
 public class AddFunction extends BinaryFunction {
-	
-	public AddFunction(BinaryArgument firstArg, BinaryArgument secondArg)
-	{
+
+	public AddFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 	}
 

@@ -31,8 +31,7 @@ public class SpanIterator implements Iterator<Cell> {
 		throw new UnsupportedOperationException();
 	}
 
-	private Position getPositionFromOffset()
-	{
+	private Position getPositionFromOffset() {
 		if (_isRowSpan)
 			return new Position(_start.getX() + _offset, _start.getY());
 		else

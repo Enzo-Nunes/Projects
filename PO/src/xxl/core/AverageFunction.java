@@ -15,10 +15,8 @@ public class AverageFunction extends SpanFunction {
 	public void recalculate() {
 		int total = 0;
 
-		for (Cell cell : _argument)
-		{
-			try
-			{
+		for (Cell cell : _argument) {
+			try {
 				total += cell.getValue().getInt();
 			} catch (IncorrectValueTypeException except) {
 				_bufferedResult = new ValueWrapper("#VALUE");

@@ -3,9 +3,8 @@ package xxl.core;
 import xxl.core.exception.IncorrectValueTypeException;
 
 public class DivFunction extends BinaryFunction {
-	
-	public DivFunction(BinaryArgument firstArg, BinaryArgument secondArg)
-	{
+
+	public DivFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 	}
 
