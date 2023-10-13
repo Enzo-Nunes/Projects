@@ -18,7 +18,6 @@ class DoNew extends Command<Calculator> {
 
 	@Override
 	protected final void execute() throws CommandException {
-		// TODO: ask teacher. Is this supposed to be verified this way? Where is readBoolean()?
 		if (_receiver.getSpreadsheet() != null && _receiver.getSpreadsheet().isDirty()) {
 			if (Form.confirm(Message.saveBeforeExit())) {
 				Command<Calculator> doSave = new DoSave(_receiver);

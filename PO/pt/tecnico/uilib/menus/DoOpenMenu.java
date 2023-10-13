@@ -1,6 +1,6 @@
 package pt.tecnico.uilib.menus;
 
-import java.util.function.Predicate;
+// import java.util.function.Predicate;
 
 /**
  * Command to open a menu.
