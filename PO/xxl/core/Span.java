@@ -24,9 +24,12 @@ public class Span implements Iterable<Cell> {
 
 	public Span(Position start, Position end, Spreadsheet containingSheet) throws InvalidSpanException {
 		_start = start;
-		_length = end.getX() - start.getX() + 1;
-		_sheet = containingSheet;
 		_isRowSpan = isRowSpan(start, end);
+		if (_isRowSpan)
+			_length = end.getX() - start.getX() + 1;
+		else
+			_length = end.getY() - start.getY() + 1;
+		_sheet = containingSheet;
 
 		if (!containingSheet.positionisValid(start) || 
 			!containingSheet.positionisValid(end))
