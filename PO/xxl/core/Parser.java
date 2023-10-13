@@ -33,8 +33,10 @@ class Parser {
 			line = reader.readLine();
 			if (line.startsWith("linhas="))
 				lineC = Integer.parseInt(line.substring(7));
-			else // TODO: assume colunas=
+			else if (line.startsWith("colunas="))
 				colC = Integer.parseInt(line.substring(8));
+			else
+				throw new UnrecognizedEntryException(line);
 		}
 
 		if (lineC < 0 || colC < 0)
@@ -107,9 +109,10 @@ class Parser {
 		}
 	}
 
-	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException {
+	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException, ParsingException {
 		String[] args = argBlob.split(",");
-		// TODO: Validate length
+		if (args.length != 2)
+			throw new ParsingException("Binary functions must have exactly 2 arguments.");
 		BinaryArgument first = parseBinaryArgument(args[0]), second = parseBinaryArgument(args[1]);
 
 		switch (name) {
