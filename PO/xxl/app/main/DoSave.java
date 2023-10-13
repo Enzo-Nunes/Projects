@@ -21,7 +21,6 @@ class DoSave extends Command<Calculator> {
 	protected final void execute() throws CommandException {
 		try {
 			if (_receiver.getSpreadsheet().getFilename() == null) {
-				addStringField("filename", Message.saveAs());
 				_receiver.saveAs(stringField("filename"));
 			} else {
 				_receiver.save();

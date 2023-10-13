@@ -4,7 +4,7 @@ Menu Principal
 0 - Sair
 Escolha uma opção: 2
 Ficheiro a abrir: saved09
-Abrir: Operação inválida: Problema ao abrir ficheiro: saved09 (No such file or directory)
+Abrir: Operação inválida: Problema ao abrir ficheiro: writing aborted; java.io.NotSerializableException: xxl.core.Spreadsheet
 Menu Principal
 1 - Novo
 2 - Abrir
