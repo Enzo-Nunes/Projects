@@ -109,9 +109,10 @@ class Parser {
 		}
 	}
 
-	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException {
+	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException, ParsingException {
 		String[] args = argBlob.split(",");
-		// TODO: Validate length
+		if (args.length != 2)
+			throw new ParsingException("Binary functions must have exactly 2 arguments.");
 		BinaryArgument first = parseBinaryArgument(args[0]), second = parseBinaryArgument(args[1]);
 
 		switch (name) {
