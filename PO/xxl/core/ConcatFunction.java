@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.PositionOutOfRangeException;
+import xxl.core.exception.InvalidSpanException;
 
 public class ConcatFunction extends SpanFunction {
 	public ConcatFunction(Span argument) {
@@ -9,7 +9,7 @@ public class ConcatFunction extends SpanFunction {
 	}
 
 	@Override
-	protected void recalculate() throws PositionOutOfRangeException {
+	protected void recalculate() throws InvalidSpanException {
 		String result = "";
 
 		for (Cell cell : _argument)
@@ -37,7 +37,7 @@ public class ConcatFunction extends SpanFunction {
 		{
 			recalculate(); //TODO: Avoid repetition
 			resultStr = _bufferedResult.visualize();
-		} catch (PositionOutOfRangeException e) {
+		} catch (InvalidSpanException e) {
 			resultStr = "#VALUE";
 		}
 		

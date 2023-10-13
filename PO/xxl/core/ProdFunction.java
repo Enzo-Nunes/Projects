@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.PositionOutOfRangeException;
+import xxl.core.exception.InvalidSpanException;
 
 public class ProdFunction extends SpanFunction {
 	public ProdFunction(Span argument) {
@@ -14,7 +14,7 @@ public class ProdFunction extends SpanFunction {
 	}
 
 	@Override
-	protected void recalculate() throws PositionOutOfRangeException {
+	protected void recalculate() throws InvalidSpanException {
 		int total = 1;
 
 		for (Cell cell : _argument) {
@@ -35,7 +35,7 @@ public class ProdFunction extends SpanFunction {
 		{
 			recalculate(); //TODO: Avoid repetition
 			resultStr = _bufferedResult.visualize();
-		} catch (PositionOutOfRangeException e) {
+		} catch (InvalidSpanException e) {
 			resultStr = "#VALUE";
 		}
 		
