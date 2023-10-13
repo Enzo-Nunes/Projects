@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.PositionOutOfRangeException;
+import xxl.core.exception.InvalidSpanException;
 
 public class Cell {
 	private Position _position;
@@ -18,7 +18,7 @@ public class Cell {
 		_content = value;
 	}
 
-	public ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
+	public ValueWrapper getValue() throws IncorrectValueTypeException, InvalidSpanException {
 		_content.recalculate();
 		return _content.getValue();
 	}

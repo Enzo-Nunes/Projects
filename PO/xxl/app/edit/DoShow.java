@@ -3,6 +3,7 @@ package xxl.app.edit;
 import pt.tecnico.uilib.menus.Command;
 import pt.tecnico.uilib.menus.CommandException;
 import xxl.core.Spreadsheet;
+import xxl.core.exception.InvalidSpanException;
 import xxl.core.exception.ParsingException;
 import xxl.core.Span;
 import xxl.app.exception.InvalidCellRangeException;
@@ -24,7 +25,7 @@ class DoShow extends Command<Spreadsheet> {
     Span span;
     try {
       span = Span.parse(range, _receiver);
-    } catch (ParsingException e) {
+    } catch (ParsingException | InvalidSpanException e) {
       throw new InvalidCellRangeException(range);
     }
     

@@ -1,6 +1,8 @@
 package xxl.core;
 
 import xxl.core.exception.ParsingException;
+import xxl.core.exception.InvalidSpanException;
+
 import java.util.Iterator;
 
 public class Span implements Iterable<Cell> {
@@ -9,7 +11,7 @@ public class Span implements Iterable<Cell> {
 	private Spreadsheet _sheet;
 	private boolean _isRowSpan;
 
-	public static Span parse(String src, Spreadsheet holder) throws ParsingException {
+	public static Span parse(String src, Spreadsheet holder) throws ParsingException, InvalidSpanException {
 		String[] parts = src.split(":");
 		if (parts.length == 1) {
 			Position pos = Position.parse(src);
@@ -20,11 +22,15 @@ public class Span implements Iterable<Cell> {
 			throw new ParsingException();
 	}
 
-	public Span(Position start, Position end, Spreadsheet containingSheet) {
+	public Span(Position start, Position end, Spreadsheet containingSheet) throws InvalidSpanException {
 		_start = start;
 		_length = end.getX() - start.getX() + 1;
 		_sheet = containingSheet;
 		_isRowSpan = isRowSpan(start, end);
+
+		if (!containingSheet.positionisValid(start) || 
+			!containingSheet.positionisValid(end))
+			throw new InvalidSpanException();
 	}
 
 	private Span(Position start, int length, Spreadsheet containingSheet, boolean isRowSpan) {

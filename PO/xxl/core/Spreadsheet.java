@@ -6,7 +6,7 @@ import java.util.HashMap;
 import javax.swing.RowFilter.Entry;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.PositionOutOfRangeException;
+import xxl.core.exception.InvalidSpanException;
 
 public class Spreadsheet {
 	private ArrayList<User> _owners;
@@ -33,9 +33,9 @@ public class Spreadsheet {
 		_owners.remove(owner);
 	}
 
-	public Cell getCell(Position position) throws PositionOutOfRangeException {
-		if (!posInSpace(position))
-			throw new PositionOutOfRangeException();
+	public Cell getCell(Position position) throws InvalidSpanException {
+		if (!positionisValid(position))
+			throw new InvalidSpanException();
 
 		if (_cells.containsKey(position))
 		{
@@ -47,9 +47,9 @@ public class Spreadsheet {
 	}
 
 	public void setCellContent(Position position, CellValue content)
-			throws IncorrectValueTypeException, PositionOutOfRangeException {
-		if (!posInSpace(position))
-			throw new PositionOutOfRangeException();
+			throws IncorrectValueTypeException, InvalidSpanException {
+		if (!positionisValid(position))
+			throw new InvalidSpanException();
 
 		_dirty = true;
 
@@ -64,9 +64,9 @@ public class Spreadsheet {
 	}
 
 	public ValueWrapper getCellContent(Position position)
-			throws IncorrectValueTypeException, PositionOutOfRangeException {
-		if (!posInSpace(position))
-			throw new PositionOutOfRangeException();
+			throws IncorrectValueTypeException, InvalidSpanException {
+		if (!positionisValid(position))
+			throw new InvalidSpanException();
 
 		_dirty = true;
 
@@ -76,7 +76,7 @@ public class Spreadsheet {
 		return null;
 	}
 
-	private boolean posInSpace(Position pos) {
+	public boolean positionisValid(Position pos) {
 		return (pos.getX() > 0 && pos.getX() <= _botLeftCorner.getX())
 				&& (pos.getY() > 0 && pos.getY() <= _botLeftCorner.getY());
 	}
