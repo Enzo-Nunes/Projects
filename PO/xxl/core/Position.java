@@ -1,6 +1,8 @@
 package xxl.core;
 
-class Position {
+import java.io.Serializable;
+
+class Position implements Serializable {
 	private int _posX, _posY;
 
 	public Position(int positionX, int positionY) {

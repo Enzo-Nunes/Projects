@@ -2,13 +2,12 @@ package xxl.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.swing.RowFilter.Entry;
+import java.io.Serializable;
 
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
 
-public class Spreadsheet {
+public class Spreadsheet implements Serializable {
 	private ArrayList<User> _owners;
 	private HashMap<Position, Cell> _cells;
 	//private CutBuffer _cutBuffer;

@@ -1,9 +1,11 @@
 package xxl.core;
 
+import java.io.Serializable;
+
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
 
-public class BinaryArgument {
+public class BinaryArgument implements Serializable {
 	private int _literal;
 	private Position _referencedPos;
 	private Spreadsheet _sheet;
