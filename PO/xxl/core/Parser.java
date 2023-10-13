@@ -91,15 +91,18 @@ class Parser {
 	}
 
 	private CellValue parseFunction(String cellValue) throws UnrecognizedEntryException, ParsingException {
+		cellValue = cellValue.substring(1); // Remove leading '='
 		int firstParent = cellValue.indexOf("(");
 		int lastParent = cellValue.indexOf(")");
 		String name = cellValue.substring(0, firstParent);
-		String args = cellValue.substring(firstParent + 1, lastParent - firstParent);
+		String args = cellValue.substring(firstParent + 1, lastParent);
 
 		if (args.contains(",")) // Takes several args
 			return parseBinaryFunction(name, args);
 		else
+		{
 			return parseSpanFunction(name, args);
+		}
 	}
 
 	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException {
@@ -122,6 +125,7 @@ class Parser {
 				return new DivFunction(first, second);
 
 			default:
+				System.out.println("NVAL=" + name);
 				throw new UnrecognizedEntryException(name);
 		}
 	}
