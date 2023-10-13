@@ -10,7 +10,6 @@ import xxl.core.exception.ParsingException;
 import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.SpreadsheetSizeException;
 import xxl.core.exception.UnrecognizedEntryException;
-import xxl.core.exception.ParsingException;
 
 class Parser {
 	Spreadsheet _sheet;
@@ -30,12 +29,11 @@ class Parser {
 		int lineC = 0, colC = 0;
 		String line;
 
-		// TODO: Check length
 		for (int i = 0; i < 2; i++) {
 			line = reader.readLine();
 			if (line.startsWith("linhas="))
 				lineC = Integer.parseInt(line.substring(7));
-			else // assume colunas=
+			else //TODO: assume colunas=
 				colC = Integer.parseInt(line.substring(8));
 		}
 
@@ -56,10 +54,16 @@ class Parser {
 
 	private Cell parseCellLine(String cellLine) throws UnrecognizedEntryException, NumberFormatException, ParsingException {
 		// Format: X;Y|content
-		String[] parts = cellLine.split("|");
-		// TODO: Validate length
+		String[] parts = cellLine.split("\\|");
+		CellValue value = null;
+		if (parts.length == 2)
+		{
+			if (parts[1].length() != 0)
+				value = parseCellValue(parts[1]);
+		}
+		else if (parts.length != 1)
+			throw new UnrecognizedEntryException(cellLine);
 		Position pos = Position.parse(parts[0]);
-		CellValue value = parseCellValue(parts[1]);
 		Cell cell = new Cell(pos);
 		cell.update(value);
 		return cell;
@@ -73,7 +77,6 @@ class Parser {
 	}
 
 	private CellValue parseLiteral(String cellValue) throws UnrecognizedEntryException, NumberFormatException {
-		cellValue = cellValue.substring(1); // Remove leading '='
 		if (Character.isDigit(cellValue.charAt(0)))
 			return new IntegerLiteral(Integer.parseInt(cellValue));
 		else
@@ -146,6 +149,7 @@ class Parser {
 	}
 
 	private CellValue parseReference(String cellValue) throws NumberFormatException {
+		cellValue = cellValue.substring(1); // Remove leading '='
 		Position pos = Position.parse(cellValue);
 
 		return new ReferenceValue(pos, _sheet);

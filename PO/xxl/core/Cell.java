@@ -22,6 +22,8 @@ public class Cell {
 
 	public String visualize()
 	{
+		if (_content == null)
+			return "";
 		return _position.visualize() + "|" + _content.visualize();
 	}
 }

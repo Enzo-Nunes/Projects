@@ -49,7 +49,10 @@ public class Spreadsheet {
 		_dirty = true;
 
 		if (!_cells.containsKey(position))
-			_cells.put(position, new Cell(position)).update(content);
+		{
+			_cells.put(position, new Cell(position));
+			_cells.get(position).update(content);
+		}
 		else
 			_cells.get(position).update(content);
 	}
@@ -68,8 +71,8 @@ public class Spreadsheet {
 	}
 
 	private boolean posInSpace(Position pos) {
-		return (pos.getX() >= 0 && pos.getX() < _botLeftCorner.getX())
-				&& (pos.getY() >= 0 && pos.getY() < _botLeftCorner.getY());
+		return (pos.getX() > 0 && pos.getX() <= _botLeftCorner.getX())
+				&& (pos.getY() > 0 && pos.getY() <= _botLeftCorner.getY());
 	}
 
 	public void setFilename(String filename) {
