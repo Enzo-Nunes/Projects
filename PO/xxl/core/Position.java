@@ -25,18 +25,15 @@ class Position implements Serializable {
 	}
 
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return visualize().hashCode();
 	}
 
 	@Override
-	public boolean equals(Object other)
-	{
+	public boolean equals(Object other) {
 		Position pos;
-		try
-		{
-			pos = (Position)other;
+		try {
+			pos = (Position) other;
 		} catch (ClassCastException e) {
 			return false;
 		}
@@ -44,8 +41,7 @@ class Position implements Serializable {
 		return _posX == pos._posX && _posY == pos._posY;
 	}
 
-	public String visualize()
-	{
+	public String visualize() {
 		return _posY + ";" + _posX;
 	}
 }

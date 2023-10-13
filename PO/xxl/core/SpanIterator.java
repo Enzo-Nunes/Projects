@@ -25,15 +25,13 @@ public class SpanIterator implements Iterator<Cell> {
 	public Cell next() {
 		Cell result;
 		Position pos = getPositionFromOffset();
-		try
-		{
+		try {
 			result = _sheet.getCell(pos);
 		} catch (InvalidSpanException e) {
 			result = null;
 		}
 
-		if (result == null)
-		{
+		if (result == null) {
 			result = new Cell(pos);
 			result.update(null);
 		}

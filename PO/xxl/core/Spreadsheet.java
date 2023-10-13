@@ -10,7 +10,7 @@ import xxl.core.exception.InvalidSpanException;
 public class Spreadsheet implements Serializable {
 	private ArrayList<User> _owners;
 	private HashMap<Position, Cell> _cells;
-	//private CutBuffer _cutBuffer;
+	// private CutBuffer _cutBuffer;
 	private Position _botLeftCorner; // aka size
 	private String _filename;
 	private boolean _dirty;
@@ -36,8 +36,7 @@ public class Spreadsheet implements Serializable {
 		if (!positionisValid(position))
 			throw new InvalidSpanException();
 
-		if (_cells.containsKey(position))
-		{
+		if (_cells.containsKey(position)) {
 			Cell cell = _cells.get(position);
 			return cell;
 		}
@@ -52,18 +51,15 @@ public class Spreadsheet implements Serializable {
 
 		_dirty = true;
 
-		if (!_cells.containsKey(position))
-		{
+		if (!_cells.containsKey(position)) {
 			Cell cell = new Cell(position);
 			cell.update(content);
 			_cells.put(position, cell);
-		}
-		else
+		} else
 			_cells.get(position).update(content);
 	}
 
-	public ValueWrapper getCellContent(Position position)
-			throws IncorrectValueTypeException, InvalidSpanException {
+	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException, InvalidSpanException {
 		if (!positionisValid(position))
 			throw new InvalidSpanException();
 
@@ -88,13 +84,11 @@ public class Spreadsheet implements Serializable {
 		return _filename;
 	}
 
-	public void markAsClean()
-	{
+	public void markAsClean() {
 		_dirty = false;
 	}
 
-	public boolean isDirty()
-	{
+	public boolean isDirty() {
 		return _dirty;
 	}
 }

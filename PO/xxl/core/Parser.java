@@ -17,9 +17,9 @@ class Parser {
 	public Parser() {
 	}
 
-	public Spreadsheet parseFromFile(String filename) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, InvalidSpanException, FileNotFoundException, IOException,
-			SpreadsheetSizeException, ParsingException {
+	public Spreadsheet parseFromFile(String filename)
+			throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, InvalidSpanException,
+			FileNotFoundException, IOException, SpreadsheetSizeException, ParsingException {
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
 		return parseData(reader);
 	}
@@ -33,7 +33,7 @@ class Parser {
 			line = reader.readLine();
 			if (line.startsWith("linhas="))
 				lineC = Integer.parseInt(line.substring(7));
-			else //TODO: assume colunas=
+			else // TODO: assume colunas=
 				colC = Integer.parseInt(line.substring(8));
 		}
 
@@ -41,7 +41,7 @@ class Parser {
 			throw new SpreadsheetSizeException("Spreadsheet lines and cols must not be negative.");
 		else if (lineC == 0 || colC == 0)
 			throw new SpreadsheetSizeException("Spreadsheet lines and cols must not be zero.");
-		
+
 		_sheet = new Spreadsheet(colC, lineC);
 
 		while ((line = reader.readLine()) != null) {
@@ -52,16 +52,15 @@ class Parser {
 		return _sheet;
 	}
 
-	private Cell parseCellLine(String cellLine) throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
+	private Cell parseCellLine(String cellLine)
+			throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
 		// Format: X;Y|content
 		String[] parts = cellLine.split("\\|");
 		CellValue value = null;
-		if (parts.length == 2)
-		{
+		if (parts.length == 2) {
 			if (parts[1].length() != 0)
 				value = parseCellValue(parts[1]);
-		}
-		else if (parts.length != 1)
+		} else if (parts.length != 1)
 			throw new UnrecognizedEntryException(cellLine);
 		Position pos = Position.parse(parts[0]);
 		Cell cell = new Cell(pos);
@@ -69,28 +68,32 @@ class Parser {
 		return cell;
 	}
 
-	private CellValue parseCellValue(String cellValue) throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
+	private CellValue parseCellValue(String cellValue)
+			throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
 		if (cellValue.startsWith("="))
 			return parseExpression(cellValue);
 		else
 			return parseLiteral(cellValue);
 	}
 
-	private CellValue parseLiteral(String cellValue) throws UnrecognizedEntryException, NumberFormatException, InvalidSpanException {
+	private CellValue parseLiteral(String cellValue)
+			throws UnrecognizedEntryException, NumberFormatException, InvalidSpanException {
 		if (cellValue.charAt(0) == '\'')
 			return new StringLiteral(cellValue.substring(1));
 		else
 			return new IntegerLiteral(Integer.parseInt(cellValue));
 	}
 
-	private CellValue parseExpression(String cellValue) throws UnrecognizedEntryException, ParsingException, InvalidSpanException {
+	private CellValue parseExpression(String cellValue)
+			throws UnrecognizedEntryException, ParsingException, InvalidSpanException {
 		if (cellValue.contains("("))
 			return parseFunction(cellValue);
 		else
 			return parseReference(cellValue);
 	}
 
-	private CellValue parseFunction(String cellValue) throws UnrecognizedEntryException, ParsingException, InvalidSpanException {
+	private CellValue parseFunction(String cellValue)
+			throws UnrecognizedEntryException, ParsingException, InvalidSpanException {
 		cellValue = cellValue.substring(1); // Remove leading '='
 		int firstParent = cellValue.indexOf("(");
 		int lastParent = cellValue.indexOf(")");
@@ -99,8 +102,7 @@ class Parser {
 
 		if (args.contains(",")) // Takes several args
 			return parseBinaryFunction(name, args);
-		else
-		{
+		else {
 			return parseSpanFunction(name, args);
 		}
 	}
@@ -108,25 +110,24 @@ class Parser {
 	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException {
 		String[] args = argBlob.split(",");
 		// TODO: Validate length
-		BinaryArgument first = parseBinaryArgument(args[0]),
-				second = parseBinaryArgument(args[1]);
+		BinaryArgument first = parseBinaryArgument(args[0]), second = parseBinaryArgument(args[1]);
 
 		switch (name) {
-			case "ADD":
-				return new AddFunction(first, second);
+		case "ADD":
+			return new AddFunction(first, second);
 
-			case "SUB":
-				return new SubFunction(first, second);
+		case "SUB":
+			return new SubFunction(first, second);
 
-			case "MUL":
-				return new MulFunction(first, second);
+		case "MUL":
+			return new MulFunction(first, second);
 
-			case "DIV":
-				return new DivFunction(first, second);
+		case "DIV":
+			return new DivFunction(first, second);
 
-			default:
-				System.out.println("NVAL=" + name);
-				throw new UnrecognizedEntryException(name);
+		default:
+			System.out.println("NVAL=" + name);
+			throw new UnrecognizedEntryException(name);
 		}
 	}
 
@@ -135,20 +136,20 @@ class Parser {
 		Span span = Span.parse(arg, _sheet);
 
 		switch (name) {
-			case "AVERAGE":
-				return new AverageFunction(span);
+		case "AVERAGE":
+			return new AverageFunction(span);
 
-			case "COALESCE":
-				return new CoalesceFunction(span);
+		case "COALESCE":
+			return new CoalesceFunction(span);
 
-			case "CONCAT":
-				return new ConcatFunction(span);
+		case "CONCAT":
+			return new ConcatFunction(span);
 
-			case "PRODUCT":
-				return new ProdFunction(span);
+		case "PRODUCT":
+			return new ProdFunction(span);
 
-			default:
-				throw new UnrecognizedEntryException(name);
+		default:
+			throw new UnrecognizedEntryException(name);
 		}
 	}
 

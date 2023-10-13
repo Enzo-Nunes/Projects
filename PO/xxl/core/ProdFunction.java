@@ -31,14 +31,13 @@ public class ProdFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try
-		{
-			recalculate(); //TODO: Avoid repetition
+		try {
+			recalculate(); // TODO: Avoid repetition
 			resultStr = _bufferedResult.visualize();
 		} catch (InvalidSpanException e) {
 			resultStr = "#VALUE";
 		}
-		
+
 		return resultStr + "=PRODUCT(" + _argument.visualize() + ")";
 	}
 }

@@ -12,10 +12,8 @@ public class CoalesceFunction extends SpanFunction {
 	protected void recalculate() throws InvalidSpanException {
 		String result = "";
 
-		for (Cell cell : _argument)
-		{
-			try
-			{
+		for (Cell cell : _argument) {
+			try {
 				result = cell.getValue().getString();
 				break;
 			} catch (IncorrectValueTypeException e) {
@@ -34,14 +32,13 @@ public class CoalesceFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try
-		{
-			recalculate(); //TODO: Avoid repetition
+		try {
+			recalculate(); // TODO: Avoid repetition
 			resultStr = _bufferedResult.visualize();
 		} catch (InvalidSpanException e) {
 			resultStr = "#VALUE";
 		}
-		
+
 		return resultStr + "=COALESCE(" + _argument.visualize() + ")";
 	}
 }
