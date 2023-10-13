@@ -29,9 +29,12 @@ class DoShow extends Command<Spreadsheet> {
     }
     
     for (Cell cell : span)
+    {
+      //System.out.println("SHOWITER");
       if (cell != null)
         _display.addLine(cell.visualize());
-
-    _display.display();
+      //else
+      //  System.out.println("NULLCELLITER");
+    }
   }
 }

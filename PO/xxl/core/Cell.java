@@ -4,12 +4,15 @@ import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
 
 public class Cell {
-	Position _position;
-	CellValue _content;
+	private Position _position;
+	private CellValue _content;
 
 	public Cell(Position pos){
 		_position = pos;
 	}
+
+	public Position getPosition() { return _position; }
+	public CellValue getContentCopy() { return _content.deepCopy(); }
 
 	public void update(CellValue value) {
 		_content = value;
@@ -23,7 +26,7 @@ public class Cell {
 	public String visualize()
 	{
 		if (_content == null)
-			return "";
+			return _position.visualize() + "|";
 		return _position.visualize() + "|" + _content.visualize();
 	}
 }
