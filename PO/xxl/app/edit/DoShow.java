@@ -29,7 +29,8 @@ class DoShow extends Command<Spreadsheet> {
     }
     
     for (Cell cell : span)
-      _display.addLine(cell.visualize());
+      if (cell != null)
+        _display.addLine(cell.visualize());
 
     _display.display();
   }

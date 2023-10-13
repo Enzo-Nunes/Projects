@@ -1,21 +1,25 @@
-SRC=src
-
-SRCS=$(wildcard $(SRC)/*.java)
+SRCS=$(wildcard *.java)
 TARGET=xxl.app.App
-TARGET_CLASS=$(SRC)/$(TARGET).class
-JAVA_ARGS=-cp src/po-uilib.jar:.
+TARGET_CLASS=$(TARGET).class
+JAVA_ARGS=-cp po-uilib.jar:.
 
 .PHONY: run
 .PHONY: build
 .PHONY: clean
 
 build: $(TARGET_CLASS)
+build2:
+	find xxl -name "*.java" -print | xargs javac -cp po-uilib.jar:.
 
 run: $(TARGET_CLASS)
-	cd $(SRC); java $(JAVA_ARGS) $(TARGET) 
+	java $(JAVA_ARGS) $(TARGET) 
 
 $(TARGET_CLASS): $(SRCS)
-	cd $(SRC); javac $(JAVA_ARGS) `find xxl -name "*.java"`
+	javac $(JAVA_ARGS) `find xxl -name "*.java"`
+
+test:
+	./runtests.sh
+	./runtests_both.sh
 
 clean:
 #	$(RM) *.class
