@@ -33,14 +33,13 @@ public class AverageFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try
-		{
-			recalculate(); //TODO: Avoid repetition
+		try {
+			recalculate(); // TODO: Avoid repetition
 			resultStr = _bufferedResult.visualize();
 		} catch (InvalidSpanException e) {
 			resultStr = "#VALUE";
 		}
-		
+
 		return resultStr + "=AVERAGE(" + _argument.visualize() + ")";
 	}
 }

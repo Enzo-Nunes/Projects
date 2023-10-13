@@ -31,8 +31,7 @@ public class Span implements Iterable<Cell> {
 			_length = end.getY() - start.getY() + 1;
 		_sheet = containingSheet;
 
-		if (!containingSheet.positionisValid(start) || 
-			!containingSheet.positionisValid(end))
+		if (!containingSheet.positionisValid(start) || !containingSheet.positionisValid(end))
 			throw new InvalidSpanException();
 	}
 
@@ -59,8 +58,7 @@ public class Span implements Iterable<Cell> {
 		return new SpanIterator(_start, _isRowSpan, _length, _sheet);
 	}
 
-	public String visualize()
-	{
+	public String visualize() {
 		int endX = _start.getX() + (_isRowSpan ? _length : 0);
 		int endY = _start.getY() + (_isRowSpan ? 0 : _length);
 		return _start.getX() + ";" + _start.getY() + ":" + endX + ";" + endY;

@@ -20,17 +20,15 @@ public class DivFunction extends BinaryFunction {
 	}
 
 	@Override
-	public String visualize()
-	{
+	public String visualize() {
 		String resultStr;
-		try
-		{
+		try {
 			recalculate();
 			resultStr = _bufferedResult.visualize();
 		} catch (IncorrectValueTypeException | InvalidSpanException e) {
 			resultStr = "#VALUE";
 		}
-		
+
 		return resultStr + "=DIV(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}
 }

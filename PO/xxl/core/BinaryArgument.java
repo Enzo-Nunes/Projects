@@ -33,8 +33,7 @@ public class BinaryArgument implements Serializable {
 		return new BinaryArgument(_referencedPos, _sheet);
 	}
 
-	public String visualize()
-	{
+	public String visualize() {
 		if (_referencedPos == null)
 			return "" + _literal;
 

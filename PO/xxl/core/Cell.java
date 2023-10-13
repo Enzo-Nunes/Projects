@@ -9,12 +9,17 @@ public class Cell implements Serializable {
 	private Position _position;
 	private CellValue _content;
 
-	public Cell(Position pos){
+	public Cell(Position pos) {
 		_position = pos;
 	}
 
-	public Position getPosition() { return _position; }
-	public CellValue getContentCopy() { return _content.deepCopy(); }
+	public Position getPosition() {
+		return _position;
+	}
+
+	public CellValue getContentCopy() {
+		return _content.deepCopy();
+	}
 
 	public void update(CellValue value) {
 		_content = value;
@@ -25,8 +30,7 @@ public class Cell implements Serializable {
 		return _content.getValue();
 	}
 
-	public String visualize()
-	{
+	public String visualize() {
 		if (_content == null)
 			return _position.visualize() + "|";
 		return _position.visualize() + "|" + _content.visualize();

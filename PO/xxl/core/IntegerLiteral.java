@@ -13,7 +13,8 @@ public class IntegerLiteral extends LiteralValue {
 	}
 
 	@Override
-	protected void recalculate() { }
+	protected void recalculate() {
+	}
 
 	@Override
 	public CellValue deepCopy() {
@@ -21,8 +22,7 @@ public class IntegerLiteral extends LiteralValue {
 	}
 
 	@Override
-	public String visualize()
-	{
+	public String visualize() {
 		return "" + _value;
 	}
 }

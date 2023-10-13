@@ -26,7 +26,8 @@ public class Calculator {
 	private User _currentUser;
 	private ArrayList<User> _users;
 	private static User _root;
-	//TODO: mess with users stuff. Maybe create root when creating calculator? When to add new users?
+	// TODO: mess with users stuff. Maybe create root when creating calculator? When
+	// to add new users?
 
 	public Calculator() {
 		_root = new User("root");
@@ -38,32 +39,24 @@ public class Calculator {
 	/**
 	 * Return the current spreadsheet.
 	 *
-	 * @returns the current spreadsheet of this application. This reference can be
-	 *          null.
+	 * @returns the current spreadsheet of this application. This reference can be null.
 	 */
 	public final Spreadsheet getSpreadsheet() {
 		return _spreadsheet;
 	}
-
-	// public void setSpreadsheet(Spreadsheet spreadsheet) {
-	// _spreadsheet = spreadsheet;
-	// }
 
 	public void createNewSpreadsheet(int rows, int columns) {
 		_spreadsheet = new Spreadsheet(rows, columns);
 	}
 
 	/**
-	 * Saves the serialized application's state into the file associated to the
-	 * current network.
+	 * Saves the serialized application's state into the file associated to the current network.
 	 *
-	 * @throws FileNotFoundException           if for some reason the file cannot be
-	 *                                         created or opened.
-	 * @throws MissingFileAssociationException if the current network does not have
-	 *                                         a file.
-	 * @throws IOException                     if there is some error while
-	 *                                         serializing the state of the network
-	 *                                         to disk.
+	 * @throws FileNotFoundException           if for some reason the file cannot be created or
+	 *                                         opened.
+	 * @throws MissingFileAssociationException if the current network does not have a file.
+	 * @throws IOException                     if there is some error while serializing the state of
+	 *                                         the network to disk.
 	 */
 	public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
 		try (ObjectOutputStream obOut = new ObjectOutputStream(new FileOutputStream(_spreadsheet.getFilename()));) {
@@ -72,18 +65,15 @@ public class Calculator {
 	}
 
 	/**
-	 * Saves the serialized application's state into the specified file. The current
-	 * network is
+	 * Saves the serialized application's state into the specified file. The current network is
 	 * associated to this file.
 	 *
 	 * @param filename the name of the file.
-	 * @throws FileNotFoundException           if for some reason the file cannot be
-	 *                                         created or opened.
-	 * @throws MissingFileAssociationException if the current network does not have
-	 *                                         a file.
-	 * @throws IOException                     if there is some error while
-	 *                                         serializing the state of the network
-	 *                                         to disk.
+	 * @throws FileNotFoundException           if for some reason the file cannot be created or
+	 *                                         opened.
+	 * @throws MissingFileAssociationException if the current network does not have a file.
+	 * @throws IOException                     if there is some error while serializing the state of
+	 *                                         the network to disk.
 	 */
 	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
 		try (ObjectOutputStream obOut = new ObjectOutputStream(new FileOutputStream(filename));) {
@@ -93,12 +83,9 @@ public class Calculator {
 	}
 
 	/**
-	 * @param filename name of the file containing the serialized application's
-	 *                 state
-	 *                 to load.
-	 * @throws UnavailableFileException if the specified file does not exist or
-	 *                                  there is
-	 *                                  an error while processing this file.
+	 * @param filename name of the file containing the serialized application's state to load.
+	 * @throws UnavailableFileException if the specified file does not exist or there is an error
+	 *                                  while processing this file.
 	 */
 	public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
 		try (ObjectInputStream obIn = new ObjectInputStream(new FileInputStream(filename));) {
@@ -116,9 +103,8 @@ public class Calculator {
 	public void importFile(String filename) throws ImportFileException {
 		try {
 			_spreadsheet = new Parser().parseFromFile(filename);
-		} catch (IOException | UnrecognizedEntryException | NumberFormatException
-				| IncorrectValueTypeException | InvalidSpanException
-				| SpreadsheetSizeException | ParsingException e) {
+		} catch (IOException | UnrecognizedEntryException | NumberFormatException | IncorrectValueTypeException
+				| InvalidSpanException | SpreadsheetSizeException | ParsingException e) {
 			throw new ImportFileException(filename, e);
 		}
 	}
