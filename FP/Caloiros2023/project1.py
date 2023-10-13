@@ -28,10 +28,6 @@ def eh_intersecao(arg):
 		return False
 	if not isinstance(arg[1], int):
 		return False
-	if arg[0] not in alfabeto:
-		return False
-	if not (1 <= arg[1] <= 99):
-		return False
 	return True
 
 
@@ -75,8 +71,10 @@ def obtem_intersecoes_adjacentes(t, i):
 
 	return tuple(x for x in (baixo, esquerda, direita, cima) if x != ())
 
+
 def ordena_intersecoes(tup):
 	return tuple(sorted(tup, key=lambda x: (x[1], x[0])))
+
 
 def territorio_para_str(t):
 	if not eh_territorio(t):
@@ -136,11 +134,13 @@ def obtem_vale(t, i):
 				vale.append(y)
 
 	return ordena_intersecoes(tuple(vale))
-	
+
+
 def verifica_conexao(t, i1, i2):
 	if not eh_intersecao_valida(t, i1) or not eh_intersecao_valida(t, i2):
 		raise ValueError('verifica_conexao: argumentos invalidos')
 	return i2 in obtem_cadeia(t, i1) and eh_intersecao_livre(t, i1) == eh_intersecao_livre(t, i2)
+
 
 def calcula_numero_montanhas(t):
 	if not eh_territorio(t):
@@ -151,6 +151,7 @@ def calcula_numero_montanhas(t):
 			res += y
 	return res
 
+
 def getMontanhas(t):
 	res = []
 	for i in range(len(t)):
@@ -158,6 +159,7 @@ def getMontanhas(t):
 			if not eh_intersecao_livre(t, (alfabeto[i], j+1)):
 				res.append((alfabeto[i], j+1))
 	return res
+
 
 def calcula_numero_cadeias_montanhas(t):
 	if not eh_territorio(t):
@@ -175,8 +177,8 @@ def calcula_numero_cadeias_montanhas(t):
 			if x in toCheck:
 				toCheck.remove(x)
 		res += 1
-
 	return res
+
 
 def calcula_tamanho_vales(t):
 	if not eh_territorio(t):
