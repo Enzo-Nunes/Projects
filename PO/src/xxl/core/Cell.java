@@ -10,6 +10,7 @@ public class Cell {
 	public Cell(Position pos){
 		_position = pos;
 	}
+
 	public void update(CellValue value) {
 		_content = value;
 	}
@@ -17,5 +18,10 @@ public class Cell {
 	public ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
 		_content.recalculate();
 		return _content.getValue();
+	}
+
+	public String visualize()
+	{
+		return _position.visualize() + "|" + _content.visualize();
 	}
 }

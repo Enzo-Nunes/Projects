@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
+import xxl.core.exception.SpreadsheetSizeException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 class Parser {
@@ -16,13 +17,13 @@ class Parser {
 	}
 
 	public Spreadsheet parseFromFile(String filename) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, PositionOutOfRangeException, FileNotFoundException, IOException {
+			IncorrectValueTypeException, PositionOutOfRangeException, FileNotFoundException, IOException, SpreadsheetSizeException {
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
 		return parseData(reader);
 	}
 
 	private Spreadsheet parseData(BufferedReader reader) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, PositionOutOfRangeException, IOException {
+			IncorrectValueTypeException, PositionOutOfRangeException, IOException, SpreadsheetSizeException {
 		int lineC = 0, colC = 0;
 		String line;
 
@@ -35,6 +36,11 @@ class Parser {
 				colC = Integer.parseInt(line.substring(8));
 		}
 
+		if (lineC < 0 || colC < 0)
+			throw new SpreadsheetSizeException("Spreadsheet lines and cols must not be negative.");
+		else if (lineC == 0 || colC == 0)
+			throw new SpreadsheetSizeException("Spreadsheet lines and cols must not be zero.");
+		
 		_sheet = new Spreadsheet(colC, lineC);
 
 		while ((line = reader.readLine()) != null) {
@@ -49,7 +55,7 @@ class Parser {
 		// Format: X;Y|content
 		String[] parts = cellLine.split("|");
 		// TODO: Validate length
-		Position pos = parsePosition(parts[0]);
+		Position pos = Position.parse(parts[0]);
 		CellValue value = parseCellValue(parts[1]);
 		Cell cell = new Cell(pos);
 		cell.update(value);
@@ -116,7 +122,7 @@ class Parser {
 
 	private CellValue parseSpanFunction(String name, String arg)
 			throws UnrecognizedEntryException, NumberFormatException {
-		Span span = parseSpan(arg);
+		Span span = Span.parse(arg, _sheet);
 
 		switch (name) {
 			case "AVERAGE":
@@ -137,27 +143,15 @@ class Parser {
 	}
 
 	private CellValue parseReference(String cellValue) throws NumberFormatException {
-		Position pos = parsePosition(cellValue);
+		Position pos = Position.parse(cellValue);
 
 		return new ReferenceValue(pos, _sheet);
 	}
 
 	private BinaryArgument parseBinaryArgument(String arg) throws NumberFormatException {
 		if (arg.contains(";"))
-			return new BinaryArgument(parsePosition(arg), _sheet);
+			return new BinaryArgument(Position.parse(arg), _sheet);
 		else
 			return new BinaryArgument(Integer.parseInt(arg));
-	}
-
-	private Span parseSpan(String src) throws NumberFormatException {
-		String[] parts = src.split(":");
-		// TODO: Check length
-		return new Span(parsePosition(parts[0]), parsePosition(parts[1]), _sheet);
-	}
-
-	private Position parsePosition(String src) throws NumberFormatException {
-		String[] parts = src.split(";");
-		// TODO: Check length
-		return new Position(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
 	}
 }
