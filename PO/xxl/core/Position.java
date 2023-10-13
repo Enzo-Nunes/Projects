@@ -2,6 +2,8 @@ package xxl.core;
 
 import java.io.Serializable;
 
+import xxl.core.exception.ParsingException;
+
 class Position implements Serializable {
 	private int _posX, _posY;
 
@@ -10,9 +12,10 @@ class Position implements Serializable {
 		_posY = positionY;
 	}
 
-	public static Position parse(String src) throws NumberFormatException {
+	public static Position parse(String src) throws NumberFormatException, ParsingException {
 		String[] parts = src.split(";");
-		// TODO: Check length
+		if (parts.length != 2)
+			throw new ParsingException("Positions take two integer values.");
 		return new Position(Integer.parseInt(parts[1]), Integer.parseInt(parts[0]));
 	}
 

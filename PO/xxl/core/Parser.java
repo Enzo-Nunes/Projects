@@ -156,14 +156,14 @@ class Parser {
 		}
 	}
 
-	private CellValue parseReference(String cellValue) throws NumberFormatException {
+	private CellValue parseReference(String cellValue) throws NumberFormatException, ParsingException {
 		cellValue = cellValue.substring(1); // Remove leading '='
 		Position pos = Position.parse(cellValue);
 
 		return new ReferenceValue(pos, _sheet);
 	}
 
-	private BinaryArgument parseBinaryArgument(String arg) throws NumberFormatException {
+	private BinaryArgument parseBinaryArgument(String arg) throws NumberFormatException, ParsingException {
 		if (arg.contains(";"))
 			return new BinaryArgument(Position.parse(arg), _sheet);
 		else
