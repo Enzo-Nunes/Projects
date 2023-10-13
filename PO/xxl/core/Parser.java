@@ -46,7 +46,7 @@ class Parser {
 
 		while ((line = reader.readLine()) != null) {
 			Cell cell = parseCellLine(line);
-			_sheet.setCellContent(cell._position, cell._content); // TODO: Make better
+			_sheet.setCellContent(cell.getPosition(), cell.getContentCopy()); // TODO: Make better
 		}
 
 		return _sheet;

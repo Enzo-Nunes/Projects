@@ -34,7 +34,11 @@ public class ReferenceValue extends CellValue {
 		String resultStr;
 		try
 		{
-			resultStr = getValue().visualize();
+			ValueWrapper value = getValue();
+			if (value == null)
+				return "";
+			else
+				resultStr = value.visualize();
 		} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
 			resultStr = "#VALUE";
 		}

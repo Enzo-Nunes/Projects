@@ -29,8 +29,13 @@ public class SpanIterator implements Iterator<Cell> {
 		{
 			result = _sheet.getCell(pos);
 		} catch (PositionOutOfRangeException e) {
-			_offset++;
-			return null;
+			result = null;
+		}
+
+		if (result == null)
+		{
+			result = new Cell(pos);
+			result.update(null);
 		}
 		_offset++;
 		return result;

@@ -3,6 +3,8 @@ package xxl.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.RowFilter.Entry;
+
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
 
@@ -36,7 +38,10 @@ public class Spreadsheet {
 			throw new PositionOutOfRangeException();
 
 		if (_cells.containsKey(position))
-			return _cells.get(position);
+		{
+			Cell cell = _cells.get(position);
+			return cell;
+		}
 
 		return null;
 	}
@@ -50,8 +55,9 @@ public class Spreadsheet {
 
 		if (!_cells.containsKey(position))
 		{
-			_cells.put(position, new Cell(position));
-			_cells.get(position).update(content);
+			Cell cell = new Cell(position);
+			cell.update(content);
+			_cells.put(position, cell);
 		}
 		else
 			_cells.get(position).update(content);

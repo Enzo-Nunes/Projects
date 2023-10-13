@@ -17,6 +17,7 @@ Menu de Edição
 0 - Sair
 Escolha uma opção: 1
 Especifique a gama (startline;startcol:endline;endcol): 3;3
+3;3|
 Menu de Edição
 1 - Visualizar
 2 - Inserir
