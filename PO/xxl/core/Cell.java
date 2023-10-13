@@ -1,9 +1,11 @@
 package xxl.core;
 
+import java.io.Serializable;
+
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
 
-public class Cell {
+public class Cell implements Serializable {
 	private Position _position;
 	private CellValue _content;
 
