@@ -8,6 +8,12 @@ class Position {
 		_posY = positionY;
 	}
 
+	public static Position parse(String src) throws NumberFormatException {
+		String[] parts = src.split(";");
+		// TODO: Check length
+		return new Position(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+	}
+
 	public int getX() {
 		return _posX;
 	}

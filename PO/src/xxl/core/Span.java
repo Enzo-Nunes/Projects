@@ -8,6 +8,13 @@ public class Span implements Iterable<Cell> {
 	private Spreadsheet _sheet;
 	private boolean _isRowSpan;
 
+	public static Span parse(String src, Spreadsheet holder)
+	{
+		String[] parts = src.split(":");
+		// TODO: Check length
+		return new Span(Position.parse(parts[0]), Position.parse(parts[1]), holder);
+	}
+
 	public Span(Position start, Position end, Spreadsheet containingSheet) {
 		_start = start;
 		_length = end.getX() - start.getX() + 1;

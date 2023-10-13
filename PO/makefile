@@ -1,30 +1,38 @@
-SRC=src
-CLASS=build/class
-JAR=build/jar
+SRC=
 
 SRCS=$(wildcard $(SRC)/*.java)
-CLASSES=$(patsubst $(SRC)/%.java, $(CLASS)/%.class, $(SRCS))
-TARGET_JAR=fuckme.jar
-ENTRY_CLASS=fuckme
-
-J_FLAGS=-sourcepath $(SRC)
+TARGET=xxl.app.App
+TARGET_CLASS=$(SRC)/$(TARGET).class
+JAVA_ARGS=-cp src/po-uilib.jar:.
 
 .PHONY: run
 .PHONY: build
 .PHONY: clean
 
-build: $(JAR)/$(TARGET_JAR)
+build: $(TARGET_CLASS)
 
-run: $(JAR)/$(TARGET_JAR)
-	java -jar $(JAR)/$(TARGET_JAR)
+run: $(TARGET_CLASS)
+	java $(JAVA_ARGS) $(TARGET) 
 
-$(JAR)/$(TARGET_JAR): $(CLASSES)
-	@mkdir -p $(@D)
-	jar cfev $(JAR)/$(TARGET_JAR) $(ENTRY_CLASS) -C $(CLASS) .
-
-$(CLASS)/%.class: $(SRC)/%.java
-	@mkdir -p $(@D)
-	cd $(SRC) && javac $(J_FLAGS) -d ../$(CLASS) $(subst $(SRC)/, ./, $<)
+$(TARGET_CLASS): $(SRCS)
+	javac $(JAVA_ARGS) `find xxl -name "*.java"`
 
 clean:
-	$(RM) -r $(CLASS) $(JAR)
+	$(RM) $(TARGET_CLASS)
+
+#===OLD===
+#build: $(JAR)/$(TARGET_JAR)
+#
+#run: $(JAR)/$(TARGET_JAR)
+#	java -jar $(JAR)/$(TARGET_JAR)
+#
+#$(JAR)/$(TARGET_JAR): $(CLASSES)
+#	@mkdir -p $(@D)
+#	jar cfev $(JAR)/$(TARGET_JAR) $(ENTRY_CLASS) -C $(CLASS) .
+#
+#$(CLASS)/%.class: $(SRC)/%.java
+#	@mkdir -p $(@D)
+#	cd $(SRC) && javac $(J_FLAGS) -d ../$(CLASS) $(subst $(SRC)/, ./, $<)
+#
+#clean:
+#	$(RM) -r $(CLASS) $(JAR)
