@@ -9,7 +9,7 @@ public class StringLiteral extends LiteralValue {
 
 	@Override
 	public ValueWrapper getValue() {
-		return new ValueWrapper(_value);
+		return new ValueWrapper(_value.toString());
 	}
 
 	@Override
@@ -23,6 +23,6 @@ public class StringLiteral extends LiteralValue {
 	@Override
 	public String visualize()
 	{
-		return _value;
+		return "'" + _value;
 	}
 }

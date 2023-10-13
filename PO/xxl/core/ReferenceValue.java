@@ -36,7 +36,7 @@ public class ReferenceValue extends CellValue {
 		{
 			ValueWrapper value = getValue();
 			if (value == null)
-				return "";
+				return "#VALUE" + "=" + _referencedPos.visualize();
 			else
 				resultStr = value.visualize();
 		} catch (IncorrectValueTypeException | InvalidSpanException e) {

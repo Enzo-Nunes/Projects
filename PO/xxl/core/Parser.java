@@ -77,10 +77,10 @@ class Parser {
 	}
 
 	private CellValue parseLiteral(String cellValue) throws UnrecognizedEntryException, NumberFormatException, InvalidSpanException {
-		if (Character.isDigit(cellValue.charAt(0)))
-			return new IntegerLiteral(Integer.parseInt(cellValue));
+		if (cellValue.charAt(0) == '\'')
+			return new StringLiteral(cellValue.substring(1));
 		else
-			return new StringLiteral(cellValue);
+			return new IntegerLiteral(Integer.parseInt(cellValue));
 	}
 
 	private CellValue parseExpression(String cellValue) throws UnrecognizedEntryException, ParsingException, InvalidSpanException {
