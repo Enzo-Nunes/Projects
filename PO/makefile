@@ -21,6 +21,9 @@ test:
 	./runtests.sh
 	./runtests_both.sh
 
+export: $(TARGET_CLASS)
+	jar cvf proj.jar xxl
+
 clean:
 #	$(RM) *.class
 
