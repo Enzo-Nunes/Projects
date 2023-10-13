@@ -33,8 +33,10 @@ class Parser {
 			line = reader.readLine();
 			if (line.startsWith("linhas="))
 				lineC = Integer.parseInt(line.substring(7));
-			else // TODO: assume colunas=
+			else if (line.startsWith("colunas="))
 				colC = Integer.parseInt(line.substring(8));
+			else
+				throw new UnrecognizedEntryException(line);
 		}
 
 		if (lineC < 0 || colC < 0)
