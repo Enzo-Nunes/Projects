@@ -14,26 +14,25 @@ import xxl.core.Cell;
  */
 class DoShow extends Command<Spreadsheet> {
 
-  DoShow(Spreadsheet receiver) {
-    super(Label.SHOW, receiver);
-    addStringField("range", Message.address());
-  }
-  
-  @Override
-  protected final void execute() throws CommandException {
-    String range = stringField("range");
-    Span span;
-    try {
-      span = Span.parse(range, _receiver);
-    } catch (ParsingException | InvalidSpanException e) {
-      throw new InvalidCellRangeException(range);
-    }
-    
-    for (Cell cell : span)
-    {
-      //System.out.println("SHOWITER");
-      if (cell != null)
-        _display.addNewLine(cell.visualize(), false);
-    }
-  }
+	DoShow(Spreadsheet receiver) {
+		super(Label.SHOW, receiver);
+		addStringField("range", Message.address());
+	}
+
+	@Override
+	protected final void execute() throws CommandException {
+		String range = stringField("range");
+		Span span;
+		try {
+			span = Span.parse(range, _receiver);
+		} catch (ParsingException | InvalidSpanException e) {
+			throw new InvalidCellRangeException(range);
+		}
+
+		for (Cell cell : span) {
+			// System.out.println("SHOWITER");
+			if (cell != null)
+				_display.addNewLine(cell.visualize(), false);
+		}
+	}
 }

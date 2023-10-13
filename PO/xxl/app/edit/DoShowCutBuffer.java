@@ -9,12 +9,12 @@ import xxl.core.Spreadsheet;
  */
 class DoShowCutBuffer extends Command<Spreadsheet> {
 
-  DoShowCutBuffer(Spreadsheet receiver) {
-    super(Label.SHOW_CUT_BUFFER, receiver);
-  }
-  
-  @Override
-  protected final void execute() {
-    // FIXME implement command
-  }
+	DoShowCutBuffer(Spreadsheet receiver) {
+		super(Label.SHOW_CUT_BUFFER, receiver);
+	}
+
+	@Override
+	protected final void execute() {
+		// FIXME implement command
+	}
 }

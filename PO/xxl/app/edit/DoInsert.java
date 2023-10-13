@@ -10,13 +10,13 @@ import xxl.core.Spreadsheet;
  */
 class DoInsert extends Command<Spreadsheet> {
 
-  DoInsert(Spreadsheet receiver) {
-    super(Label.INSERT, receiver);
-    // FIXME add fields
-  }
-  
-  @Override
-  protected final void execute() throws CommandException {
-    // FIXME implement command
-  }
+	DoInsert(Spreadsheet receiver) {
+		super(Label.INSERT, receiver);
+		// FIXME add fields
+	}
+
+	@Override
+	protected final void execute() throws CommandException {
+		// FIXME implement command
+	}
 }

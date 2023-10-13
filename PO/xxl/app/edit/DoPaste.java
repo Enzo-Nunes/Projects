@@ -10,13 +10,13 @@ import xxl.core.Spreadsheet;
  */
 class DoPaste extends Command<Spreadsheet> {
 
-  DoPaste(Spreadsheet receiver) {
-    super(Label.PASTE, receiver);
-    // FIXME add fields
-  }
-  
-  @Override
-  protected final void execute() throws CommandException {
-    // FIXME implement command
-  }
+	DoPaste(Spreadsheet receiver) {
+		super(Label.PASTE, receiver);
+		// FIXME add fields
+	}
+
+	@Override
+	protected final void execute() throws CommandException {
+		// FIXME implement command
+	}
 }

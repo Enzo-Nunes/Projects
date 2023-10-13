@@ -9,13 +9,13 @@ import xxl.core.Spreadsheet;
  */
 class DoShowFunctions extends Command<Spreadsheet> {
 
-  DoShowFunctions(Spreadsheet receiver) {
-    super(Label.SEARCH_FUNCTIONS, receiver);
-    // FIXME add fields
-  }
+	DoShowFunctions(Spreadsheet receiver) {
+		super(Label.SEARCH_FUNCTIONS, receiver);
+		// FIXME add fields
+	}
 
-  @Override
-  protected final void execute() {
-    // FIXME implement command
-  }
+	@Override
+	protected final void execute() {
+		// FIXME implement command
+	}
 }
