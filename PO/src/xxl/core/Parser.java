@@ -6,9 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import xxl.core.exception.IncorrectValueTypeException;
+import xxl.core.exception.ParsingException;
 import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.SpreadsheetSizeException;
 import xxl.core.exception.UnrecognizedEntryException;
+import xxl.core.exception.ParsingException;
 
 class Parser {
 	Spreadsheet _sheet;
@@ -17,13 +19,14 @@ class Parser {
 	}
 
 	public Spreadsheet parseFromFile(String filename) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, PositionOutOfRangeException, FileNotFoundException, IOException, SpreadsheetSizeException {
+			IncorrectValueTypeException, PositionOutOfRangeException, FileNotFoundException, IOException,
+			SpreadsheetSizeException, ParsingException {
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
 		return parseData(reader);
 	}
 
 	private Spreadsheet parseData(BufferedReader reader) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, PositionOutOfRangeException, IOException, SpreadsheetSizeException {
+			IncorrectValueTypeException, PositionOutOfRangeException, IOException, SpreadsheetSizeException, ParsingException {
 		int lineC = 0, colC = 0;
 		String line;
 
@@ -51,7 +54,7 @@ class Parser {
 		return _sheet;
 	}
 
-	private Cell parseCellLine(String cellLine) throws UnrecognizedEntryException, NumberFormatException {
+	private Cell parseCellLine(String cellLine) throws UnrecognizedEntryException, NumberFormatException, ParsingException {
 		// Format: X;Y|content
 		String[] parts = cellLine.split("|");
 		// TODO: Validate length
@@ -62,7 +65,7 @@ class Parser {
 		return cell;
 	}
 
-	private CellValue parseCellValue(String cellValue) throws UnrecognizedEntryException, NumberFormatException {
+	private CellValue parseCellValue(String cellValue) throws UnrecognizedEntryException, NumberFormatException, ParsingException {
 		if (cellValue.startsWith("="))
 			return parseExpression(cellValue);
 		else
@@ -77,14 +80,14 @@ class Parser {
 			return new StringLiteral(cellValue);
 	}
 
-	private CellValue parseExpression(String cellValue) throws UnrecognizedEntryException {
+	private CellValue parseExpression(String cellValue) throws UnrecognizedEntryException, ParsingException {
 		if (cellValue.contains("("))
 			return parseFunction(cellValue);
 		else
 			return parseReference(cellValue);
 	}
 
-	private CellValue parseFunction(String cellValue) throws UnrecognizedEntryException {
+	private CellValue parseFunction(String cellValue) throws UnrecognizedEntryException, ParsingException {
 		int firstParent = cellValue.indexOf("(");
 		int lastParent = cellValue.indexOf(")");
 		String name = cellValue.substring(0, firstParent);
@@ -121,7 +124,7 @@ class Parser {
 	}
 
 	private CellValue parseSpanFunction(String name, String arg)
-			throws UnrecognizedEntryException, NumberFormatException {
+			throws UnrecognizedEntryException, NumberFormatException, ParsingException {
 		Span span = Span.parse(arg, _sheet);
 
 		switch (name) {

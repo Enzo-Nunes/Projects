@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import xxl.core.exception.ImportFileException;
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.MissingFileAssociationException;
+import xxl.core.exception.ParsingException;
 import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.SpreadsheetSizeException;
 import xxl.core.exception.UnavailableFileException;
@@ -116,7 +117,8 @@ public class Calculator {
 		try {
 			_spreadsheet = new Parser().parseFromFile(filename);
 		} catch (IOException | UnrecognizedEntryException | NumberFormatException
-				| IncorrectValueTypeException | PositionOutOfRangeException | SpreadsheetSizeException e) {
+				| IncorrectValueTypeException | PositionOutOfRangeException
+				| SpreadsheetSizeException | ParsingException e) {
 			throw new ImportFileException(filename, e);
 		}
 	}
