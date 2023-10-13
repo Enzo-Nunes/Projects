@@ -10,13 +10,13 @@ import xxl.core.Spreadsheet;
  */
 class DoDelete extends Command<Spreadsheet> {
 
-  DoDelete(Spreadsheet receiver) {
-    super(Label.DELETE, receiver);
-    // FIXME add fields
-  }
-  
-  @Override
-  protected final void execute() throws CommandException {
-    // FIXME implement command
-  }
+	DoDelete(Spreadsheet receiver) {
+		super(Label.DELETE, receiver);
+		// FIXME add fields
+	}
+
+	@Override
+	protected final void execute() throws CommandException {
+		// FIXME implement command
+	}
 }
