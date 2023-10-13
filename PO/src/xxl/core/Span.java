@@ -1,5 +1,6 @@
 package xxl.core;
 
+import xxl.core.exception.ParsingException;
 import java.util.Iterator;
 
 public class Span implements Iterable<Cell> {
@@ -8,11 +9,15 @@ public class Span implements Iterable<Cell> {
 	private Spreadsheet _sheet;
 	private boolean _isRowSpan;
 
-	public static Span parse(String src, Spreadsheet holder)
-	{
+	public static Span parse(String src, Spreadsheet holder) throws ParsingException {
 		String[] parts = src.split(":");
-		// TODO: Check length
-		return new Span(Position.parse(parts[0]), Position.parse(parts[1]), holder);
+		if (parts.length == 1) {
+			Position pos = Position.parse(src);
+			return new Span(pos, pos, holder);
+		} else if (parts.length == 2)
+			return new Span(Position.parse(parts[0]), Position.parse(parts[1]), holder);
+		else
+			throw new ParsingException();
 	}
 
 	public Span(Position start, Position end, Spreadsheet containingSheet) {
