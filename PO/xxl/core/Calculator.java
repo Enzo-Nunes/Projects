@@ -26,14 +26,16 @@ public class Calculator {
 	private User _currentUser;
 	private ArrayList<User> _users;
 	private static User _root;
-	// TODO: mess with users stuff. Maybe create root when creating calculator? When
-	// to add new users?
 
 	public Calculator() {
 		_root = new User("root");
 		_users = new ArrayList<User>();
 		_users.add(_root);
 		_currentUser = _root;
+	}
+
+	public User getCurrentUser() {
+		return _currentUser;
 	}
 
 	/**
