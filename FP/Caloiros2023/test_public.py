@@ -1,5 +1,5 @@
-import pytest 
-import project1 as fp # <--- Change the name projectoFP to the file name with your project
+import pytest
+import project1 as fp
 
 
 class TestPublicTerritorioIntersecoes:
