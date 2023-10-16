@@ -66,6 +66,7 @@ def eh_intersecao_valida(t:tuple, i:tuple) -> bool:
 		return False
 	if not i[1] <= last[1]:
 		return False
+	
 	return True
 
 
@@ -75,6 +76,7 @@ def eh_intersecao_livre(t:tuple, i:tuple) -> bool:
 
 	if not eh_intersecao_valida(t, i):
 		return False
+	
 	return not t[ALFABETO.index(i[0])][i[1]-1]
 
 
@@ -100,11 +102,13 @@ def obtem_intersecoes_adjacentes(t:tuple, i:tuple) -> tuple:
 def ordena_intersecoes(tup:tuple) -> tuple:
 	""" Recebe um tuplo de intersecoes e devolve um tuplo com as intersecoes
 		ordenadas de acordo com a ordem de leitura do territorio."""
+	
 	return tuple(sorted(tup, key=lambda x: (x[1], x[0])))
 
 
 def territorio_para_str(t:tuple) -> str:
 	""" Recebe um territorio e devolve uma cadeia de caracteres que o representa."""
+
 	if not eh_territorio(t):
 		raise ValueError('territorio_para_str: argumento invalido')
 
@@ -183,6 +187,7 @@ def verifica_conexao(t:tuple, i1:tuple, i2:tuple) -> bool:
 	
 	if not eh_intersecao_valida(t, i1) or not eh_intersecao_valida(t, i2):
 		raise ValueError('verifica_conexao: argumentos invalidos')
+	
 	return i2 in obtem_cadeia(t, i1)
 
 
@@ -191,10 +196,12 @@ def calcula_numero_montanhas(t:tuple) -> int:
 
 	if not eh_territorio(t):
 		raise ValueError('calcula_numero_montanhas: argumento invalido')
+	
 	res = 0
 	for x in t:
 		for y in x:
 			res += y
+
 	return res
 
 
@@ -207,6 +214,7 @@ def obtem_montanhas(t:tuple) -> list:
 		for j in range(len(t[i])):
 			if not eh_intersecao_livre(t, (ALFABETO[i], j+1)):
 				res.append((ALFABETO[i], j+1))
+
 	return res
 
 
