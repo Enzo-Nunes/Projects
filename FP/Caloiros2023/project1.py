@@ -157,7 +157,8 @@ def obtem_cadeia(t:tuple, i:tuple) -> tuple:
 		if current not in res:
 			res.append(current)
 			for x in obtem_intersecoes_adjacentes(t, current):
-				if x not in res and x not in stack and eh_intersecao_livre(t, x) == eh_intersecao_livre(t, i):
+				if x not in res and x not in stack and\
+				   eh_intersecao_livre(t, x) == eh_intersecao_livre(t, i):
 					stack.append(x)
 
 	return ordena_intersecoes(tuple(res))
