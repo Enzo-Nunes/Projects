@@ -23,7 +23,11 @@ public class BinaryArgument implements Serializable {
 		if (_referencedPos == null)
 			return _literal;
 
-		return _sheet.getCellContent(_referencedPos).getInt();
+		ValueWrapper value = _sheet.getCellContent(_referencedPos);
+
+		if (value == null)
+			return 0;
+		return value.getInt();
 	}
 
 	public BinaryArgument deepCopy() {
