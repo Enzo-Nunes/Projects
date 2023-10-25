@@ -20,7 +20,7 @@ $(TARGET_CLASS): $(SRCS)
 test:
 	./runtests.sh
 
-export: $(TARGET_CLASS)
+export_jar: $(TARGET_CLASS)
 	jar cvf proj.jar xxl
 
 clean:
