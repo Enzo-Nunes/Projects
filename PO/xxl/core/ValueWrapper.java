@@ -1,8 +1,9 @@
 package xxl.core;
 
+import java.io.Serializable;
 import xxl.core.exception.IncorrectValueTypeException;
 
-public class ValueWrapper {
+public class ValueWrapper implements Serializable {
 	private int _int;
 	private String _string;
 
