@@ -63,8 +63,6 @@ public class Spreadsheet implements Serializable {
 		if (!positionisValid(position))
 			throw new InvalidSpanException();
 
-		_dirty = true;
-
 		if (_cells.containsKey(position))
 			return _cells.get(position).getValue();
 
