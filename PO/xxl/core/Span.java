@@ -50,7 +50,9 @@ public class Span implements Iterable<Cell> {
 		return _length;
 	}
 
-	private static boolean isRowSpan(Position start, Position end) {
+	private static boolean isRowSpan(Position start, Position end) throws InvalidSpanException {
+		if (start.getX() != end.getX() && start.getY() != end.getY())
+			throw new InvalidSpanException();
 		return start.getY() == end.getY();
 	}
 
