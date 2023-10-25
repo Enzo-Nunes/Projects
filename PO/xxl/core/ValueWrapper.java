@@ -31,7 +31,7 @@ public class ValueWrapper implements Serializable {
 
 	public String visualize() {
 		if (_string != null)
-			return _string;
+			return "'" + _string;
 		return "" + _int;
 	}
 }
