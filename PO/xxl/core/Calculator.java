@@ -78,10 +78,8 @@ public class Calculator {
 	 *                                         the network to disk.
 	 */
 	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
-		try (ObjectOutputStream obOut = new ObjectOutputStream(new FileOutputStream(filename));) {
-			obOut.writeObject(_spreadsheet);
-			_spreadsheet.setFilename(filename);
-		}
+		_spreadsheet.setFilename(filename);
+		save();
 	}
 
 	/**

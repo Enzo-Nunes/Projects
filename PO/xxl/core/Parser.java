@@ -12,10 +12,12 @@ import xxl.core.exception.SpreadsheetSizeException;
 import xxl.core.exception.UnrecognizedEntryException;
 
 class Parser {
-	Spreadsheet _sheet;
+	private Spreadsheet _sheet;
 
 	public Parser() {
 	}
+
+	
 
 	public Spreadsheet parseFromFile(String filename)
 			throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, InvalidSpanException,
