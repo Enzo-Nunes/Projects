@@ -7,13 +7,15 @@ public class MulFunction extends BinaryFunction {
 
 	public MulFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
+		recalculate();
+		//TODO: Register observer
 	}
 
 	@Override
-	public void recalculate() throws IncorrectValueTypeException, InvalidSpanException {
+	public void recalculate() {
 		try {
 			_bufferedResult = new ValueWrapper(_arg1.getValue() * _arg2.getValue());
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | IncorrectValueTypeException | InvalidSpanException e) {
 			_bufferedResult = null;
 		}
 	}
@@ -26,12 +28,11 @@ public class MulFunction extends BinaryFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try {
-			recalculate();
-			resultStr = _bufferedResult.visualize();
-		} catch (IncorrectValueTypeException | InvalidSpanException | NullPointerException e) {
+
+		if (_bufferedResult == null)
 			resultStr = "#VALUE";
-		}
+		else
+			resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=MUL(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}

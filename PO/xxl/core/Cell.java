@@ -5,7 +5,7 @@ import java.io.Serializable;
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
 
-public class Cell implements Serializable {
+public class Cell implements Serializable, Observer {
 	private Position _position;
 	private CellValue _content;
 
@@ -21,7 +21,7 @@ public class Cell implements Serializable {
 		return _content.deepCopy();
 	}
 
-	public void update(CellValue value) {
+	public void updateValue(CellValue value) {
 		_content = value;
 	}
 
@@ -34,5 +34,12 @@ public class Cell implements Serializable {
 		if (_content == null)
 			return _position.visualize() + "|";
 		return _position.visualize() + "|" + _content.visualize();
+	}
+
+
+
+	public void update()
+	{
+		_content.recalculate();
 	}
 }

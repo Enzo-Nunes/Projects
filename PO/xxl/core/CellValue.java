@@ -8,7 +8,7 @@ import xxl.core.exception.InvalidSpanException;
 abstract class CellValue implements Serializable {
 	abstract public ValueWrapper getValue() throws IncorrectValueTypeException, InvalidSpanException;
 
-	abstract protected void recalculate() throws IncorrectValueTypeException, InvalidSpanException; // for future optimization
+	abstract protected void recalculate();
 
 	abstract public CellValue deepCopy();
 

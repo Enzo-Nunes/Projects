@@ -33,7 +33,7 @@ public class SpanIterator implements Iterator<Cell> {
 
 		if (result == null) {
 			result = new Cell(pos);
-			result.update(null);
+			result.updateValue(null);
 		}
 		_offset++;
 		return result;
