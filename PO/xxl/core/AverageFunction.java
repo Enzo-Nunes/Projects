@@ -6,6 +6,8 @@ import xxl.core.exception.InvalidSpanException;
 public class AverageFunction extends SpanFunction {
 	public AverageFunction(Span argument) {
 		super(argument);
+		recalculate();
+		//TODO: Register observer
 	}
 
 	@Override
@@ -14,14 +16,14 @@ public class AverageFunction extends SpanFunction {
 	}
 
 	@Override
-	protected void recalculate() throws InvalidSpanException {
+	protected void recalculate() {
 		int total = 0;
 
 		for (Cell cell : _argument) {
 			try {
 				total += cell.getValue().getInt();
-			} catch (IncorrectValueTypeException except) {
-				_bufferedResult = new ValueWrapper("#VALUE");
+			} catch (IncorrectValueTypeException | InvalidSpanException e) {
+				_bufferedResult = null;
 			}
 		}
 
@@ -33,12 +35,11 @@ public class AverageFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try {
-			recalculate(); // TODO: Avoid repetition
-			resultStr = _bufferedResult.visualize();
-		} catch (InvalidSpanException e) {
+
+		if (_bufferedResult == null)
 			resultStr = "#VALUE";
-		}
+		else
+			resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=AVERAGE(" + _argument.visualize() + ")";
 	}

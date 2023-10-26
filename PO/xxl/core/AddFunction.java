@@ -7,13 +7,15 @@ class AddFunction extends BinaryFunction {
 
 	public AddFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
+		recalculate();
+		//TODO: Register observer
 	}
 
 	@Override
-	protected void recalculate() throws IncorrectValueTypeException, InvalidSpanException {
+	protected void recalculate() {
 		try {
 			_bufferedResult = new ValueWrapper(_arg1.getValue() + _arg2.getValue());
-		} catch (NullPointerException e) {
+		} catch (IncorrectValueTypeException | InvalidSpanException | NullPointerException e) {
 			_bufferedResult = null;
 		}
 	}
@@ -26,12 +28,11 @@ class AddFunction extends BinaryFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try {
-			recalculate();
-			resultStr = _bufferedResult.visualize();
-		} catch (IncorrectValueTypeException | InvalidSpanException | NullPointerException e) {
+	
+		if (_bufferedResult == null)
 			resultStr = "#VALUE";
-		}
+		else
+			resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=ADD(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}

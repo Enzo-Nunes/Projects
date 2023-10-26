@@ -6,17 +6,19 @@ import xxl.core.exception.InvalidSpanException;
 public class CoalesceFunction extends SpanFunction {
 	public CoalesceFunction(Span argument) {
 		super(argument);
+		recalculate();
+		//TODO: Register observer
 	}
 
 	@Override
-	protected void recalculate() throws InvalidSpanException {
+	protected void recalculate() {
 		String result = "";
 
 		for (Cell cell : _argument) {
 			try {
 				result = cell.getValue().getString();
 				break;
-			} catch (IncorrectValueTypeException e) {
+			} catch (IncorrectValueTypeException | InvalidSpanException e) {
 				result = "";
 			}
 		}
@@ -32,12 +34,11 @@ public class CoalesceFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try {
-			recalculate(); // TODO: Avoid repetition
-			resultStr = _bufferedResult.visualize();
-		} catch (InvalidSpanException e) {
+
+		if (_bufferedResult == null)
 			resultStr = "#VALUE";
-		}
+		else
+		resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=COALESCE(" + _argument.visualize() + ")";
 	}
