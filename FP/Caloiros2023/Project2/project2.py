@@ -564,8 +564,7 @@ def jogo_para_str(g:'list[list[str]]', t:'[int, int]') -> str:
 def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 	""" Função principal que permite jogar um jogo completo do Go de dois jogadores.
 		A função recebe um inteiro correspondente à dimensão do tabuleiro, e dois
-		tuplos (potencialmente vazios) com a representação externa das interseções
-		ocupadas por pedras brancas (tb) e pretas (tp) inicialmente."""
+		tuplos com a representação externa das interseções ocupadas inicialmente. """
 	
 	# Verificação dos argumentos
 	if not (isinstance(n, int) and isinstance(tb, tuple) and isinstance(tn, tuple)):
