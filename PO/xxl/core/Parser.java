@@ -18,6 +18,11 @@ class Parser {
 	public Parser() {
 	}
 
+	public Parser (Spreadsheet sheet)
+	{
+		_sheet = sheet;
+	}
+
 	
 
 	public Spreadsheet parseFromFile(String filename)
@@ -73,7 +78,7 @@ class Parser {
 		return cell;
 	}
 
-	private CellValue parseCellValue(String cellValue)
+	public CellValue parseCellValue(String cellValue)
 			throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
 		if (cellValue.startsWith("="))
 			return parseExpression(cellValue);

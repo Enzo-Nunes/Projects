@@ -8,6 +8,7 @@ import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
 import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.UnrecognizedEntryException;
+import xxl.core.exception.ParsingException;
 
 public class Spreadsheet implements Serializable {
 	private ArrayList<User> _owners;
@@ -217,5 +218,15 @@ public class Spreadsheet implements Serializable {
 		ret.sort(new PositionComparator());
 
 		return ret;
+	}
+
+	public void insertSpan(String span, String content) throws ParsingException, InvalidSpanException, UnrecognizedEntryException
+	{
+		Parser parser = new Parser(this);
+		Span parsedSpan = Span.parse(span, this);
+		CellValue parsedContent = parser.parseCellValue(content);
+
+		for (Cell cell : parsedSpan)
+			cell.updateValue(parsedContent.deepCopy());
 	}
 }
