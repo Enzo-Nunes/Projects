@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
 
-public class Cell implements Serializable, Observer {
+public class Cell implements Serializable {
 	private Position _position;
 	private CellValue _content;
 	private ArrayList<Observer> _subscribers;
@@ -60,5 +60,10 @@ public class Cell implements Serializable, Observer {
 	public void unsubscribe(Observer observer)
 	{
 		_subscribers.remove(observer);
+	}
+
+	public void unsubscribeFromAll()
+	{
+		_content.unsubscribeFromAll();
 	}
 }
