@@ -97,15 +97,13 @@ public class Spreadsheet implements Serializable {
 	}
 
 	public void pasteCutBuffer(Span span) throws InvalidSpanException, PositionOutOfRangeException {
+		int bufferLength = _cutBuffer.getLength();
 
-		Span bufferSpan = _cutBuffer.getSpan();
-		int bufferLenght = bufferSpan.getLength();
-
-		if (bufferSpan.isRowSpan() != span.isRowSpan())
+		if (_cutBuffer.isRowBuffer() != span.isRowSpan())
 			throw new InvalidSpanException();
 
 		//FIXME No exceptions??
-		if (bufferLenght == 0 || bufferLenght != span.getLength())
+		if (bufferLength == 0 || bufferLength != span.getLength())
 			return;
 
 		//FIXME Repeated code. Optimizable?
