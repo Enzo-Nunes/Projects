@@ -48,7 +48,7 @@ public class Spreadsheet implements Serializable {
 	}
 
 	public void setCellContent(Position position, CellValue content)
-			throws IncorrectValueTypeException, PositionOutOfRangeException {
+			throws PositionOutOfRangeException {
 		if (!positionisValid(position))
 			throw new PositionOutOfRangeException();
 
@@ -72,7 +72,7 @@ public class Spreadsheet implements Serializable {
 		return null;
 	}
 
-	public void insertCell(Position position, CellValue content) throws IncorrectValueTypeException, PositionOutOfRangeException {
+	public void insertCell(Position position, CellValue content) throws PositionOutOfRangeException {
 		if (!positionisValid(position))
 			throw new PositionOutOfRangeException();
 
@@ -90,7 +90,7 @@ public class Spreadsheet implements Serializable {
 		_cutBuffer.setContent(span.deepCopy());
 	}
 
-	public void pasteCutBuffer(Span span) throws PositionOutOfRangeException {
+	public void pasteCutBuffer(Span span) throws InvalidSpanException, PositionOutOfRangeException {
 
 		Span bufferSpan = _cutBuffer.getSpan();
 		int bufferLenght = bufferSpan.getLength();
