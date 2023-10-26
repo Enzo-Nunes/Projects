@@ -6,6 +6,8 @@ import xxl.core.exception.InvalidSpanException;
 public class ProdFunction extends SpanFunction {
 	public ProdFunction(Span argument) {
 		super(argument);
+		recalculate();
+		//TODO: Register observer
 	}
 
 	@Override
@@ -14,14 +16,15 @@ public class ProdFunction extends SpanFunction {
 	}
 
 	@Override
-	protected void recalculate() throws InvalidSpanException {
+	protected void recalculate() {
 		int total = 1;
 
 		for (Cell cell : _argument) {
 			try {
 				total *= cell.getValue().getInt();
-			} catch (IncorrectValueTypeException except) {
-				_bufferedResult = new ValueWrapper("#VALUE");
+			} catch (IncorrectValueTypeException | InvalidSpanException except) {
+				_bufferedResult = null;
+				return;
 			}
 		}
 
@@ -31,12 +34,11 @@ public class ProdFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try {
-			recalculate(); // TODO: Avoid repetition
-			resultStr = _bufferedResult.visualize();
-		} catch (InvalidSpanException e) {
+		
+		if (_bufferedResult == null)
 			resultStr = "#VALUE";
-		}
+		else
+			resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=PRODUCT(" + _argument.visualize() + ")";
 	}
