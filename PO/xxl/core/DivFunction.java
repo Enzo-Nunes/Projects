@@ -8,7 +8,6 @@ public class DivFunction extends BinaryFunction {
 	public DivFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 		recalculate();
-		//TODO: Register observer
 	}
 
 	@Override

@@ -14,7 +14,7 @@ abstract class CellValue implements Serializable, Observer {
 
 	public abstract String visualize();
 
-	public abstract void subscribeToAll();
+	protected abstract void subscribeToAll();
 
 	public abstract void unsubscribeFromAll();
 }

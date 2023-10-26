@@ -5,15 +5,16 @@ public abstract class SpanFunction extends FunctionValue {
 
 	public SpanFunction(Span argument) {
 		_argument = argument;
+		subscribeToAll();
 	}
 
 	@Override
-	public void subscribeToAll() {
+	protected final void subscribeToAll() {
 		_argument.subscribe(this);
 	}
 
 	@Override
-	public void unsubscribeFromAll() {
+	public final void unsubscribeFromAll() {
 		_argument.unsubscribe(this);
 	}
 }

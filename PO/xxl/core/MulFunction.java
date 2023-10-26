@@ -8,7 +8,6 @@ public class MulFunction extends BinaryFunction {
 	public MulFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 		recalculate();
-		//TODO: Register observer
 	}
 
 	@Override

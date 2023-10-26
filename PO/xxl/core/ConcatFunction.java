@@ -7,7 +7,6 @@ public class ConcatFunction extends SpanFunction {
 	public ConcatFunction(Span argument) {
 		super(argument);
 		recalculate();
-		//TODO: Register observer
 	}
 
 	@Override
