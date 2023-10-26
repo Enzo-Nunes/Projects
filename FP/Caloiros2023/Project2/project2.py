@@ -3,11 +3,11 @@ ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 """Jogo Go."""
 
 """TAD Interseção."""
-def cria_intersecao(col:int, lin:int) -> tuple:
+def cria_intersecao(col:str, lin:int) -> tuple:
 	"""	Recebe dois inteiros e cria um interseção. Verifica a validade dos parâmetros."""
 	if not (isinstance(lin, int) and isinstance(col, str)):
 		raise ValueError("cria_intersecao: argumentos invalidos")
-	if col not in ALFABETO[:19]:
+	if col not in ALFABETO[:19] and len(col) != 1:
 		raise ValueError("cria_intersecao: argumentos invalidos")
 	if not 1 <= lin <= 19:
 		raise ValueError("cria_intersecao: argumentos invalidos") 
@@ -15,7 +15,7 @@ def cria_intersecao(col:int, lin:int) -> tuple:
 	return (col, lin)
 
 
-def obtem_col(i:tuple) -> int:
+def obtem_col(i:'tuple[str,int]') -> int:
 	"""	Recebe uma interseção e devolve a coluna."""
 
 	return i[0]
@@ -27,7 +27,7 @@ def obtem_lin(i:tuple) -> int:
 	return i[1]
 
 
-def eh_intersecao(arg) -> bool:
+def eh_intersecao(arg:any) -> bool:
 	"""	Recebe um argumento e verifica se é uma interseção."""
 
 	if not isinstance(arg, tuple):
@@ -75,7 +75,7 @@ def eh_str_intersecao(s:str) -> bool:
 		return False
 	if len(s) not in (2, 3):
 		return False
-	if not s[0] in ALFABETO[:19]:
+	if not s[0] in ALFABETO[:19] and len(s[0]) != 1:
 		return False
 	if not s[1:].isdigit():
 		return False
@@ -195,7 +195,7 @@ def cria_goban_vazio(n:int) -> tuple:
 
 	if not isinstance(n, int):
 		raise ValueError("cria_goban_vazio: argumentos invalidos")
-	if n != 9 and n != 13 and n != 19:
+	if n not in (9, 13, 19):
 		raise ValueError("cria_goban_vazio: argumentos invalidos")
 
 
@@ -210,7 +210,7 @@ def cria_goban(n:int, ib:tuple, ip:tuple) -> list:
 		raise ValueError("cria_goban: argumentos invalidos")
 	if not isinstance(ib, tuple) or not isinstance(ip, tuple):
 		raise ValueError("cria_goban: argumentos invalidos")
-	if n != 9 and n != 13 and n != 19:
+	if n not in (9, 13, 19):
 		raise ValueError("cria_goban: argumentos invalidos")
 	
 	g = cria_goban_vazio(n)
@@ -324,9 +324,9 @@ def eh_intersecao_valida(t:tuple, i:tuple) -> bool:
 		return False
 	if not eh_intersecao(i):
 		return False
-	if not i[0] <= last[0]:
+	if not obtem_col(i) <= obtem_col(last):
 		return False
-	if not i[1] <= last[1]:
+	if not obtem_lin(i) <= obtem_lin(last):
 		return False
 	
 	return True
@@ -481,7 +481,11 @@ def eh_territorio_jogador(g:list, t:tuple, p:str) -> bool:
 	""" Recebe um goban, um território e uma pedra de jogador e verifica se o
 		território é do jogador."""
 	
-	for interseção in obtem_adjacentes_diferentes(g, t):
+	fronteira = obtem_adjacentes_diferentes(g, t)
+	if fronteira == ():
+		return False
+
+	for interseção in fronteira:
 		if obtem_pedra(g, interseção) != p:
 			return False
 		
@@ -497,7 +501,6 @@ def calcula_pontos(g:list) -> tuple:
 
 	branco = pedras[0]
 	preto  = pedras[1]
-	print(pedras)
 	for território in obtem_territorios(g):
 		if eh_territorio_jogador(g, território, cria_pedra_branca()):
 			branco += len(território)
@@ -528,7 +531,6 @@ def eh_jogada_legal(g:list, i:tuple, p:str, l:list) -> bool:
 	
 	# Suicídio
 	if not tem_liberdades(goban, obtem_cadeia(goban, i), p):
-		print(goban_para_str(goban))
 		return False
 	
 	return True
@@ -550,10 +552,49 @@ def turno_jogador(g:list, p:str, l:list) -> bool:
 
 	return True
 
-ib = tuple(str_para_intersecao(i)
-for i in ('C1', 'C2', 'C3', 'D2', 'D3', 'D4', 'A3', 'B3'))
-ip = tuple(str_para_intersecao(i)
-for i in ('A1', 'A2', 'B1', 'E4', 'E5', 'F4', 'F5', 'G6', 'G7'))
-g = cria_goban(9, ib, ip)
-print(goban_para_str(g))
-turno_jogador(g, cria_pedra_preta(), cria_goban_vazio(9))
+
+def go(n:int, tb:tuple, tn:tuple) -> bool:
+	""" Função principal que permite jogar um jogo completo do Go de dois jogadores.
+		A função recebe um inteiro correspondente à dimensão do tabuleiro, e dois
+		tuplos (potencialmente vazios) com a representação externa das interseções
+		ocupadas por pedras brancas (tb) e pretas (tp) inicialmente."""
+	
+	# Verificação dos argumentos
+	if not (isinstance(n, int) and isinstance(tb, tuple) and isinstance(tn, tuple)):
+		raise ValueError("go: argumentos invalidos")
+	if n not in (9, 13, 19):
+		raise ValueError("go: argumentos invalidos")
+	if not all(eh_str_intersecao(x) for x in tb):
+		raise ValueError("go: argumentos invalidos")
+	if not all(eh_str_intersecao(x) for x in tn):
+		raise ValueError("go: argumentos invalidos")
+	
+	# Criação do goban
+	vazio = cria_goban_vazio(n)
+	if not all(eh_intersecao_valida(vazio, str_para_intersecao(x)) for x in tb):
+		raise ValueError("go: argumentos invalidos")
+	
+	goban = cria_goban(n, tuple(str_para_intersecao(x) for x in tb), tuple(str_para_intersecao(x) for x in tn))
+
+	# Jogadores
+	branco = cria_pedra_branca()
+	preto  = cria_pedra_preta()
+
+	# Turnos
+	turno  = preto
+	ultimo = branco
+
+	# Passes
+	passe_turno  = False
+	passe_ultimo = False
+
+	# Loop de Jogo
+	while not (passe_turno and passe_ultimo):
+		passe_ultimo  = passe_turno
+		print("Branco (O) tem {} pontos".format(calcula_pontos(goban)[0]))
+		print("Preto (X) tem {} pontos".format(calcula_pontos(goban)[1]))
+		print(goban_para_str(goban))
+		passe_turno   = not turno_jogador(goban, turno, ultimo)
+		turno, ultimo = ultimo, turno
+
+	return calcula_pontos(goban)[0] >= calcula_pontos(goban)[1]
