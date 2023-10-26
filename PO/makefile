@@ -17,8 +17,10 @@ run: $(TARGET_CLASS)
 $(TARGET_CLASS): $(SRCS)
 	javac $(JAVA_ARGS) `find xxl -name "*.java"`
 
-test:
+test_old:
 	./runtests.sh
+
+test:
 	./runtests_both.sh
 
 export_jar: $(TARGET_CLASS)

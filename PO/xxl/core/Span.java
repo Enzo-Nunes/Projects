@@ -3,9 +3,10 @@ package xxl.core;
 import xxl.core.exception.ParsingException;
 import xxl.core.exception.InvalidSpanException;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
-public class Span implements Iterable<Cell> {
+public class Span implements Iterable<Cell>, Serializable {
 	private Position _start;
 	private int _length;
 	private Spreadsheet _sheet;

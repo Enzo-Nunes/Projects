@@ -17,7 +17,7 @@ public class CoalesceFunction extends SpanFunction {
 			try {
 				result = cell.getValue().getString();
 				break;
-			} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException | NullPointerException e) {
 				result = "";
 			}
 		}

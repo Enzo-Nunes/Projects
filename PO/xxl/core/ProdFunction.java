@@ -21,7 +21,7 @@ public class ProdFunction extends SpanFunction {
 		for (Cell cell : _argument) {
 			try {
 				total *= cell.getValue().getInt();
-			} catch (IncorrectValueTypeException | PositionOutOfRangeException except) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException | NullPointerException except) {
 				_bufferedResult = null;
 				return;
 			}
