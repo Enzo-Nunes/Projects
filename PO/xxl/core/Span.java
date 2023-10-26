@@ -79,9 +79,9 @@ public class Span implements Iterable<Cell>, Serializable {
 	}
 
 	public String visualize() {
-		int endX = _start.getX() + (_isRowSpan ? _length : 0);
-		int endY = _start.getY() + (_isRowSpan ? 0 : _length);
-		return _start.getX() + ";" + _start.getY() + ":" + endX + ";" + endY;
+		int endX = _start.getX() + (_isRowSpan ? _length - 1 : 0);
+		int endY = _start.getY() + (_isRowSpan ? 0 : _length - 1);
+		return _start.getY() + ";" + _start.getX() + ":" + endY + ";" + endX;
 	}
 
 	public void subscribe(Observer obs)
