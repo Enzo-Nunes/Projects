@@ -19,6 +19,7 @@ $(TARGET_CLASS): $(SRCS)
 
 test:
 	./runtests.sh
+	./runtests_both.sh
 
 export_jar: $(TARGET_CLASS)
 	jar cvf proj.jar xxl
