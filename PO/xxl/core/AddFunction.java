@@ -8,7 +8,6 @@ class AddFunction extends BinaryFunction {
 	public AddFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 		recalculate();
-		//TODO: Register observer
 	}
 
 	@Override

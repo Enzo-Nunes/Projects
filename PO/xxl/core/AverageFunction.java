@@ -7,7 +7,6 @@ public class AverageFunction extends SpanFunction {
 	public AverageFunction(Span argument) {
 		super(argument);
 		recalculate();
-		//TODO: Register observer
 	}
 
 	@Override

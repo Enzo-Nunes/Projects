@@ -8,7 +8,6 @@ public class SubFunction extends BinaryFunction {
 	public SubFunction(BinaryArgument firstArg, BinaryArgument secondArg) {
 		super(firstArg, secondArg);
 		recalculate();
-		//TODO: Register observer
 	}
 
 	@Override
