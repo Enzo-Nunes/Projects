@@ -42,9 +42,11 @@ public class Spreadsheet implements Serializable {
 		if (_cells.containsKey(position)) {
 			Cell cell = _cells.get(position);
 			return cell;
+		} else {
+			Cell cell = new Cell(position);
+			_cells.put(position, cell);
+			return cell;
 		}
-
-		return null;
 	}
 
 	public void setCellContent(Position position, CellValue content)

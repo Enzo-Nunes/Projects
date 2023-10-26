@@ -1,8 +1,9 @@
 package xxl.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class CutBuffer {
+public class CutBuffer implements Serializable {
     private ArrayList<CellValue> _content;
 	private boolean _isRowBuffer;
 

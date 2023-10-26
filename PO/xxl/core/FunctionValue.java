@@ -2,7 +2,6 @@ package xxl.core;
 
 public abstract class FunctionValue extends CellValue{
 	protected ValueWrapper _bufferedResult;
-	protected boolean _resultIsBuffered;
 
 	@Override
 	public void update()
@@ -12,9 +11,6 @@ public abstract class FunctionValue extends CellValue{
 
 	@Override
 	public ValueWrapper getValue() {
-		if (_resultIsBuffered)
-			return _bufferedResult;
-
 		return _bufferedResult;
 	}
 }
