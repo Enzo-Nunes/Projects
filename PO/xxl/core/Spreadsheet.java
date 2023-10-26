@@ -14,6 +14,7 @@ public class Spreadsheet implements Serializable {
 	private Position _botLeftCorner; // aka size
 	private String _filename;
 	private boolean _dirty;
+	private CutBuffer _cutBuffer;
 
 	public Spreadsheet(int width, int height) {
 		_owners = new ArrayList<User>();
@@ -21,6 +22,7 @@ public class Spreadsheet implements Serializable {
 
 		_cells = new HashMap<Position, Cell>();
 		_botLeftCorner = new Position(width, height);
+		_cutBuffer = new CutBuffer();
 		_dirty = false;
 	}
 
@@ -67,6 +69,47 @@ public class Spreadsheet implements Serializable {
 			return _cells.get(position).getValue();
 
 		return null;
+	}
+
+	public void insertCell(Position position, CellValue content) throws IncorrectValueTypeException, InvalidSpanException {
+		if (!positionisValid(position))
+			throw new InvalidSpanException();
+
+		_dirty = true;
+
+		if (!_cells.containsKey(position)) {
+			Cell cell = new Cell(position);
+			cell.update(content);
+			_cells.put(position, cell);
+		} else
+			_cells.get(position).update(content);
+	}
+
+	public void updateCutBuffer(Span span) throws InvalidSpanException {
+		_cutBuffer.setContent(span.deepCopy());
+	}
+
+	public void pasteCutBuffer(Span span) throws InvalidSpanException {
+
+		Span bufferSpan = _cutBuffer.getSpan();
+		int bufferLenght = bufferSpan.getLength();
+
+		if (bufferSpan.isRowSpan() != span.isRowSpan())
+			throw new InvalidSpanException();
+
+		//FIXME No exceptions??
+		if (bufferLenght == 0 || bufferLenght != span.getLength())
+			return;
+
+		if (span.isSingleCell()) {
+			for (Cell cell : span) {
+				//FIXMEN Add 'if' to check if inside the spreadsheet
+				insertCell(cell.getPosition(), _cutBuffer.getContent(cell.getPosition()));
+			}
+		} else {
+			//TODO deep copy each cell of the
+		}
+
 	}
 
 	public boolean positionisValid(Position pos) {
