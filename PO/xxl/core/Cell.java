@@ -1,16 +1,21 @@
 package xxl.core;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class Cell implements Serializable, Observer {
 	private Position _position;
 	private CellValue _content;
+	private ArrayList<Observer> _subscribers;
+
+
 
 	public Cell(Position pos) {
 		_position = pos;
+		_subscribers = new ArrayList<Observer>();
 	}
 
 	public Position getPosition() {
@@ -23,10 +28,10 @@ public class Cell implements Serializable, Observer {
 
 	public void updateValue(CellValue value) {
 		_content = value;
+		update();
 	}
 
-	public ValueWrapper getValue() throws IncorrectValueTypeException, InvalidSpanException {
-		_content.recalculate();
+	public ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
 		return _content.getValue();
 	}
 
@@ -41,5 +46,19 @@ public class Cell implements Serializable, Observer {
 	public void update()
 	{
 		_content.recalculate();
+
+		for (Observer obs : _subscribers)
+			obs.update();
+	}
+
+	public void subscribe(Observer observer)
+	{
+		//FIXME: Maybe? Handle case where observed cell may not have been created yet
+		_subscribers.add(observer);
+	}
+
+	public void unsubscribe(Observer observer)
+	{
+		_subscribers.remove(observer);
 	}
 }

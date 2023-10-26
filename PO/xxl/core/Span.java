@@ -78,4 +78,18 @@ public class Span implements Iterable<Cell> {
 		int endY = _start.getY() + (_isRowSpan ? 0 : _length);
 		return _start.getX() + ";" + _start.getY() + ":" + endX + ";" + endY;
 	}
+
+	public void subscribe(Observer obs)
+	{
+		for (Cell c : this){
+			c.subscribe(obs);
+		}
+	}
+
+	public void unsubscribe(Observer obs)
+	{
+		for (Cell c : this){
+			c.unsubscribe(obs);
+		}
+	}
 }

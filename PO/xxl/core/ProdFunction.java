@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class ProdFunction extends SpanFunction {
 	public ProdFunction(Span argument) {
@@ -22,7 +22,7 @@ public class ProdFunction extends SpanFunction {
 		for (Cell cell : _argument) {
 			try {
 				total *= cell.getValue().getInt();
-			} catch (IncorrectValueTypeException | InvalidSpanException except) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException except) {
 				_bufferedResult = null;
 				return;
 			}

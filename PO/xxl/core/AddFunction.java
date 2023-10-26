@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 class AddFunction extends BinaryFunction {
 
@@ -15,7 +15,7 @@ class AddFunction extends BinaryFunction {
 	protected void recalculate() {
 		try {
 			_bufferedResult = new ValueWrapper(_arg1.getValue() + _arg2.getValue());
-		} catch (IncorrectValueTypeException | InvalidSpanException | NullPointerException e) {
+		} catch (IncorrectValueTypeException | PositionOutOfRangeException | NullPointerException e) {
 			_bufferedResult = null;
 		}
 	}

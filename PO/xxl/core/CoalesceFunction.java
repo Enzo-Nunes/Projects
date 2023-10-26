@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class CoalesceFunction extends SpanFunction {
 	public CoalesceFunction(Span argument) {
@@ -18,7 +18,7 @@ public class CoalesceFunction extends SpanFunction {
 			try {
 				result = cell.getValue().getString();
 				break;
-			} catch (IncorrectValueTypeException | InvalidSpanException e) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
 				result = "";
 			}
 		}

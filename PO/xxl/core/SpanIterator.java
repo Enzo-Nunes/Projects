@@ -2,7 +2,7 @@ package xxl.core;
 
 import java.util.Iterator;
 
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class SpanIterator implements Iterator<Cell> {
 	private Position _start;
@@ -27,7 +27,7 @@ public class SpanIterator implements Iterator<Cell> {
 		Position pos = getPositionFromOffset();
 		try {
 			result = _sheet.getCell(pos);
-		} catch (InvalidSpanException e) {
+		} catch (PositionOutOfRangeException e) {
 			result = null;
 		}
 
