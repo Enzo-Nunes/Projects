@@ -106,7 +106,8 @@ public class Spreadsheet implements Serializable {
 		if (span.isSingleCell()) {
 			int i = 0;
 			for (Cell cell : span) {
-				//FIXME Add 'if' to check inside the spreadsheet. maybe mess with the 'i' iterable?
+				if (!positionisValid(cell.getPosition()))
+					break;
 				insertCell(cell.getPosition(), _cutBuffer.getContent().get(i));
 				i++;
 			}
