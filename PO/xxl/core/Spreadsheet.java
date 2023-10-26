@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class Spreadsheet implements Serializable {
 	private ArrayList<User> _owners;
@@ -34,9 +35,9 @@ public class Spreadsheet implements Serializable {
 		_owners.remove(owner);
 	}
 
-	public Cell getCell(Position position) throws InvalidSpanException {
+	public Cell getCell(Position position) throws PositionOutOfRangeException {
 		if (!positionisValid(position))
-			throw new InvalidSpanException();
+			throw new PositionOutOfRangeException();
 
 		if (_cells.containsKey(position)) {
 			Cell cell = _cells.get(position);
@@ -47,9 +48,9 @@ public class Spreadsheet implements Serializable {
 	}
 
 	public void setCellContent(Position position, CellValue content)
-			throws IncorrectValueTypeException, InvalidSpanException {
+			throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!positionisValid(position))
-			throw new InvalidSpanException();
+			throw new PositionOutOfRangeException();
 
 		_dirty = true;
 
@@ -61,9 +62,9 @@ public class Spreadsheet implements Serializable {
 			_cells.get(position).updateValue(content);
 	}
 
-	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException, InvalidSpanException {
+	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!positionisValid(position))
-			throw new InvalidSpanException();
+			throw new PositionOutOfRangeException();
 
 		if (_cells.containsKey(position))
 			return _cells.get(position).getValue();
@@ -71,9 +72,9 @@ public class Spreadsheet implements Serializable {
 		return null;
 	}
 
-	public void insertCell(Position position, CellValue content) throws IncorrectValueTypeException, InvalidSpanException {
+	public void insertCell(Position position, CellValue content) throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!positionisValid(position))
-			throw new InvalidSpanException();
+			throw new PositionOutOfRangeException();
 
 		_dirty = true;
 
@@ -85,11 +86,11 @@ public class Spreadsheet implements Serializable {
 			_cells.get(position).updateValue(content);
 	}
 
-	public void updateCutBuffer(Span span) throws InvalidSpanException {
+	public void updateCutBuffer(Span span) throws PositionOutOfRangeException {
 		_cutBuffer.setContent(span.deepCopy());
 	}
 
-	public void pasteCutBuffer(Span span) throws InvalidSpanException {
+	public void pasteCutBuffer(Span span) throws PositionOutOfRangeException {
 
 		Span bufferSpan = _cutBuffer.getSpan();
 		int bufferLenght = bufferSpan.getLength();

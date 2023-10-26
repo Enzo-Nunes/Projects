@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class ReferenceValue extends CellValue {
 	private Position _referencedPos;
@@ -13,7 +13,7 @@ public class ReferenceValue extends CellValue {
 	}
 
 	@Override
-	public ValueWrapper getValue() throws InvalidSpanException, IncorrectValueTypeException {
+	public ValueWrapper getValue() throws PositionOutOfRangeException, IncorrectValueTypeException {
 		return _sheet.getCellContent(_referencedPos);
 	}
 
@@ -35,7 +35,7 @@ public class ReferenceValue extends CellValue {
 				resultStr = "#VALUE";
 			else
 				resultStr = value.visualize();
-		} catch (IncorrectValueTypeException | InvalidSpanException e) {
+		} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
 			resultStr = "#VALUE";
 		}
 

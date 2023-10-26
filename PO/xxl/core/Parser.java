@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.ParsingException;
+import xxl.core.exception.PositionOutOfRangeException;
 import xxl.core.exception.InvalidSpanException;
 import xxl.core.exception.SpreadsheetSizeException;
 import xxl.core.exception.UnrecognizedEntryException;
@@ -21,13 +22,13 @@ class Parser {
 
 	public Spreadsheet parseFromFile(String filename)
 			throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, InvalidSpanException,
-			FileNotFoundException, IOException, SpreadsheetSizeException, ParsingException {
+			FileNotFoundException, IOException, SpreadsheetSizeException, ParsingException, PositionOutOfRangeException {
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
 		return parseData(reader);
 	}
 
 	private Spreadsheet parseData(BufferedReader reader) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, InvalidSpanException, IOException, SpreadsheetSizeException, ParsingException {
+			IncorrectValueTypeException, InvalidSpanException, PositionOutOfRangeException, IOException, SpreadsheetSizeException, ParsingException {
 		int lineC = 0, colC = 0;
 		String line;
 

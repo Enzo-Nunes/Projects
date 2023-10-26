@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class DivFunction extends BinaryFunction {
 
@@ -15,7 +15,7 @@ public class DivFunction extends BinaryFunction {
 	protected void recalculate() {
 		try {
 			_bufferedResult = new ValueWrapper(_arg1.getValue() / _arg2.getValue());
-		} catch (NullPointerException | InvalidSpanException | IncorrectValueTypeException e) {
+		} catch (NullPointerException | PositionOutOfRangeException | IncorrectValueTypeException e) {
 			_bufferedResult = null;
 		}
 	}

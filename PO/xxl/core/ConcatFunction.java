@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class ConcatFunction extends SpanFunction {
 	public ConcatFunction(Span argument) {
@@ -17,7 +17,7 @@ public class ConcatFunction extends SpanFunction {
 		for (Cell cell : _argument) {
 			try {
 				result += cell.getValue().getString();
-			} catch (IncorrectValueTypeException | InvalidSpanException e) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
 				result += "";
 			}
 		}

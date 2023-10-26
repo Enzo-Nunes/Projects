@@ -3,7 +3,7 @@ package xxl.core;
 import java.io.Serializable;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class BinaryArgument implements Serializable {
 	private int _literal;
@@ -19,7 +19,7 @@ public class BinaryArgument implements Serializable {
 		_sheet = containingSheet;
 	}
 
-	public int getValue() throws IncorrectValueTypeException, InvalidSpanException {
+	public int getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (_referencedPos == null)
 			return _literal;
 
@@ -40,5 +40,29 @@ public class BinaryArgument implements Serializable {
 			return "" + _literal;
 
 		return _referencedPos.visualize();
+	}
+
+	public void subscribe(Observer obs)
+	{
+		if (_referencedPos == null)
+			return;
+
+		try {
+			_sheet.getCell(_referencedPos).subscribe(obs);
+		} catch (PositionOutOfRangeException e) {
+			return; //Ignore
+		}
+	}
+
+	public void unsubscribe(Observer obs)
+	{
+		if (_referencedPos == null)
+			return;
+
+		try {
+			_sheet.getCell(_referencedPos).unsubscribe(obs);
+		} catch (PositionOutOfRangeException e) {
+			return; //Ignore
+		}
 	}
 }

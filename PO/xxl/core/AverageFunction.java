@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class AverageFunction extends SpanFunction {
 	public AverageFunction(Span argument) {
@@ -22,7 +22,7 @@ public class AverageFunction extends SpanFunction {
 		for (Cell cell : _argument) {
 			try {
 				total += cell.getValue().getInt();
-			} catch (IncorrectValueTypeException | InvalidSpanException e) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
 				_bufferedResult = null;
 			}
 		}

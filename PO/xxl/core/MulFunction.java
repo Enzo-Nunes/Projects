@@ -1,7 +1,7 @@
 package xxl.core;
 
 import xxl.core.exception.IncorrectValueTypeException;
-import xxl.core.exception.InvalidSpanException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 public class MulFunction extends BinaryFunction {
 
@@ -15,7 +15,7 @@ public class MulFunction extends BinaryFunction {
 	public void recalculate() {
 		try {
 			_bufferedResult = new ValueWrapper(_arg1.getValue() * _arg2.getValue());
-		} catch (NullPointerException | IncorrectValueTypeException | InvalidSpanException e) {
+		} catch (NullPointerException | IncorrectValueTypeException | PositionOutOfRangeException e) {
 			_bufferedResult = null;
 		}
 	}
