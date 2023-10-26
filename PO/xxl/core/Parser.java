@@ -81,7 +81,7 @@ class Parser {
 			return parseLiteral(cellValue);
 	}
 
-	private CellValue parseLiteral(String cellValue)
+	public LiteralValue parseLiteral(String cellValue)
 			throws UnrecognizedEntryException, NumberFormatException, InvalidSpanException {
 		if (cellValue.charAt(0) == '\'')
 			return new StringLiteral(cellValue.substring(1));
@@ -97,7 +97,7 @@ class Parser {
 			return parseReference(cellValue);
 	}
 
-	private CellValue parseFunction(String cellValue)
+	private FunctionValue parseFunction(String cellValue)
 			throws UnrecognizedEntryException, ParsingException, InvalidSpanException {
 		cellValue = cellValue.substring(1); // Remove leading '='
 		int firstParent = cellValue.indexOf("(");
@@ -112,7 +112,7 @@ class Parser {
 		}
 	}
 
-	private CellValue parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException, ParsingException {
+	private BinaryFunction parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException, ParsingException {
 		String[] args = argBlob.split(",");
 		if (args.length != 2)
 			throw new ParsingException("Binary functions must have exactly 2 arguments.");
@@ -137,7 +137,7 @@ class Parser {
 		}
 	}
 
-	private CellValue parseSpanFunction(String name, String arg)
+	private SpanFunction parseSpanFunction(String name, String arg)
 			throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
 		Span span = Span.parse(arg, _sheet);
 
@@ -159,7 +159,7 @@ class Parser {
 		}
 	}
 
-	private CellValue parseReference(String cellValue) throws NumberFormatException, ParsingException {
+	private ReferenceValue parseReference(String cellValue) throws NumberFormatException, ParsingException {
 		cellValue = cellValue.substring(1); // Remove leading '='
 		Position pos = Position.parse(cellValue);
 
