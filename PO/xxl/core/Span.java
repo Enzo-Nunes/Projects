@@ -36,7 +36,7 @@ public class Span implements Iterable<Cell>, Serializable {
 			throw new InvalidSpanException();
 	}
 
-	public Span(Position start, int length, Spreadsheet containingSheet, boolean isRowSpan) {
+	private Span(Position start, int length, Spreadsheet containingSheet, boolean isRowSpan) {
 		// TODO: check for exceptions
 		_start = start;
 		_length = length;
@@ -46,7 +46,6 @@ public class Span implements Iterable<Cell>, Serializable {
 
 	// Anonnymous Span. Is this valid?
 	public Span(Position start, int length, boolean isRowSpan) {
-		// TODO: check for exceptions
 		_start = start;
 		_length = length;
 		_isRowSpan = isRowSpan;
