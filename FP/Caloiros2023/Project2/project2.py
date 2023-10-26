@@ -448,12 +448,10 @@ def jogada(g:'list[list[str]]', i:'tuple[str,int]', p:str) -> 'list[list[str]]':
 		interseção i e remove todas as pedras do jogador contrário pertencentes
 		a cadeias adjacentes à i sem liberdades, devolvendo o próprio goban."""
 
-	inimigo = inimigo(p)
-
 	coloca_pedra(g, i, p)
 	for adjacente in obtem_intersecoes_adjacentes(i, obtem_ultima_intersecao(g)):
-		if pedras_iguais(obtem_pedra(g, adjacente), inimigo):
-			if not tem_liberdades(g, adjacente, inimigo):
+		if pedras_iguais(obtem_pedra(g, adjacente), inimigo(p)):
+			if not tem_liberdades(g, adjacente, inimigo(p)):
 				remove_cadeia(g, adjacente)
 
 	return g
