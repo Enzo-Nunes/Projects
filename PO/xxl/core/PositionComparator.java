@@ -10,12 +10,7 @@ public class PositionComparator implements Comparator<Cell> {
 		Position a1 = arg1.getPosition();
 
 		if (a0.getX() == a1.getX())
-		{
-			if (a0.getY() == a1.getY())
-				return 0;
-
 			return a0.getY() - a1.getY();
-		}
 
 		return a0.getX() - a1.getX();
 	}
