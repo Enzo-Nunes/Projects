@@ -202,7 +202,7 @@ def cria_goban_vazio(n:int) -> 'list[list[str]]':
 	return [[cria_pedra_neutra() for _ in range(n)] for _ in range(n)]
 
 
-def cria_goban(n:int, ib:'tuple[str,int]', ip:'tuple[str,int]') -> 'list[list[str]]':
+def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') -> 'list[list[str]]':
 	""" Cria um goban de tamanho n x n, com as interseçõe do tuplo ib ocupadas por
 		pedras brancas e as interseções do tuplo ip ocupadas por pedras pretas."""
 	
@@ -267,7 +267,8 @@ def obtem_cadeia(g:'list[list[str]]', i:'tuple[str,int]') -> 'tuple[tuple[str,in
 		if current not in res:
 			res.append(current)
 			for adjacente in obtem_intersecoes_adjacentes(current, last):
-				if adjacente not in res and adjacente not in stack and pedras_iguais(pedra_i, obtem_pedra(g, adjacente)):
+				if  pedras_iguais(pedra_i, obtem_pedra(g, adjacente)) and \
+					adjacente not in res and adjacente not in stack:
 					stack.append(adjacente)
 
 	return ordena_intersecoes(tuple(res))
@@ -401,9 +402,9 @@ def obtem_territorios(g:'list[list[str]]') -> 'tuple[tuple[tuple[str,int]]]':
 
 	while len(stack) > 0:
 		current = stack.pop()
-		cadeia = obtem_cadeia(g, current)
+		cadeia  = obtem_cadeia(g, current)
 		territorios.append(cadeia)
-		stack = [interseção for interseção in stack if interseção not in cadeia]
+		stack   = [interseção for interseção in stack if interseção not in cadeia]
 
 	return tuple(sorted(territorios, key=lambda x: (obtem_lin(x[0]), obtem_col(x[0]))))
 
@@ -427,7 +428,7 @@ def obtem_adjacentes_diferentes(g:'list[list[str]]', t:'tuple[tuple[str,int]]') 
 
 
 def tem_liberdades(g:'list[list[str]]', i:'tuple[str, int]', p:str) -> bool:
-	"""	Determina se a cadeia t do goban g tem liberdades a favor do jogador p."""
+	"""	Determina se a cadeia de i do goban g tem liberdades a favor do jogador p."""
 
 	for adjacente in obtem_adjacentes_diferentes(g, obtem_cadeia(g, i)):
 		if obtem_pedra(g, adjacente) != inimigo(p):
@@ -447,10 +448,12 @@ def jogada(g:'list[list[str]]', i:'tuple[str,int]', p:str) -> 'list[list[str]]':
 		interseção i e remove todas as pedras do jogador contrário pertencentes
 		a cadeias adjacentes à i sem liberdades, devolvendo o próprio goban."""
 
+	inimigo = inimigo(p)
+
 	coloca_pedra(g, i, p)
 	for adjacente in obtem_intersecoes_adjacentes(i, obtem_ultima_intersecao(g)):
-		if pedras_iguais(obtem_pedra(g, adjacente), inimigo(p)):
-			if not tem_liberdades(g, adjacente, inimigo(p)):
+		if pedras_iguais(obtem_pedra(g, adjacente), inimigo):
+			if not tem_liberdades(g, adjacente, inimigo):
 				remove_cadeia(g, adjacente)
 
 	return g
@@ -539,20 +542,20 @@ def turno_jogador(g:'list[list[str]]', p:str, l:'list[list[str]]') -> bool:
 		própria numa interseção. Devolve False se o jogador passar ou True se
 		colocar uma pedra."""
 	
-	turno = ""
-	while not (eh_str_intersecao(turno) and eh_jogada_legal(g, str_para_intersecao(turno), p, l) or turno == "P"):
-		turno = input("Escreva uma intersecao ou 'P' para passar [{}]:".format(pedra_para_str(p)))
+	turno_atual = ""
+	while not (eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l) or turno_atual == "P"):
+		turno_atual = input("Escreva uma intersecao ou 'P' para passar [{}]:".format(pedra_para_str(p)))
 
-	if turno == "P":
+	if turno_atual == "P":
 		return False
 	
-	jogada(g, str_para_intersecao(turno), p)
+	jogada(g, str_para_intersecao(turno_atual), p)
 
 	return True
 
 def jogo_para_str(g:'list[list[str]]', t:'[int, int]') -> str:
 	""" Recebe um goban e um tuplo com as pontuações dos jogadores branco e preto
-		e mostra as pontuações e o goban no terminal."""
+		e retorna uma cadeia de caracteres que representa o jogo."""
 	return	"Branco (O) tem {} pontos\n".format(t[0]) + \
 			"Preto (X) tem {} pontos\n" .format(t[1]) + \
 			goban_para_str(g)
@@ -579,25 +582,28 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 	if not all(eh_intersecao_valida(vazio, str_para_intersecao(x)) for x in tb):
 		raise ValueError("go: argumentos invalidos")
 	
-	goban = cria_goban(n, tuple(str_para_intersecao(x) for x in tb), tuple(str_para_intersecao(x) for x in tn))
+	# Criação do goban.
+	pedras_brancas = tuple(str_para_intersecao(x) for x in tb)
+	pedras_pretas  = tuple(str_para_intersecao(x) for x in tn)
+	goban = cria_goban(n, pedras_brancas, pedras_pretas)
 
-	# Turnos
-	turno  = cria_pedra_preta()
-	ultimo = cria_pedra_branca()
+	# Turnos. Começa o preto.
+	turno_atual	   = cria_pedra_preta()
+	turno_anterior = cria_pedra_branca()
 
-	# Passes
-	passe_turno  = False
-	passe_ultimo = False
+	# Indicam se a jogada atual e/ou anterior foram passadas.
+	passe_atual	   = False
+	passe_anterior = False
 
-	# Loop de Jogo
-	while not (passe_turno and passe_ultimo):
-		passe_ultimo  = passe_turno
-		pontos		  = calcula_pontos(goban)
+	# Loop de Jogo.
+	while not (passe_atual and passe_anterior):
+		passe_anterior = passe_atual
+		pontos		   = calcula_pontos(goban)
 		print(jogo_para_str(goban, pontos))
-		passe_turno   = not turno_jogador(goban, turno, ultimo)
-		turno, ultimo = ultimo, turno
+		passe_atual	   = not turno_jogador(goban, turno_atual, turno_anterior)
+		turno_atual, turno_anterior = turno_anterior, turno_atual
 	
-	# Fim de Jogo
+	# Fim de Jogo.
 	print(jogo_para_str(goban, pontos))
 
 	return calcula_pontos(goban)[0] >= calcula_pontos(goban)[1]
