@@ -5,7 +5,7 @@ def cria_intersecao(col:str, lin:int) -> 'tuple[str,int]':
 	"""	Recebe dois inteiros e cria um interseção. Verifica a validade dos parâmetros."""
 	if not (isinstance(lin, int) and isinstance(col, str)):
 		raise ValueError("cria_intersecao: argumentos invalidos")
-	if col not in ALFABETO[:19] and len(col) != 1:
+	if col not in ALFABETO[:19] or len(col) != 1:
 		raise ValueError("cria_intersecao: argumentos invalidos")
 	if not 1 <= lin <= 19:
 		raise ValueError("cria_intersecao: argumentos invalidos") 
@@ -541,7 +541,7 @@ def turno_jogador(g:'list[list[str]]', p:str, l:'list[list[str]]') -> bool:
 	
 	turno = ""
 	while not (eh_str_intersecao(turno) and eh_jogada_legal(g, str_para_intersecao(turno), p, l) or turno == "P"):
-		turno = input("Escreva uma intersecao ou 'P' para passar [X]:")
+		turno = input("Escreva uma intersecao ou 'P' para passar [{}]:".format(pedra_para_str(p)))
 
 	if turno == "P":
 		return False
@@ -549,6 +549,13 @@ def turno_jogador(g:'list[list[str]]', p:str, l:'list[list[str]]') -> bool:
 	jogada(g, str_para_intersecao(turno), p)
 
 	return True
+
+def jogo_para_str(g:'list[list[str]]', t:'[int, int]') -> str:
+	""" Recebe um goban e um tuplo com as pontuações dos jogadores branco e preto
+		e mostra as pontuações e o goban no terminal."""
+	return	"Branco (O) tem {} pontos\n".format(t[0]) + \
+			"Preto (X) tem {} pontos\n" .format(t[1]) + \
+			goban_para_str(g)
 
 
 def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
@@ -566,30 +573,31 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 		raise ValueError("go: argumentos invalidos")
 	if not all(eh_str_intersecao(x) for x in tn):
 		raise ValueError("go: argumentos invalidos")
+	
+	# Criação do goban
 	vazio = cria_goban_vazio(n)
 	if not all(eh_intersecao_valida(vazio, str_para_intersecao(x)) for x in tb):
 		raise ValueError("go: argumentos invalidos")
 	
-	# Goban
 	goban = cria_goban(n, tuple(str_para_intersecao(x) for x in tb), tuple(str_para_intersecao(x) for x in tn))
 
 	# Turnos
 	turno  = cria_pedra_preta()
 	ultimo = cria_pedra_branca()
 
-	# Determinar se o jogo continua. Se o último jogador passar e o atual também, o jogo termina.
-	continua_atual  = True
-	continua_ultimo = True
+	# Passes
+	passe_turno  = False
+	passe_ultimo = False
 
 	# Loop de Jogo
-	while continua_atual or continua_ultimo:
-		continua_ultimo	= continua_atual
-		pontos			= calcula_pontos(goban)
-		print("Branco (O) tem {} pontos".format(pontos[0]))
-		print("Preto (X) tem {} pontos" .format(pontos[1]))
-		print(goban_para_str(goban))
-		continua_atual	= turno_jogador(goban, turno, ultimo)
-		turno, ultimo	= ultimo, turno
+	while not (passe_turno and passe_ultimo):
+		passe_ultimo  = passe_turno
+		pontos		  = calcula_pontos(goban)
+		print(jogo_para_str(goban, pontos))
+		passe_turno   = not turno_jogador(goban, turno, ultimo)
+		turno, ultimo = ultimo, turno
+	
+	# Fim de Jogo
+	print(jogo_para_str(goban, pontos))
 
-	pontos = calcula_pontos(goban)
-	return pontos[0] >= pontos[1]
+	return calcula_pontos(goban)[0] >= calcula_pontos(goban)[1]
