@@ -24,7 +24,7 @@ class DoPaste extends Command<Spreadsheet> {
 		try {
 			_receiver.pasteCutBuffer(Span.parse(stringField("span"), _receiver));
 		} catch (ParsingException | InvalidSpanException | PositionOutOfRangeException e) {
-			throw new InvalidCellRangeException(Message.address());
+			throw new InvalidCellRangeException(stringField("span"));
 		}
 	}
 }

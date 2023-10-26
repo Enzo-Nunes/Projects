@@ -76,18 +76,20 @@ public class Spreadsheet implements Serializable {
 		return null;
 	}
 
-	public void insertCell(Position position, CellValue content) throws PositionOutOfRangeException {
+	public void clearCellContent(Position position) throws PositionOutOfRangeException {
 		if (!positionisValid(position))
 			throw new PositionOutOfRangeException();
 
-		_dirty = true;
+		if (_cells.containsKey(position)) {
+			_dirty = true;
+			_cells.remove(position);
+		}
+	}
 
-		if (!_cells.containsKey(position)) {
-			Cell cell = new Cell(position);
-			cell.updateValue(content);
-			_cells.put(position, cell);
-		} else
-			_cells.get(position).updateValue(content);
+	public void clearSpanContent(Span span) throws PositionOutOfRangeException {
+		for (Cell cell : span) {
+			clearCellContent(cell.getPosition());
+		}
 	}
 
 	public void updateCutBuffer(Span span) throws PositionOutOfRangeException {
@@ -112,16 +114,20 @@ public class Spreadsheet implements Serializable {
 			for (Cell cell : span) {
 				if (!positionisValid(cell.getPosition()))
 					break;
-				insertCell(cell.getPosition(), _cutBuffer.getContent().get(i));
+				setCellContent(cell.getPosition(), _cutBuffer.getContent().get(i));
 				i++;
 			}
 		} else {
 			int i = 0;
 			for (Cell cell : span) {
-				insertCell(cell.getPosition(), _cutBuffer.getContent().get(i));
+				setCellContent(cell.getPosition(), _cutBuffer.getContent().get(i));
 				i++;
 			}
 		}
+	}
+
+	public CutBuffer getCutBuffer() {
+		return _cutBuffer;
 	}
 
 	public boolean positionisValid(Position pos) {

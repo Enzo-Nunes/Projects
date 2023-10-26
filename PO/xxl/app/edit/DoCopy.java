@@ -26,7 +26,7 @@ class DoCopy extends Command<Spreadsheet> {
 			_receiver.updateCutBuffer(span);
 			_receiver.clearSpan(span);
 		} catch (ParsingException | PositionOutOfRangeException | InvalidSpanException e) {
-			throw new InvalidCellRangeException(Message.address());
+			throw new InvalidCellRangeException(stringField("span"));
 		}
 	}
 }

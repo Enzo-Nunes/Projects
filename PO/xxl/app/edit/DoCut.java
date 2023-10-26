@@ -24,7 +24,7 @@ class DoCut extends Command<Spreadsheet> {
 		try {
 			_receiver.updateCutBuffer(Span.parse(stringField("span"), _receiver));
 		} catch (ParsingException | PositionOutOfRangeException | InvalidSpanException e) {
-			throw new InvalidCellRangeException(Message.address());
+			throw new InvalidCellRangeException(stringField("span"));
 		}
 	}
 }
