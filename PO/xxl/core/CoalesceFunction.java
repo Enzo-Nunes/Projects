@@ -41,4 +41,9 @@ public class CoalesceFunction extends SpanFunction {
 
 		return resultStr + "=COALESCE(" + _argument.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "COALESCE";
+	}
 }

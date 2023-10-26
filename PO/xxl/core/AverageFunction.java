@@ -43,4 +43,9 @@ public class AverageFunction extends SpanFunction {
 
 		return resultStr + "=AVERAGE(" + _argument.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "AVERAGE";
+	}
 }

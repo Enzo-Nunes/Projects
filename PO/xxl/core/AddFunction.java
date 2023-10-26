@@ -35,4 +35,9 @@ class AddFunction extends BinaryFunction {
 
 		return resultStr + "=ADD(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "ADD";
+	}
 }

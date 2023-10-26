@@ -40,4 +40,9 @@ public class ConcatFunction extends SpanFunction {
 
 		return resultStr + "=CONCAT(" + _argument.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "CONCAT";
+	}
 }

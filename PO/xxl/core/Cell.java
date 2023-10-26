@@ -47,8 +47,7 @@ public class Cell implements Serializable {
 
 
 
-	public void update()
-	{
+	public void update() {
 		if (_content == null)
 			return;
 			
@@ -58,20 +57,26 @@ public class Cell implements Serializable {
 			obs.update();
 	}
 
-	public void subscribe(Observer observer)
-	{
+	public void subscribe(Observer observer) {
 		//FIXME: Maybe? Handle case where observed cell may not have been created yet
 		_subscribers.add(observer);
 	}
 
-	public void unsubscribe(Observer observer)
-	{
+	public void unsubscribe(Observer observer) {
 		_subscribers.remove(observer);
 	}
 
-	public void unsubscribeFromAll()
-	{
+	public void unsubscribeFromAll() {
 		if (_content != null)
 			_content.unsubscribeFromAll();
+	}
+
+
+
+	public String getFunctionName() {
+		if (_content == null)
+			return "";
+
+		return _content.getFunctionName();
 	}
 }

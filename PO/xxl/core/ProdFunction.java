@@ -41,4 +41,9 @@ public class ProdFunction extends SpanFunction {
 
 		return resultStr + "=PRODUCT(" + _argument.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "PRODUCT";
+	}
 }
