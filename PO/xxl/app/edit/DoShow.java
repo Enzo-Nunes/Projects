@@ -10,7 +10,7 @@ import xxl.app.exception.InvalidCellRangeException;
 import xxl.core.Cell;
 
 /**
- * Class for searching functions.
+ * Show span command.
  */
 class DoShow extends Command<Spreadsheet> {
 
