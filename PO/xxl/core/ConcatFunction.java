@@ -16,7 +16,7 @@ public class ConcatFunction extends SpanFunction {
 		for (Cell cell : _argument) {
 			try {
 				result += cell.getValue().getString();
-			} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException | NullPointerException e) {
 				result += "";
 			}
 		}

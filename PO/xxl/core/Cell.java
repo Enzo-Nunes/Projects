@@ -23,6 +23,8 @@ public class Cell implements Serializable {
 	}
 
 	public CellValue getContentCopy() {
+		if (_content == null)
+			return null;
 		return _content.deepCopy();
 	}
 
@@ -32,6 +34,8 @@ public class Cell implements Serializable {
 	}
 
 	public ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException {
+		if (_content == null)
+			return null;
 		return _content.getValue();
 	}
 
@@ -45,6 +49,9 @@ public class Cell implements Serializable {
 
 	public void update()
 	{
+		if (_content == null)
+			return;
+			
 		_content.recalculate();
 
 		for (Observer obs : _subscribers)
@@ -64,6 +71,7 @@ public class Cell implements Serializable {
 
 	public void unsubscribeFromAll()
 	{
-		_content.unsubscribeFromAll();
+		if (_content != null)
+			_content.unsubscribeFromAll();
 	}
 }

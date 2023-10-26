@@ -21,8 +21,9 @@ public class AverageFunction extends SpanFunction {
 		for (Cell cell : _argument) {
 			try {
 				total += cell.getValue().getInt();
-			} catch (IncorrectValueTypeException | PositionOutOfRangeException e) {
+			} catch (IncorrectValueTypeException | PositionOutOfRangeException | NullPointerException e) {
 				_bufferedResult = null;
+				return;
 			}
 		}
 
