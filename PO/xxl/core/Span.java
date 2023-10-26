@@ -63,6 +63,11 @@ public class Span implements Iterable<Cell> {
 		return _isRowSpan;
 	}
 
+	public boolean isSingleCell()
+	{
+		return _length == 1;
+	}
+
 	private static boolean isRowSpan(Position start, Position end) throws InvalidSpanException {
 		if (start.getX() != end.getX() && start.getY() != end.getY())
 			throw new InvalidSpanException();
