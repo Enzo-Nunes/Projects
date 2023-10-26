@@ -7,6 +7,7 @@ import java.io.Serializable;
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.InvalidSpanException;
 import xxl.core.exception.PositionOutOfRangeException;
+import xxl.core.exception.UnrecognizedEntryException;
 
 public class Spreadsheet implements Serializable {
 	private ArrayList<User> _owners;
@@ -149,5 +150,43 @@ public class Spreadsheet implements Serializable {
 			Position pos = cell.getPosition();
 			_cells.remove(pos);
 		}
+	}
+
+	public String searchCellValues(String value)
+	{
+		Parser parser = new Parser();
+		LiteralValue parsed;
+
+		try {
+			parsed = parser.parseLiteral(value);
+		} catch (UnrecognizedEntryException | NumberFormatException | InvalidSpanException e) {
+			return null;
+		}
+
+		ArrayList<Cell> matches = findCellsWithValue(parsed);
+
+		String ret = "";
+
+		for (Cell cell : matches)
+			ret += cell.visualize() + "\n";
+
+		return ret;
+	}
+
+	private ArrayList<Cell> findCellsWithValue(LiteralValue value)
+	{
+		ArrayList<Cell> ret = new ArrayList<Cell>();
+
+		for (Cell cell : _cells.values())
+		{
+			try {
+				if (cell.getValue().equals(value.getValue()))
+					ret.add(cell);
+			} catch (PositionOutOfRangeException | IncorrectValueTypeException e) {
+				continue; //Ignore
+			}
+		}
+
+		return ret;
 	}
 }

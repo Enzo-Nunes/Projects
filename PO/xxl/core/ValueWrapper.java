@@ -34,4 +34,14 @@ public class ValueWrapper implements Serializable {
 			return "'" + _string;
 		return "" + _int;
 	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		if (!(object instanceof ValueWrapper))
+			return false;
+
+		ValueWrapper other = (ValueWrapper)object;
+		return other._int == _int && other._string == _string;
+	}
 }
