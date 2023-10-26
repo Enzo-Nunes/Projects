@@ -14,6 +14,6 @@ class DoShowCutBuffer extends Command<Spreadsheet> {
 
 	@Override
 	protected final void execute() {
-		_receiver.getCutBuffer().getSpan().visualize();
+		_display.add(_receiver.getCutBuffer().visualize());
 	}
 }
