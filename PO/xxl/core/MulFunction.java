@@ -35,4 +35,9 @@ public class MulFunction extends BinaryFunction {
 
 		return resultStr + "=MUL(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "MUL";
+	}
 }

@@ -57,4 +57,9 @@ public class ReferenceValue extends CellValue {
 	public void unsubscribeFromAll() {
 		return; //Do nothing
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "";
+	}
 }

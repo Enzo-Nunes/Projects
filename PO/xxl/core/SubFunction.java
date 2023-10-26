@@ -35,4 +35,9 @@ public class SubFunction extends BinaryFunction {
 
 		return resultStr + "=SUB(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "SUB";
+	}
 }

@@ -187,6 +187,35 @@ public class Spreadsheet implements Serializable {
 			}
 		}
 
+		ret.sort(new PositionComparator());
+
+		return ret;
+	}
+
+	public String searchCellFunctions(String value)
+	{
+		ArrayList<Cell> matches = findCellsWithFunction(value);
+
+		String ret = "";
+
+		for (Cell cell : matches)
+			ret += cell.visualize() + "\n";
+
+		return ret;
+	}
+
+	private ArrayList<Cell> findCellsWithFunction(String funcName)
+	{
+		ArrayList<Cell> ret = new ArrayList<Cell>();
+
+		for (Cell cell : _cells.values())
+		{
+			if (cell.getFunctionName().contains(funcName))
+				ret.add(cell);
+		}
+
+		ret.sort(new PositionComparator());
+
 		return ret;
 	}
 }

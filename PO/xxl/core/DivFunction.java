@@ -35,4 +35,9 @@ public class DivFunction extends BinaryFunction {
 
 		return resultStr + "=DIV(" + _arg1.visualize() + "," + _arg2.visualize() + ")";
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "DIV";
+	}
 }

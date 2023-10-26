@@ -15,4 +15,9 @@ public abstract class LiteralValue extends CellValue {
 	public void unsubscribeFromAll() {
 		return; //Do nothing
 	}
+
+	@Override
+	public String getFunctionName() {
+		return "";
+	}
 }
