@@ -68,7 +68,7 @@ class Parser {
 			throw new UnrecognizedEntryException(cellLine);
 		Position pos = Position.parse(parts[0]);
 		Cell cell = new Cell(pos);
-		cell.update(value);
+		cell.updateValue(value);
 		return cell;
 	}
 

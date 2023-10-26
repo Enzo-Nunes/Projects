@@ -6,16 +6,18 @@ import xxl.core.exception.InvalidSpanException;
 public class ConcatFunction extends SpanFunction {
 	public ConcatFunction(Span argument) {
 		super(argument);
+		recalculate();
+		//TODO: Register observer
 	}
 
 	@Override
-	protected void recalculate() throws InvalidSpanException {
+	protected void recalculate() {
 		String result = "";
 
 		for (Cell cell : _argument) {
 			try {
 				result += cell.getValue().getString();
-			} catch (IncorrectValueTypeException e) {
+			} catch (IncorrectValueTypeException | InvalidSpanException e) {
 				result += "";
 			}
 		}
@@ -31,12 +33,11 @@ public class ConcatFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		try {
-			recalculate(); // TODO: Avoid repetition
-			resultStr = _bufferedResult.visualize();
-		} catch (InvalidSpanException e) {
+		
+		if (_bufferedResult == null)
 			resultStr = "#VALUE";
-		}
+		else
+			resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=CONCAT(" + _argument.visualize() + ")";
 	}
