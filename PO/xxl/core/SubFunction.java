@@ -11,7 +11,11 @@ public class SubFunction extends BinaryFunction {
 
 	@Override
 	public void recalculate() throws IncorrectValueTypeException, InvalidSpanException {
-		_bufferedResult = new ValueWrapper(_arg1.getValue() - _arg2.getValue());
+		try {
+			_bufferedResult = new ValueWrapper(_arg1.getValue() - _arg2.getValue());
+		} catch (NullPointerException e) {
+			_bufferedResult = null;
+		}
 	}
 
 	@Override
@@ -25,7 +29,7 @@ public class SubFunction extends BinaryFunction {
 		try {
 			recalculate();
 			resultStr = _bufferedResult.visualize();
-		} catch (IncorrectValueTypeException | InvalidSpanException e) {
+		} catch (IncorrectValueTypeException | InvalidSpanException | NullPointerException e) {
 			resultStr = "#VALUE";
 		}
 

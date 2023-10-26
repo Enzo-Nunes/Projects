@@ -25,8 +25,6 @@ public class BinaryArgument implements Serializable {
 
 		ValueWrapper value = _sheet.getCellContent(_referencedPos);
 
-		if (value == null)
-			return 0;
 		return value.getInt();
 	}
 

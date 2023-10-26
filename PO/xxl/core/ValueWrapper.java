@@ -24,7 +24,7 @@ public class ValueWrapper implements Serializable {
 
 	public int getInt() throws IncorrectValueTypeException {
 		if (_string != null)
-			throw new IncorrectValueTypeException();
+			throw new IncorrectValueTypeException(_string);
 
 		return _int;
 	}
