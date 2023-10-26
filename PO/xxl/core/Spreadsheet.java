@@ -139,4 +139,12 @@ public class Spreadsheet implements Serializable {
 	public boolean isDirty() {
 		return _dirty;
 	}
+
+	public void clearSpan(Span span) {
+		for (Cell cell : span) {
+			cell.unsubscribeFromAll();
+			Position pos = cell.getPosition();
+			_cells.remove(pos);
+		}
+	}
 }

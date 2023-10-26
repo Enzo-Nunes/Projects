@@ -5,12 +5,16 @@ import java.io.Serializable;
 import xxl.core.exception.IncorrectValueTypeException;
 import xxl.core.exception.PositionOutOfRangeException;
 
-abstract class CellValue implements Serializable {
-	abstract public ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException;
+abstract class CellValue implements Serializable, Observer {
+	public abstract ValueWrapper getValue() throws IncorrectValueTypeException, PositionOutOfRangeException;
 
-	abstract protected void recalculate();
+	protected abstract void recalculate();
 
-	abstract public CellValue deepCopy();
+	public abstract CellValue deepCopy();
 
-	abstract public String visualize();
+	public abstract String visualize();
+
+	public abstract void subscribeToAll();
+
+	public abstract void unsubscribeFromAll();
 }

@@ -7,6 +7,7 @@ import xxl.core.Span;
 import xxl.core.Spreadsheet;
 import xxl.core.exception.InvalidSpanException;
 import xxl.core.exception.ParsingException;
+import xxl.core.exception.PositionOutOfRangeException;
 
 /**
  * Copy command.
@@ -24,7 +25,7 @@ class DoCopy extends Command<Spreadsheet> {
 			Span span = Span.parse(stringField("span"), _receiver);
 			_receiver.updateCutBuffer(span);
 			_receiver.clearSpan(span);
-		} catch (ParsingException | InvalidSpanException e) {
+		} catch (ParsingException | PositionOutOfRangeException | InvalidSpanException e) {
 			throw new InvalidCellRangeException(Message.address());
 		}
 	}

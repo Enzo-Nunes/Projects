@@ -19,6 +19,7 @@ public class ReferenceValue extends CellValue {
 
 	@Override
 	protected void recalculate() {
+		return; //Do nothing
 	}
 
 	@Override
@@ -40,5 +41,20 @@ public class ReferenceValue extends CellValue {
 		}
 
 		return resultStr + "=" + _referencedPos.visualize();
+	}
+
+	@Override
+	public void update() {
+		return; //Do nothing
+	}
+
+	@Override
+	public void subscribeToAll() {
+		return; //Do nothing
+	}
+
+	@Override
+	public void unsubscribeFromAll() {
+		return; //Do nothing
 	}
 }
