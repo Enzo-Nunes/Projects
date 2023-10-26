@@ -21,4 +21,8 @@ public class CutBuffer {
 			_content.add(cell.getContentCopy());
 		}
     }
+
+	public ArrayList<CellValue> getContent() {
+		return _content;
+	}
 }

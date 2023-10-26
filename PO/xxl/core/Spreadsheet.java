@@ -101,15 +101,21 @@ public class Spreadsheet implements Serializable {
 		if (bufferLenght == 0 || bufferLenght != span.getLength())
 			return;
 
+		//FIXME Repeated code. Optimizable?
 		if (span.isSingleCell()) {
+			int i = 0;
 			for (Cell cell : span) {
-				//FIXMEN Add 'if' to check if inside the spreadsheet
-				insertCell(cell.getPosition(), _cutBuffer.getContent(cell.getPosition()));
+				//FIXME Add 'if' to check inside the spreadsheet. maybe mess with the 'i' iterable?
+				insertCell(cell.getPosition(), _cutBuffer.getContent().get(i));
+				i++;
 			}
 		} else {
-			//TODO deep copy each cell of the
+			int i = 0;
+			for (Cell cell : span) {
+				insertCell(cell.getPosition(), _cutBuffer.getContent().get(i));
+				i++;
+			}
 		}
-
 	}
 
 	public boolean positionisValid(Position pos) {
