@@ -79,10 +79,10 @@ public class Spreadsheet implements Serializable {
 
 		if (!_cells.containsKey(position)) {
 			Cell cell = new Cell(position);
-			cell.update(content);
+			cell.updateValue(content);
 			_cells.put(position, cell);
 		} else
-			_cells.get(position).update(content);
+			_cells.get(position).updateValue(content);
 	}
 
 	public void updateCutBuffer(Span span) throws InvalidSpanException {
