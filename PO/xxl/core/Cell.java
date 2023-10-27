@@ -58,7 +58,6 @@ public class Cell implements Serializable {
 	}
 
 	public void subscribe(Observer observer) {
-		//FIXME: Maybe? Handle case where observed cell may not have been created yet
 		_subscribers.add(observer);
 	}
 
