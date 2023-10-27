@@ -55,8 +55,7 @@ public class Spreadsheet implements Serializable {
 		}
 	}
 
-	public void setCellContent(Position position, CellValue content)
-			throws PositionOutOfRangeException {
+	public void setCellContent(Position position, CellValue content) throws PositionOutOfRangeException {
 		if (!positionisValid(position))
 			throw new PositionOutOfRangeException();
 

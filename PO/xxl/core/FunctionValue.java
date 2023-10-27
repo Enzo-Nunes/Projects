@@ -1,11 +1,10 @@
 package xxl.core;
 
-public abstract class FunctionValue extends CellValue{
+public abstract class FunctionValue extends CellValue {
 	protected ValueWrapper _bufferedResult;
 
 	@Override
-	public void update()
-	{
+	public void update() {
 		recalculate();
 	}
 

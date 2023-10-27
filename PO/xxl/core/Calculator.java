@@ -55,11 +55,9 @@ public class Calculator {
 	/**
 	 * Saves the serialized application's state into the file associated to the current network.
 	 *
-	 * @throws FileNotFoundException           if for some reason the file cannot be created or
-	 *                                         opened.
+	 * @throws FileNotFoundException           if for some reason the file cannot be created or opened.
 	 * @throws MissingFileAssociationException if the current network does not have a file.
-	 * @throws IOException                     if there is some error while serializing the state of
-	 *                                         the network to disk.
+	 * @throws IOException                     if there is some error while serializing the state of the network to disk.
 	 */
 	public void save() throws FileNotFoundException, MissingFileAssociationException, IOException {
 		try (ObjectOutputStream obOut = new ObjectOutputStream(new FileOutputStream(_spreadsheet.getFilename()));) {
@@ -68,15 +66,12 @@ public class Calculator {
 	}
 
 	/**
-	 * Saves the serialized application's state into the specified file. The current network is
-	 * associated to this file.
+	 * Saves the serialized application's state into the specified file. The current network is associated to this file.
 	 *
 	 * @param filename the name of the file.
-	 * @throws FileNotFoundException           if for some reason the file cannot be created or
-	 *                                         opened.
+	 * @throws FileNotFoundException           if for some reason the file cannot be created or opened.
 	 * @throws MissingFileAssociationException if the current network does not have a file.
-	 * @throws IOException                     if there is some error while serializing the state of
-	 *                                         the network to disk.
+	 * @throws IOException                     if there is some error while serializing the state of the network to disk.
 	 */
 	public void saveAs(String filename) throws FileNotFoundException, MissingFileAssociationException, IOException {
 		_spreadsheet.setFilename(filename);
@@ -85,8 +80,7 @@ public class Calculator {
 
 	/**
 	 * @param filename name of the file containing the serialized application's state to load.
-	 * @throws UnavailableFileException if the specified file does not exist or there is an error
-	 *                                  while processing this file.
+	 * @throws UnavailableFileException if the specified file does not exist or there is an error while processing this file.
 	 */
 	public void load(String filename) throws UnavailableFileException, IOException, ClassNotFoundException {
 		try (ObjectInputStream obIn = new ObjectInputStream(new FileInputStream(filename));) {

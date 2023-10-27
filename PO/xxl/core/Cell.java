@@ -11,8 +11,6 @@ public class Cell implements Serializable {
 	private CellValue _content;
 	private ArrayList<Observer> _subscribers;
 
-
-
 	public Cell(Position pos) {
 		_position = pos;
 		_subscribers = new ArrayList<Observer>();
@@ -45,12 +43,10 @@ public class Cell implements Serializable {
 		return _position.visualize() + "|" + _content.visualize();
 	}
 
-
-
 	public void update() {
 		if (_content == null)
 			return;
-			
+
 		_content.recalculate();
 
 		for (Observer obs : _subscribers)
@@ -69,8 +65,6 @@ public class Cell implements Serializable {
 		if (_content != null)
 			_content.unsubscribeFromAll();
 	}
-
-
 
 	public String getFunctionName() {
 		if (_content == null)

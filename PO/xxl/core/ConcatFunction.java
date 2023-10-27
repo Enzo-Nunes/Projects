@@ -32,7 +32,7 @@ public class ConcatFunction extends SpanFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		
+
 		if (_bufferedResult == null)
 			resultStr = "#VALUE";
 		else

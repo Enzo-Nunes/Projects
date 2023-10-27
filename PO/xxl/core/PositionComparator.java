@@ -14,5 +14,5 @@ public class PositionComparator implements Comparator<Cell> {
 
 		return a0.getX() - a1.getX();
 	}
-	
+
 }

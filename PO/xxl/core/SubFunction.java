@@ -27,7 +27,7 @@ public class SubFunction extends BinaryFunction {
 	@Override
 	public String visualize() {
 		String resultStr;
-		
+
 		if (_bufferedResult == null)
 			resultStr = "#VALUE";
 		else

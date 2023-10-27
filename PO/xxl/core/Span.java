@@ -55,8 +55,7 @@ public class Span implements Iterable<Cell>, Serializable {
 		return _isRowSpan;
 	}
 
-	public boolean isSingleCell()
-	{
+	public boolean isSingleCell() {
 		return _length == 1;
 	}
 
@@ -76,16 +75,14 @@ public class Span implements Iterable<Cell>, Serializable {
 		return _start.getY() + ";" + _start.getX() + ":" + endY + ";" + endX;
 	}
 
-	public void subscribe(Observer obs)
-	{
-		for (Cell c : this){
+	public void subscribe(Observer obs) {
+		for (Cell c : this) {
 			c.subscribe(obs);
 		}
 	}
 
-	public void unsubscribe(Observer obs)
-	{
-		for (Cell c : this){
+	public void unsubscribe(Observer obs) {
+		for (Cell c : this) {
 			c.unsubscribe(obs);
 		}
 	}
