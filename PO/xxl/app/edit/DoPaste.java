@@ -23,6 +23,7 @@ class DoPaste extends Command<Spreadsheet> {
 	protected final void execute() throws CommandException {
 		try {
 			_receiver.pasteCutBuffer(Span.parse(stringField("span"), _receiver));
+			_receiver.setDirty(true);
 		} catch (ParsingException | InvalidSpanException | PositionOutOfRangeException e) {
 			throw new InvalidCellRangeException(stringField("span"));
 		}

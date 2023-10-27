@@ -22,9 +22,7 @@ class DoCopy extends Command<Spreadsheet> {
 	@Override
 	protected final void execute() throws CommandException {
 		try {
-			Span span = Span.parse(stringField("span"), _receiver);
-			_receiver.updateCutBuffer(span);
-			_receiver.clearSpan(span);
+			_receiver.updateCutBuffer(Span.parse(stringField("span"), _receiver));
 		} catch (ParsingException | PositionOutOfRangeException | InvalidSpanException e) {
 			throw new InvalidCellRangeException(stringField("span"));
 		}

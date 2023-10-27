@@ -17,6 +17,6 @@ class DoShowFunctions extends Command<Spreadsheet> {
 	@Override
 	protected final void execute() {
 		String result = _receiver.searchCellFunctions(stringField("pattern"));
-		_display.add(result);
+		_display.addNewLine(result, false);
 	}
 }

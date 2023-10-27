@@ -16,6 +16,6 @@ class DoShowValues extends Command<Spreadsheet> {
 	@Override
 	protected final void execute() {
 		String result = _receiver.searchCellValues(stringField("pattern"));
-		_display.add(result);
+		_display.addNewLine(result, false);
 	}
 }

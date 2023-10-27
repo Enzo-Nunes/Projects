@@ -26,7 +26,7 @@ public class Spreadsheet implements Serializable {
 		_cells = new HashMap<Position, Cell>();
 		_botLeftCorner = new Position(width, height);
 		_cutBuffer = new CutBuffer();
-		_dirty = false;
+		_dirty = true;
 	}
 
 	public void addOwner(User owner) {
@@ -35,6 +35,10 @@ public class Spreadsheet implements Serializable {
 
 	public void removeOwner(User owner) {
 		_owners.remove(owner);
+	}
+
+	public void setDirty(boolean dirty) {
+		_dirty = dirty;
 	}
 
 	public Cell getCell(Position position) throws PositionOutOfRangeException {
@@ -66,7 +70,8 @@ public class Spreadsheet implements Serializable {
 			_cells.get(position).updateValue(content);
 	}
 
-	public ValueWrapper getCellContent(Position position) throws IncorrectValueTypeException, PositionOutOfRangeException {
+	public ValueWrapper getCellContent(Position position)
+			throws IncorrectValueTypeException, PositionOutOfRangeException {
 		if (!positionisValid(position))
 			throw new PositionOutOfRangeException();
 
@@ -99,23 +104,27 @@ public class Spreadsheet implements Serializable {
 	public void pasteCutBuffer(Span span) throws InvalidSpanException, PositionOutOfRangeException {
 		int bufferLength = _cutBuffer.getLength();
 
-		if (_cutBuffer.isRowBuffer() != span.isRowSpan())
-			throw new InvalidSpanException();
-
-		//FIXME No exceptions??
-		if (bufferLength == 0 || bufferLength != span.getLength())
+		// FIXME No exceptions??
+		if (bufferLength == 0)
 			return;
 
-		//FIXME Repeated code. Optimizable?
+		// FIXME Repeated code. Optimizable?
 		if (span.isSingleCell()) {
-			int i = 0;
 			for (Cell cell : span) {
-				if (!positionisValid(cell.getPosition()))
-					break;
-				setCellContent(cell.getPosition(), _cutBuffer.getContent().get(i));
-				i++;
+				for (int i = 0; i < bufferLength; i++) {
+					Position pos = _cutBuffer.isRowBuffer()
+							? new Position(cell.getPosition().getX() + i, cell.getPosition().getY())
+							: new Position(cell.getPosition().getX(), cell.getPosition().getY() + i);
+					if (!positionisValid(pos))
+						break;
+					setCellContent(pos, _cutBuffer.getContent().get(i));
+				}
 			}
 		} else {
+
+			if (_cutBuffer.isRowBuffer() != span.isRowSpan())
+				throw new InvalidSpanException();
+
 			int i = 0;
 			for (Cell cell : span) {
 				setCellContent(cell.getPosition(), _cutBuffer.getContent().get(i));
@@ -157,8 +166,7 @@ public class Spreadsheet implements Serializable {
 		}
 	}
 
-	public String searchCellValues(String value)
-	{
+	public String searchCellValues(String value) {
 		Parser parser = new Parser();
 		LiteralValue parsed;
 
@@ -178,17 +186,18 @@ public class Spreadsheet implements Serializable {
 		return ret;
 	}
 
-	private ArrayList<Cell> findCellsWithValue(LiteralValue value)
-	{
+	private ArrayList<Cell> findCellsWithValue(LiteralValue value) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 
-		for (Cell cell : _cells.values())
-		{
+		for (Cell cell : _cells.values()) {
 			try {
+				// System.out.println("\n" + value.visualize());
+				// System.out.println(cell.getValue().visualize());
+				// System.out.println(cell.getValue().equals(value.getValue()) + "\n");
 				if (cell.getValue().equals(value.getValue()))
 					ret.add(cell);
 			} catch (PositionOutOfRangeException | IncorrectValueTypeException e) {
-				continue; //Ignore
+				continue; // Ignore
 			}
 		}
 
@@ -197,8 +206,7 @@ public class Spreadsheet implements Serializable {
 		return ret;
 	}
 
-	public String searchCellFunctions(String value)
-	{
+	public String searchCellFunctions(String value) {
 		ArrayList<Cell> matches = findCellsWithFunction(value);
 
 		String ret = "";
@@ -209,12 +217,10 @@ public class Spreadsheet implements Serializable {
 		return ret;
 	}
 
-	private ArrayList<Cell> findCellsWithFunction(String funcName)
-	{
+	private ArrayList<Cell> findCellsWithFunction(String funcName) {
 		ArrayList<Cell> ret = new ArrayList<Cell>();
 
-		for (Cell cell : _cells.values())
-		{
+		for (Cell cell : _cells.values()) {
 			if (cell.getFunctionName().contains(funcName))
 				ret.add(cell);
 		}
@@ -224,8 +230,8 @@ public class Spreadsheet implements Serializable {
 		return ret;
 	}
 
-	public void insertSpan(String span, String content) throws ParsingException, InvalidSpanException, UnrecognizedEntryException
-	{
+	public void insertSpan(String span, String content)
+			throws ParsingException, InvalidSpanException, UnrecognizedEntryException {
 		Parser parser = new Parser(this);
 		Span parsedSpan = Span.parse(span, this);
 		CellValue parsedContent = parser.parseCellValue(content);

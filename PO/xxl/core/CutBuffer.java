@@ -40,6 +40,9 @@ public class CutBuffer implements Serializable {
 
 			String value = _content.get(i) != null ? _content.get(i).visualize() : "";
 			ret += pos + "|" + value;
+
+			if (i < _content.size() - 1)
+				ret += "\n";
 		}
 
 		return ret;
