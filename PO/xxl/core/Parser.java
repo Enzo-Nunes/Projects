@@ -64,7 +64,7 @@ class Parser {
 
 	private Cell parseCellLine(String cellLine)
 			throws UnrecognizedEntryException, NumberFormatException, ParsingException, InvalidSpanException {
-		// Format: X;Y|content
+		// Format: Y;X|content
 		String[] parts = cellLine.split("\\|");
 		CellValue value = null;
 		if (parts.length == 2) {
@@ -137,7 +137,6 @@ class Parser {
 			return new DivFunction(first, second);
 
 		default:
-			System.out.println("NVAL=" + name);
 			throw new UnrecognizedEntryException(name);
 		}
 	}

@@ -2,7 +2,6 @@ package xxl.app.search;
 
 import pt.tecnico.uilib.menus.Command;
 import xxl.core.Spreadsheet;
-// FIXME import classes
 
 /**
  * Command for searching function names.

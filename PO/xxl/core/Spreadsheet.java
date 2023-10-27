@@ -104,11 +104,9 @@ public class Spreadsheet implements Serializable {
 	public void pasteCutBuffer(Span span) throws InvalidSpanException, PositionOutOfRangeException {
 		int bufferLength = _cutBuffer.getLength();
 
-		// FIXME No exceptions??
 		if (bufferLength == 0)
 			return;
 
-		// FIXME Repeated code. Optimizable?
 		if (span.isSingleCell()) {
 			for (Cell cell : span) {
 				for (int i = 0; i < bufferLength; i++) {
@@ -191,9 +189,6 @@ public class Spreadsheet implements Serializable {
 
 		for (Cell cell : _cells.values()) {
 			try {
-				// System.out.println("\n" + value.visualize());
-				// System.out.println(cell.getValue().visualize());
-				// System.out.println(cell.getValue().equals(value.getValue()) + "\n");
 				if (cell.getValue().equals(value.getValue()))
 					ret.add(cell);
 			} catch (PositionOutOfRangeException | IncorrectValueTypeException e) {
