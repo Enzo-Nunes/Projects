@@ -25,9 +25,9 @@ class DoInsert extends Command<Spreadsheet> {
 		try {
 			_receiver.insertSpan(stringField("span"), stringField("content"));
 		} catch (ParsingException | InvalidSpanException e) {
-			throw new InvalidCellRangeException(stringField("span")); //TODO: Review
+			throw new InvalidCellRangeException(stringField("span"));
 		} catch (UnrecognizedEntryException e) {
-			throw new UnknownFunctionException(stringField("content")); //TODO: Review
+			throw new UnknownFunctionException(stringField("content"));
 		}
 	}
 }
