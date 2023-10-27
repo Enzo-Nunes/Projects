@@ -22,7 +22,9 @@ class DoCut extends Command<Spreadsheet> {
 	@Override
 	protected final void execute() throws CommandException {
 		try {
-			_receiver.updateCutBuffer(Span.parse(stringField("span"), _receiver));
+			Span span = Span.parse(stringField("span"), _receiver);
+			_receiver.updateCutBuffer(span);
+			_receiver.clearSpan(span);
 		} catch (ParsingException | PositionOutOfRangeException | InvalidSpanException e) {
 			throw new InvalidCellRangeException(stringField("span"));
 		}

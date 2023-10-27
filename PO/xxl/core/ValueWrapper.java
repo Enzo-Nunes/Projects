@@ -36,12 +36,33 @@ public class ValueWrapper implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object object)
+	public boolean equals(Object object) //FIXME this is what you call a weird .equals()
 	{
-		if (!(object instanceof ValueWrapper))
+		if (!(object instanceof ValueWrapper)) {
 			return false;
+		}
 
 		ValueWrapper other = (ValueWrapper)object;
-		return other._int == _int && other._string == _string;
+
+		if (other._string == null && _string != null)
+			return false;
+		if (other._string != null && _string == null)
+			return false;
+
+		if (other._int != _int)
+			return false;
+
+		if (other._string == null && _string == null)
+			return true;
+
+		// System.out.println("\n"+other._string);
+		// System.out.println(other._int);
+		// System.out.println(_string);
+		// System.out.println(_int+"\n");
+
+		// System.out.println(other._int == _int);
+		// System.out.println((other._string == _string) +"\n");
+
+		return _string.equals(other._string);
 	}
 }

@@ -25,6 +25,7 @@ class DoSave extends Command<Calculator> {
 			} else {
 				_receiver.save();
 			}
+			_receiver.getSpreadsheet().setDirty(false);
 		} catch (IOException | MissingFileAssociationException e) {
 			System.err.println(e.getMessage());
 		}

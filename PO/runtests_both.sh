@@ -12,11 +12,11 @@ for x in testsBoth/*.in; do
 
     diff -cwB ${x%.in}.out ${x%.in}.outhyp > ${x%.in}.diff ;
     if [ -s ${x%.in}.diff ]; then
-        echo -n "F"
+        echo "chumbaste XD"
         failures=$failures"Fail: $x: See file ${x%.in}.diff\n" ;
     else
         let correct++;
-        echo -n "."
+        echo "boa miúdo"
         rm -f ${x%.in}.diff ${x%.in}.outhyp ; 
     fi
     let total++;
