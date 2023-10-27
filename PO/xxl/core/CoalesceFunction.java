@@ -37,7 +37,7 @@ public class CoalesceFunction extends SpanFunction {
 		if (_bufferedResult == null)
 			resultStr = "#VALUE";
 		else
-		resultStr = _bufferedResult.visualize();
+			resultStr = _bufferedResult.visualize();
 
 		return resultStr + "=COALESCE(" + _argument.visualize() + ")";
 	}

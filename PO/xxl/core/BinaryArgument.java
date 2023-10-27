@@ -42,27 +42,25 @@ public class BinaryArgument implements Serializable {
 		return _referencedPos.visualize();
 	}
 
-	public void subscribe(Observer obs)
-	{
+	public void subscribe(Observer obs) {
 		if (_referencedPos == null)
 			return;
 
 		try {
 			_sheet.getCell(_referencedPos).subscribe(obs);
 		} catch (PositionOutOfRangeException e) {
-			return; //Ignore
+			return; // Ignore
 		}
 	}
 
-	public void unsubscribe(Observer obs)
-	{
+	public void unsubscribe(Observer obs) {
 		if (_referencedPos == null)
 			return;
 
 		try {
 			_sheet.getCell(_referencedPos).unsubscribe(obs);
 		} catch (PositionOutOfRangeException e) {
-			return; //Ignore
+			return; // Ignore
 		}
 	}
 }

@@ -19,7 +19,7 @@ public class ReferenceValue extends CellValue {
 
 	@Override
 	protected void recalculate() {
-		return; //Do nothing
+		return; // Do nothing
 	}
 
 	@Override
@@ -45,17 +45,17 @@ public class ReferenceValue extends CellValue {
 
 	@Override
 	public void update() {
-		return; //Do nothing
+		return; // Do nothing
 	}
 
 	@Override
 	public void subscribeToAll() {
-		return; //Do nothing
+		return; // Do nothing
 	}
 
 	@Override
 	public void unsubscribeFromAll() {
-		return; //Do nothing
+		return; // Do nothing
 	}
 
 	@Override

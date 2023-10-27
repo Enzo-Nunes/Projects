@@ -18,22 +18,20 @@ class Parser {
 	public Parser() {
 	}
 
-	public Parser (Spreadsheet sheet)
-	{
+	public Parser(Spreadsheet sheet) {
 		_sheet = sheet;
 	}
 
-	
-
-	public Spreadsheet parseFromFile(String filename)
-			throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, InvalidSpanException,
-			FileNotFoundException, IOException, SpreadsheetSizeException, ParsingException, PositionOutOfRangeException {
+	public Spreadsheet parseFromFile(String filename) throws UnrecognizedEntryException, NumberFormatException,
+			IncorrectValueTypeException, InvalidSpanException, FileNotFoundException, IOException,
+			SpreadsheetSizeException, ParsingException, PositionOutOfRangeException {
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
 		return parseData(reader);
 	}
 
-	private Spreadsheet parseData(BufferedReader reader) throws UnrecognizedEntryException, NumberFormatException,
-			IncorrectValueTypeException, InvalidSpanException, PositionOutOfRangeException, IOException, SpreadsheetSizeException, ParsingException {
+	private Spreadsheet parseData(BufferedReader reader)
+			throws UnrecognizedEntryException, NumberFormatException, IncorrectValueTypeException, InvalidSpanException,
+			PositionOutOfRangeException, IOException, SpreadsheetSizeException, ParsingException {
 		int lineC = 0, colC = 0;
 		String line;
 
@@ -117,7 +115,8 @@ class Parser {
 		}
 	}
 
-	private BinaryFunction parseBinaryFunction(String name, String argBlob) throws UnrecognizedEntryException, ParsingException {
+	private BinaryFunction parseBinaryFunction(String name, String argBlob)
+			throws UnrecognizedEntryException, ParsingException {
 		String[] args = argBlob.split(",");
 		if (args.length != 2)
 			throw new ParsingException("Binary functions must have exactly 2 arguments.");

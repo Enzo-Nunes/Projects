@@ -36,12 +36,11 @@ public class ValueWrapper implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object object)
-	{
+	public boolean equals(Object object) {
 		if (!(object instanceof ValueWrapper))
 			return false;
 
-		ValueWrapper other = (ValueWrapper)object;
+		ValueWrapper other = (ValueWrapper) object;
 
 		if (other._string == null && _string != null)
 			return false;
