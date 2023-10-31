@@ -222,12 +222,12 @@ def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') ->
 	g = cria_goban_vazio(n)
 
 	for interseção in ib:
-		if not eh_intersecao_valida(g, interseção):
+		if not eh_intersecao_valida(g, interseção) or interseção in ip or not ib.count(interseção):
 			raise ValueError("cria_goban: argumentos invalidos")
 		coloca_pedra(g, interseção, cria_pedra_branca())
 
 	for interseção in ip:
-		if not eh_intersecao_valida(g, interseção):
+		if not eh_intersecao_valida(g, interseção) or interseção in ib or not ip.count(interseção):
 			raise ValueError("cria_goban: argumentos invalidos")
 		coloca_pedra(g, interseção, cria_pedra_preta())
 
@@ -293,10 +293,10 @@ def remove_pedra(g:'list[list[str]]', i:'tuple[str,int]') -> 'list[list[str]]':
 	return g
 
 
-def remove_cadeia(g:'list[list[str]]', i:'tuple[str,int]') -> 'list[list[str]]':
-	"""	Recebe um goban e uma interseção e remove a pedra de cada interseção da sua cadeia."""
+def remove_cadeia(g:'list[list[str]]', t:'tuple[tuple[str,int]]') -> 'list[list[str]]':
+	"""	Recebe um goban e uma cadeia e remove as pedras de todas as suas interseções."""
 
-	for interseção in obtem_cadeia(g, i):
+	for interseção in t:
 		remove_pedra(g, interseção)
 
 	return g
@@ -455,7 +455,7 @@ def jogada(g:'list[list[str]]', i:'tuple[str,int]', p:str) -> 'list[list[str]]':
 	for adjacente in obtem_intersecoes_adjacentes(i, obtem_ultima_intersecao(g)):
 		if pedras_iguais(obtem_pedra(g, adjacente), inimigo(p)):
 			if not tem_liberdades(g, adjacente, inimigo(p)):
-				remove_cadeia(g, adjacente)
+				remove_cadeia(g, obtem_cadeia(adjacente))
 
 	return g
 
