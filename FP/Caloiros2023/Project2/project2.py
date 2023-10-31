@@ -526,15 +526,15 @@ def eh_jogada_legal(g:'list[list[str]]', i:'tuple[str,int]', p:str, l:'list[list
 	if eh_pedra_jogador(obtem_pedra(g, i)):
 		return False
 
-	goban = cria_copia_goban(g)
-	jogada(goban, i, p)
+	g_teste = cria_copia_goban(g)
+	jogada(g_teste, i, p)
 
 	# Repetição
-	if gobans_iguais(goban, l):
+	if gobans_iguais(g_teste, l):
 		return False
-	
+
 	# Suicídio
-	if not tem_liberdades(goban, i, p):
+	if not tem_liberdades(g_teste, i, p):
 		return False
 	
 	return True
