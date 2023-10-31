@@ -1,11 +1,19 @@
-ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+def caracter(str:str, n:int) -> str:
+	""" Recebe um caracter e um inteiro e devolve o caracter deslocado n posições."""
+
+	return chr(ord(str) + n)
+
+def indice(str:str) -> int:
+	""" Recebe um caracter e devolve o seu índice no alfabeto."""
+
+	return ord(str) - ord("A")
 
 """TAD Interseção."""
 def cria_intersecao(col:str, lin:int) -> 'tuple[str,int]':
 	"""	Recebe dois inteiros e cria um interseção. Verifica a validade dos parâmetros."""
 	if not (isinstance(lin, int) and isinstance(col, str)):
 		raise ValueError("cria_intersecao: argumentos invalidos")
-	if col not in ALFABETO[:19] or len(col) != 1:
+	if not ("A" <= col <= "S") or len(col) != 1:
 		raise ValueError("cria_intersecao: argumentos invalidos")
 	if not 1 <= lin <= 19:
 		raise ValueError("cria_intersecao: argumentos invalidos") 
@@ -13,7 +21,7 @@ def cria_intersecao(col:str, lin:int) -> 'tuple[str,int]':
 	return (col, lin)
 
 
-def obtem_col(i:'tuple[str,int]') -> int:
+def obtem_col(i:'tuple[str,int]') -> str:
 	"""	Recebe uma interseção e devolve a coluna."""
 
 	return i[0]
@@ -34,7 +42,7 @@ def eh_intersecao(arg:any) -> bool:
 		return False
 	if not isinstance(arg[0], str) or not isinstance(arg[1], int):
 		return False
-	if not arg[0] in ALFABETO[:19]:
+	if not ("A" <= arg[0] <= "S"):
 		return False
 	if not 1 <= arg[1] <= 19:
 		return False
@@ -74,7 +82,7 @@ def eh_str_intersecao(s:str) -> bool:
 		return False
 	if len(s) not in (2, 3):
 		return False
-	if not s[0] in ALFABETO[:19] and len(s[0]) != 1:
+	if not ("A" <= s[0] <= "S") and len(s[0]) != 1:
 		return False
 	if not s[1:].isdigit():
 		return False
@@ -86,7 +94,7 @@ def obtem_intersecao_deslocada(i:'tuple[str,int]', n_cols:int, n_lins:int) -> 't
 	"""	Recebe uma interseção e dois inteiros que representam um deslocamento em
 		colunas e linhas e devolve a interseção deslocada."""
 
-	return cria_intersecao(ALFABETO[ALFABETO.index(obtem_col(i)) + n_cols], obtem_lin(i) + n_lins)
+	return cria_intersecao(caracter(obtem_col(i), n_cols), obtem_lin(i) + n_lins)
 
 
 def obtem_intersecoes_adjacentes(i:'tuple[str,int]', l:'tuple[str,int]') -> 'tuple[tuple[str,int]]':
@@ -142,9 +150,7 @@ def eh_pedra(arg:any) -> bool:
 
 	if not isinstance(arg, str):
 		return False
-	if len(arg) != 1:
-		return False
-	if arg not in "OX.":
+	if arg not in ("O", "X", "."):
 		return False
 	
 	return True
@@ -199,7 +205,7 @@ def cria_goban_vazio(n:int) -> 'list[list[str]]':
 		raise ValueError("cria_goban_vazio: argumentos invalidos")
 
 
-	return [[cria_pedra_neutra() for _ in range(n)] for _ in range(n)]
+	return [[cria_pedra_neutra() for col in range(n)] for lin in range(n)]
 
 
 def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') -> 'list[list[str]]':
@@ -231,22 +237,19 @@ def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') ->
 def cria_copia_goban(g:'list[list[str]]') -> 'list[list[str]]':
 	"""	Recebe um goban e devolve uma cópia."""
 
-	if not eh_goban(g):
-		raise ValueError("cria_copia_goban: argumentos invalidos")
-
 	return [list(col) for col in g]
 
 
 def obtem_ultima_intersecao(g:'list[list[str]]') -> 'tuple[str,int]':
 	"""	Recebe um goban e devolve a sua última interseção."""
 
-	return cria_intersecao(ALFABETO[len(g) - 1], len(g))
+	return cria_intersecao(caracter("A", len(g) - 1), len(g))
 
 
 def obtem_pedra(g:'list[list[str]]', i:'tuple[str,int]') -> str:
 	"""	Recebe um goban e uma interseção e devolve a pedra nessa interseção."""
 
-	return g[ALFABETO.index(obtem_col(i))][obtem_lin(i) - 1]
+	return g[indice(obtem_col(i))][obtem_lin(i) - 1]
 
 
 def obtem_cadeia(g:'list[list[str]]', i:'tuple[str,int]') -> 'tuple[tuple[str,int]]':
@@ -257,9 +260,9 @@ def obtem_cadeia(g:'list[list[str]]', i:'tuple[str,int]') -> 'tuple[tuple[str,in
 	last	= obtem_ultima_intersecao(g)
 
 	# Intersecoes a verificar
-	stack = [i]
+	stack	= [i]
 	# Intersecoes verificadas (resultado)
-	res = []
+	res		= []
 
 	# Algoritmo de busca em profundidade.
 	while len(stack) > 0:
@@ -277,7 +280,7 @@ def obtem_cadeia(g:'list[list[str]]', i:'tuple[str,int]') -> 'tuple[tuple[str,in
 def coloca_pedra(g:'list[list[str]]', i:'tuple[str,int]', p:str) -> list:
 	"""	Recebe um goban, uma interseção e uma pedra e coloca a pedra na interseção."""
 
-	g[ALFABETO.index(obtem_col(i))][obtem_lin(i) - 1] = p
+	g[indice(obtem_col(i))][obtem_lin(i) - 1] = p
 
 	return g
 
@@ -357,7 +360,7 @@ def goban_para_str(g:'list[list[str]]') -> str:
 
 	# Primeira linha
 	for i in range(cols):
-		field += " " + ALFABETO[i]
+		field += " " + caracter("A", i)
 	field += "\n"
 
 	# Corpo
@@ -365,14 +368,14 @@ def goban_para_str(g:'list[list[str]]') -> str:
 		field += " " if i < 10 else ""
 		field += str(i) + " "
 		for j in range(cols):
-			field += pedra_para_str(obtem_pedra(g, cria_intersecao(ALFABETO[j], i))) + " "
+			field += pedra_para_str(obtem_pedra(g, cria_intersecao(caracter("A", j), i))) + " "
 		field += " " if i < 10 else ""
 		field += str(i) + "\n"
 
 	# Ultima linha
 	field += "  "
 	for i in range(cols):
-		field += " " + ALFABETO[i]
+		field += " " + caracter("A", i)
 
 	return field
 
@@ -385,7 +388,7 @@ def obtem_intersecoes_neutras(g:'list[list[str]]') -> 'list[tuple[str,int]]':
 
 	for col in range(len(g)):
 		for lin in range(len(g)):
-			interseção = cria_intersecao(ALFABETO[col], lin + 1)
+			interseção = cria_intersecao(caracter("A", col), lin + 1)
 			if not eh_pedra_jogador(obtem_pedra(g, interseção)):
 				res.append(interseção)
 
@@ -464,12 +467,15 @@ def obtem_pedras_jogadores(g:'list[list[str]]') -> 'tuple[int,int]':
 	branco = 0
 	preto  = 0
 
-	for col in g:
-		for pedra in col:
-			if eh_pedra_branca(pedra):
+	last = obtem_ultima_intersecao(g)
+	for col in range(indice(obtem_col(last)) + 1):
+		for lin in range(obtem_lin(last)):
+			interseção = cria_intersecao(caracter("A", col), lin + 1)
+			if eh_pedra_branca(obtem_pedra(g, interseção)):
 				branco += 1
-			if eh_pedra_preta(pedra):
+			if eh_pedra_preta(obtem_pedra(g, interseção)):
 				preto  += 1
+
 
 	return (branco, preto)
 
@@ -541,7 +547,11 @@ def turno_jogador(g:'list[list[str]]', p:str, l:'list[list[str]]') -> bool:
 		colocar uma pedra."""
 	
 	turno_atual = ""
-	while not ((eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l)) or turno_atual == "P"):
+	while not ((
+			eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l)
+		) or (
+			turno_atual == "P"
+		)):
 		turno_atual = input("Escreva uma intersecao ou 'P' para passar [{}]:".format(pedra_para_str(p)))
 
 	if turno_atual == "P":
@@ -600,9 +610,13 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 		pontos		   = calcula_pontos(goban)
 		print(jogo_para_str(goban, pontos))
 		passe_atual	   = not turno_jogador(goban, turno_atual, goban_anterior)
+
 		turno_atual, turno_anterior = turno_anterior, turno_atual
 
 	# Fim de Jogo.
 	print(jogo_para_str(goban, pontos))
+	pontos = calcula_pontos(goban)
 
-	return calcula_pontos(goban)[0] >= calcula_pontos(goban)[1]
+	return pontos[0] >= pontos[1]
+
+go(9, ("B2", "C3", "B4", "A3"), ("A4", "C4", "B5"))
