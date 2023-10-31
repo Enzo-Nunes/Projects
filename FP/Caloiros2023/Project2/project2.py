@@ -541,12 +541,13 @@ def turno_jogador(g:'list[list[str]]', p:str, l:'list[list[str]]') -> bool:
 		colocar uma pedra."""
 	
 	turno_atual = ""
-	while not (eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l) or turno_atual == "P"):
+	while not ((eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l)) or turno_atual == "P"):
 		turno_atual = input("Escreva uma intersecao ou 'P' para passar [{}]:".format(pedra_para_str(p)))
 
 	if turno_atual == "P":
 		return False
 	
+	l = cria_copia_goban(g)
 	jogada(g, str_para_intersecao(turno_atual), p)
 
 	return True
@@ -582,7 +583,8 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 	# Criação do goban.
 	pedras_brancas = tuple(str_para_intersecao(x) for x in tb)
 	pedras_pretas  = tuple(str_para_intersecao(x) for x in tn)
-	goban = cria_goban(n, pedras_brancas, pedras_pretas)
+	goban		   = cria_goban(n, pedras_brancas, pedras_pretas)
+	goban_anterior = cria_copia_goban(goban)
 
 	# Turnos. Começa o preto.
 	turno_atual	   = cria_pedra_preta()
@@ -597,9 +599,9 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 		passe_anterior = passe_atual
 		pontos		   = calcula_pontos(goban)
 		print(jogo_para_str(goban, pontos))
-		passe_atual	   = not turno_jogador(goban, turno_atual, turno_anterior)
+		passe_atual	   = not turno_jogador(goban, turno_atual, goban_anterior)
 		turno_atual, turno_anterior = turno_anterior, turno_atual
-	
+
 	# Fim de Jogo.
 	print(jogo_para_str(goban, pontos))
 
