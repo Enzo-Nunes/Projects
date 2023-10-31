@@ -455,7 +455,7 @@ def jogada(g:'list[list[str]]', i:'tuple[str,int]', p:str) -> 'list[list[str]]':
 	for adjacente in obtem_intersecoes_adjacentes(i, obtem_ultima_intersecao(g)):
 		if pedras_iguais(obtem_pedra(g, adjacente), inimigo(p)):
 			if not tem_liberdades(g, adjacente, inimigo(p)):
-				remove_cadeia(g, obtem_cadeia(adjacente))
+				remove_cadeia(g, obtem_cadeia(g, adjacente))
 
 	return g
 
