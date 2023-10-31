@@ -618,5 +618,3 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 	pontos = calcula_pontos(goban)
 
 	return pontos[0] >= pontos[1]
-
-go(9, ("B2", "C3", "B4", "A3"), ("A4", "C4", "B5"))
