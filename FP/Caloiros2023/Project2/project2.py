@@ -11,7 +11,7 @@ def indice(str:str) -> int:
 """TAD Interseção."""
 def cria_intersecao(col:str, lin:int) -> 'tuple[str,int]':
 	"""	Recebe dois inteiros e cria um interseção. Verifica a validade dos parâmetros."""
-	if not (isinstance(lin, int) and isinstance(col, str)):
+	if not (type(lin) == int and isinstance(col, str)):
 		raise ValueError("cria_intersecao: argumentos invalidos")
 	if not ("A" <= col <= "S") or len(col) != 1:
 		raise ValueError("cria_intersecao: argumentos invalidos")
@@ -40,7 +40,7 @@ def eh_intersecao(arg:any) -> bool:
 		return False
 	if not len(arg) == 2:
 		return False
-	if not isinstance(arg[0], str) or not isinstance(arg[1], int):
+	if not isinstance(arg[0], str) or type(arg[1]) != int:
 		return False
 	if not ("A" <= arg[0] <= "S"):
 		return False
@@ -72,7 +72,7 @@ def intersecao_para_str(i:'tuple[str,int]') -> str:
 def str_para_intersecao(s:str) -> 'tuple[str,int]':
 	"""	Recebe uma string e devolve uma interseção."""
 
-	return cria_intersecao(s[0], int(s[1:]))
+	return (s[0], int(s[1:]))
 
 
 def eh_str_intersecao(s:str) -> bool:
@@ -199,10 +199,10 @@ def eh_pedra_jogador(p:str) -> bool:
 def cria_goban_vazio(n:int) -> 'list[list[str]]':
 	"""	Cria um goban vazio."""
 
-	if not isinstance(n, int):
-		raise ValueError("cria_goban_vazio: argumentos invalidos")
+	if type(n) != int:
+		raise ValueError("cria_goban_vazio: argumento invalido")
 	if n not in (9, 13, 19):
-		raise ValueError("cria_goban_vazio: argumentos invalidos")
+		raise ValueError("cria_goban_vazio: argumento invalido")
 
 
 	return [[cria_pedra_neutra() for col in range(n)] for lin in range(n)]
@@ -212,7 +212,7 @@ def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') ->
 	""" Cria um goban de tamanho n x n, com as interseçõe do tuplo ib ocupadas por
 		pedras brancas e as interseções do tuplo ip ocupadas por pedras pretas."""
 	
-	if not isinstance(n, int):
+	if type(n) != int:
 		raise ValueError("cria_goban: argumentos invalidos")
 	if not isinstance(ib, tuple) or not isinstance(ip, tuple):
 		raise ValueError("cria_goban: argumentos invalidos")
@@ -222,12 +222,12 @@ def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') ->
 	g = cria_goban_vazio(n)
 
 	for interseção in ib:
-		if not eh_intersecao_valida(g, interseção) or interseção in ip or not ib.count(interseção):
+		if not eh_intersecao_valida(g, interseção) or interseção in ip or ib.count(interseção) != 1:
 			raise ValueError("cria_goban: argumentos invalidos")
 		coloca_pedra(g, interseção, cria_pedra_branca())
 
 	for interseção in ip:
-		if not eh_intersecao_valida(g, interseção) or interseção in ib or not ip.count(interseção):
+		if not eh_intersecao_valida(g, interseção) or interseção in ib or ip.count(interseção) != 1:
 			raise ValueError("cria_goban: argumentos invalidos")
 		coloca_pedra(g, interseção, cria_pedra_preta())
 
@@ -576,7 +576,7 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 		tuplos com a representação externa das interseções ocupadas inicialmente. """
 	
 	# Verificação dos argumentos
-	if not (isinstance(n, int) and isinstance(tb, tuple) and isinstance(tn, tuple)):
+	if not (type(n) == int and isinstance(tb, tuple) and isinstance(tn, tuple)):
 		raise ValueError("go: argumentos invalidos")
 	if n not in (9, 13, 19):
 		raise ValueError("go: argumentos invalidos")
