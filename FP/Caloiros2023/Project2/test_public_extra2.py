@@ -353,7 +353,7 @@ class TestMarcosCriaGoban:
         assert str(excinfo.value) == "cria_goban_vazio: argumento invalido"
 
     def test_10(self):
-        ib = ("A20",)
+        ib = ("A13",)
         ip = tuple()
         ib = tuple(str_para_intersecao(x) for x in ib)
         with pytest.raises(ValueError) as excinfo:
@@ -362,7 +362,7 @@ class TestMarcosCriaGoban:
     
     def test_11(self):
         ib = ("A2",)
-        ip = ("A20",)
+        ip = ("A13",)
         ip = tuple(str_para_intersecao(x) for x in ip)
         ib = tuple(str_para_intersecao(x) for x in ib)
         with pytest.raises(ValueError) as excinfo:
@@ -512,12 +512,11 @@ class TestMarcosGobanParaStr:
         assert goban_para_str(g) == REF_TEST_GOBAN["2"]
 
 class TestMarcosObtemTerritorios:
-    # ERRORS | FIXING THESE TESTS
     def test_1(self):
         ib = ("B1","A2","B2","A4","B4","C4","D4","D3","D2","D1","F1","F2","F3","F4","F5","F6","E6","D6","C6","B6","A6","A8","B8","C8","D8","E8","F8","G8","H8","H7","H6","H5","H4","H3","H2","H1","I9","G7","E5","C3")
         ib = tuple(str_para_intersecao(x) for x in ib)
         g = cria_goban(9,ib,())
-        answer = (("A1",), ("A3", "B3"), ("A5", "B5", "C5", "D5"), ("A7", "B7", "C7", "D7", "E7", "F7"), ("A9", "B9", "C9", "D9", "E9", "F9", "G9", "H9"), ("C1", "C2"), ("E1", "E2", "E3", "E4"), ("G1", "G2", "G3", "G4", "G5", "G6"), ("I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8"))
+        answer = (('A1',), ('C1', 'C2'), ('E1', 'E2', 'E3', 'E4'), ('G1', 'G2', 'G3', 'G4', 'G5', 'G6'), ('I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8'), ('A3', 'B3'), ('A5', 'B5', 'C5', 'D5'), ('A7', 'B7', 'C7', 'D7', 'E7', 'F7'), ('A9', 'B9', 'C9', 'D9', 'E9', 'F9', 'G9', 'H9'))
         answer = tuple(tuple(str_para_intersecao(j) for j in i) for i in answer)
         assert obtem_territorios(g) == answer
     
@@ -527,7 +526,7 @@ class TestMarcosObtemTerritorios:
         ip = tuple(str_para_intersecao(x) for x in ip)
         ib = tuple(str_para_intersecao(x) for x in ib)
         g = cria_goban(9,ib,ip)
-        answer = (('A1',), ('A3', 'B3'), ('A5', 'B5', 'C5', 'D5'), ('A7', 'B7', 'C7', 'D7', 'E7', 'F7'), ('A9', 'B9', 'C9', 'D9', 'E9', 'F9', 'G9', 'H9'), ('C1', 'C2'), ('E1', 'E2', 'E3', 'E4'), ('G1', 'G2', 'G3', 'G4', 'G5', 'G6'), ('I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8'))
+        answer = (('A1',), ('C1', 'C2'), ('E1', 'E2', 'E3', 'E4'), ('G1', 'G2', 'G3', 'G4', 'G5', 'G6'), ('I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8'), ('A3', 'B3'), ('A5', 'B5', 'C5', 'D5'), ('A7', 'B7', 'C7', 'D7', 'E7', 'F7'), ('A9', 'B9', 'C9', 'D9', 'E9', 'F9', 'G9', 'H9'))
         answer = tuple(tuple(str_para_intersecao(j) for j in i) for i in answer)
         assert obtem_territorios(g) == answer
 
@@ -647,7 +646,7 @@ class TestMarcosEhJogadaLegal:
         assert eh_jogada_legal(g,cria_intersecao("A",1),cria_pedra_branca(),l)
 
 class TestMarcosTurnoJogador:
-    def test_1(self):
+    def test_1(self): # Regra do Suicídio | Intersecao invalida | Intersecao ocupada
         ib = "A2,B1,B2".split(",")
         ip = "A3,B3,C3,C2,C1".split(",")
         ib = tuple(str_para_intersecao(i) for i in ib)
@@ -657,6 +656,16 @@ class TestMarcosTurnoJogador:
         turno_jogador_offline(g,cria_pedra_branca(),l,"A1\nA2\nB2\nA3\nA4\n")
         assert goban_para_str(g) == REF_TEST_TURNO["1"]
 
+    def test_2(self): # Regra do KO
+        ib = "E5,E3,D4,F4".split(",")
+        ip = "D3,F3,E2".split(",")
+        ib = tuple(str_para_intersecao(i) for i in ib)
+        ip = tuple(str_para_intersecao(i) for i in ip)
+        g = cria_goban(9,ib,ip)
+        l = cria_copia_goban(g)
+        jogada(g,cria_intersecao("E",4),cria_pedra_preta())
+        turno_jogador_offline(g,cria_pedra_branca(),l,"E3\nE6")
+        assert goban_para_str(g) == REF_TEST_TURNO["2"]
 # goban
 
 # FUNCOES CHECKLIST ==============================================
@@ -780,4 +789,15 @@ REF_TEST_TURNO = {"1":
  3 X X X . . . . . .  3
  2 O O X . . . . . .  2
  1 . O X . . . . . .  1
+   A B C D E F G H I""","2":
+"""   A B C D E F G H I
+ 9 . . . . . . . . .  9
+ 8 . . . . . . . . .  8
+ 7 . . . . . . . . .  7
+ 6 . . . . O . . . .  6
+ 5 . . . . O . . . .  5
+ 4 . . . O X O . . .  4
+ 3 . . . X . X . . .  3
+ 2 . . . . X . . . .  2
+ 1 . . . . . . . . .  1
    A B C D E F G H I"""}
