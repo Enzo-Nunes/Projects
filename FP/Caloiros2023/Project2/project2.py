@@ -3,19 +3,21 @@ def caracter(str:str, n:int) -> str:
 
 	return chr(ord(str) + n)
 
+
 def indice(str:str) -> int:
 	""" Recebe um caracter e devolve o seu índice no alfabeto."""
 
 	return ord(str) - ord("A")
+
 
 """TAD Interseção."""
 def cria_intersecao(col:str, lin:int) -> 'tuple[str,int]':
 	"""	Recebe dois inteiros e cria um interseção. Verifica a validade dos parâmetros."""
 	if not (type(lin) == int and isinstance(col, str)):
 		raise ValueError("cria_intersecao: argumentos invalidos")
-	if not ("A" <= col <= "S") or len(col) != 1:
+	if not ("A" <= col <= "S" and len(col) == 1):
 		raise ValueError("cria_intersecao: argumentos invalidos")
-	if not 1 <= lin <= 19:
+	if not (1 <= lin <= 19):
 		raise ValueError("cria_intersecao: argumentos invalidos") 
 
 	return (col, lin)
@@ -40,11 +42,11 @@ def eh_intersecao(arg:any) -> bool:
 		return False
 	if not len(arg) == 2:
 		return False
-	if not isinstance(arg[0], str) or type(arg[1]) != int:
+	if not (isinstance(arg[0], str) and type(arg[1]) == int):
 		return False
 	if not ("A" <= arg[0] <= "S"):
 		return False
-	if not 1 <= arg[1] <= 19:
+	if not (1 <= arg[1] <= 19):
 		return False
 	
 	return True
@@ -64,13 +66,13 @@ def intersecoes_iguais(i1:'tuple[str,int]', i2:'tuple[str,int]') -> bool:
 
 
 def intersecao_para_str(i:'tuple[str,int]') -> str:
-	"""	Recebe uma interseção e devolve uma string."""
+	"""	Recebe uma interseção e devolve uma string que a representa."""
 
 	return str(obtem_col(i)) + str(obtem_lin(i))
 
 
 def str_para_intersecao(s:str) -> 'tuple[str,int]':
-	"""	Recebe uma string e devolve uma interseção."""
+	"""	Recebe uma string e devolve a interseção correspondente."""
 
 	return (s[0], int(s[1:]))
 
@@ -80,11 +82,13 @@ def eh_str_intersecao(s:str) -> bool:
 
 	if not isinstance(s, str):
 		return False
-	if len(s) not in (2, 3):
+	if not len(s) in (2, 3):
 		return False
-	if not ("A" <= s[0] <= "S") and len(s[0]) != 1:
+	if not ("A" <= s[0] <= "S"):
 		return False
 	if not s[1:].isdigit():
+		return False
+	if not (1 <= int(s[1:]) <= 19):
 		return False
 	
 	return True
@@ -150,7 +154,7 @@ def eh_pedra(arg:any) -> bool:
 
 	if not isinstance(arg, str):
 		return False
-	if arg not in ("O", "X", "."):
+	if not arg in ("O", "X", "."):
 		return False
 	
 	return True
@@ -199,9 +203,9 @@ def eh_pedra_jogador(p:str) -> bool:
 def cria_goban_vazio(n:int) -> 'list[list[str]]':
 	"""	Cria um goban vazio."""
 
-	if type(n) != int:
+	if not type(n) == int:
 		raise ValueError("cria_goban_vazio: argumento invalido")
-	if n not in (9, 13, 19):
+	if not n in (9, 13, 19):
 		raise ValueError("cria_goban_vazio: argumento invalido")
 
 
@@ -212,22 +216,22 @@ def cria_goban(n:int, ib:'tuple[tuple[str,int]]', ip:'tuple[tuple[str,int]]') ->
 	""" Cria um goban de tamanho n x n, com as interseçõe do tuplo ib ocupadas por
 		pedras brancas e as interseções do tuplo ip ocupadas por pedras pretas."""
 	
-	if type(n) != int:
+	if not (type(n) == int):
 		raise ValueError("cria_goban: argumentos invalidos")
-	if not isinstance(ib, tuple) or not isinstance(ip, tuple):
+	if not (isinstance(ib, tuple) and isinstance(ip, tuple)):
 		raise ValueError("cria_goban: argumentos invalidos")
-	if n not in (9, 13, 19):
+	if not (n in (9, 13, 19)):
 		raise ValueError("cria_goban: argumentos invalidos")
 	
 	g = cria_goban_vazio(n)
 
 	for interseção in ib:
-		if not eh_intersecao_valida(g, interseção) or interseção in ip or ib.count(interseção) != 1:
+		if not (eh_intersecao_valida(g, interseção) and not interseção in ip and ib.count(interseção) == 1):
 			raise ValueError("cria_goban: argumentos invalidos")
 		coloca_pedra(g, interseção, cria_pedra_branca())
 
 	for interseção in ip:
-		if not eh_intersecao_valida(g, interseção) or interseção in ib or ip.count(interseção) != 1:
+		if not (eh_intersecao_valida(g, interseção) and not interseção in ib and ip.count(interseção) == 1):
 			raise ValueError("cria_goban: argumentos invalidos")
 		coloca_pedra(g, interseção, cria_pedra_preta())
 
@@ -307,13 +311,13 @@ def eh_goban(arg:any) -> bool:
 
 	if not isinstance(arg, list):
 		return False
-	if len(arg) not in (9, 13, 19):
+	if not len(arg) in (9, 13, 19):
 		return False
 
 	for x in arg:
 		if not isinstance(x, list):
 			return False
-		if len(x) != len(arg):
+		if not len(x) == len(arg):
 			return False
 		for y in x:
 			if not eh_pedra(y):
@@ -342,7 +346,7 @@ def eh_intersecao_valida(g:'list[list[str]]', i:'tuple[str,int]') -> bool:
 def gobans_iguais(g1:'list[list[str]]', g2:'list[list[str]]') -> bool:
 	"""	Recebe dois gobans e verifica se são iguais."""
 
-	if not eh_goban(g1) or not eh_goban(g2):
+	if not (eh_goban(g1) and eh_goban(g2)):
 		return False
 	
 	return g1 == g2
@@ -431,7 +435,7 @@ def obtem_adjacentes_diferentes(g:'list[list[str]]', t:'tuple[tuple[str,int]]') 
 
 
 def tem_liberdades(g:'list[list[str]]', i:'tuple[str, int]', p:str) -> bool:
-	"""	Determina se a cadeia de i do goban g tem liberdades a favor do jogador p."""
+	"""	Determina se a cadeia da interseção i do goban g tem liberdades a favor do jogador p."""
 
 	for adjacente in obtem_adjacentes_diferentes(g, obtem_cadeia(g, i)):
 		if obtem_pedra(g, adjacente) != inimigo(p):
@@ -547,11 +551,10 @@ def turno_jogador(g:'list[list[str]]', p:str, l:'list[list[str]]') -> bool:
 		colocar uma pedra."""
 	
 	turno_atual = ""
-	while not ((
-			eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l)
-		) or (
-			turno_atual == "P"
-		)):
+	while not (
+		(eh_str_intersecao(turno_atual) and eh_jogada_legal(g, str_para_intersecao(turno_atual), p, l)) or
+		(turno_atual == "P")
+	):
 		turno_atual = input("Escreva uma intersecao ou 'P' para passar [{}]:".format(pedra_para_str(p)))
 
 	if turno_atual == "P":
@@ -578,7 +581,7 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 	# Verificação dos argumentos
 	if not (type(n) == int and isinstance(tb, tuple) and isinstance(tn, tuple)):
 		raise ValueError("go: argumentos invalidos")
-	if n not in (9, 13, 19):
+	if not n in (9, 13, 19):
 		raise ValueError("go: argumentos invalidos")
 	if not all(eh_str_intersecao(x) for x in tb):
 		raise ValueError("go: argumentos invalidos")
@@ -610,7 +613,6 @@ def go(n:int, tb:'tuple[tuple[str,int]]', tn:'tuple[tuple[str,int]]') -> bool:
 		pontos		   = calcula_pontos(goban)
 		print(jogo_para_str(goban, pontos))
 		passe_atual	   = not turno_jogador(goban, turno_atual, goban_anterior)
-
 		turno_atual, turno_anterior = turno_anterior, turno_atual
 
 	# Fim de Jogo.
