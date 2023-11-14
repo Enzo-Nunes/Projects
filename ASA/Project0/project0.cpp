@@ -34,6 +34,17 @@ int main() {
 		inputMatrix[i][1] = v;
 	}
 
+	// Calculate Friendship Matrix
+	for (int i = 0; i < M; i++) {
+		int current = inputMatrix[i][0];
+		int toCheck = inputMatrix[i][1];
+		for (int j = 0; j < M; j++) {
+			if (inputMatrix[j][1] == toCheck) {
+				friendshipMatrix[current - 1][inputMatrix[j][0] - 1]++;
+			}
+		}
+	}
+
 	// First Histogram
 	cout << "Histograma 1" << endl;
 	for (int i = 0; i < N; i++) {
@@ -56,17 +67,6 @@ int main() {
 			}
 		}
 		cout << count << endl;
-	}
-
-	// Friendship Matrix
-	for (int i = 0; i < M; i++) {
-		int current = inputMatrix[i][0];
-		int toCheck = inputMatrix[i][1];
-		for (int j = 0; j < M; j++) {
-			if (inputMatrix[j][1] == toCheck) {
-				friendshipMatrix[current - 1][inputMatrix[j][0] - 1]++;
-			}
-		}
 	}
 
 	// Print Friendship Matrix
