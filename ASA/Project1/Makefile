@@ -7,7 +7,7 @@ CFLAGS		= -std=c++11 -O3 -Wall  -lm
 all:	run
 
 run:	$(TARGET_EXEC)
-	./$(TARGET_EXEC)
+	./$(TARGET_EXEC) < input.txt
 
 build:	$(TARGET_EXEC)
 
