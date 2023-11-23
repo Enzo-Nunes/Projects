@@ -4,7 +4,7 @@
 #define max(a, b) (a > b ? a : b)
 using namespace std;
 
-vector<vector<int>> buildPlate(int &PlateWidth, int &PlateHeight) {
+vector<vector<int>> processInput(int &PlateWidth, int &PlateHeight) {
 	int NumShapes;
 	cin >> PlateWidth >> PlateHeight >> NumShapes;
 	vector<vector<int>> Plate(PlateWidth + 1, vector<int>(PlateHeight + 1, 0));
@@ -34,13 +34,13 @@ int getMaxPlateCost(int PlateWidth, int PlateHeight, vector<vector<int>> &Plate)
 		}
 	}
 
-	return Plate[PlateWidth][PlateHeight];
+    return Plate[PlateWidth][PlateHeight];
 }
 
 int main() {
 	int PlateWidth, PlateHeight;
 
-	vector<vector<int>> Plate = buildPlate(PlateWidth, PlateHeight);
+	vector<vector<int>> Plate = processInput(PlateWidth, PlateHeight);
 	cout << getMaxPlateCost(PlateWidth, PlateHeight, Plate) << endl;
 
 	return 0;
