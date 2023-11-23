@@ -25,11 +25,12 @@ int getMaxPlateCost(int PlateWidth, int PlateHeight, vector<vector<int>> &Plate)
 
 	for (int i = 1; i <= PlateWidth; i++) {
 		for (int j = 1; j <= PlateHeight; j++) {
-			for (int k = 1; k < i; k++) {
-				Plate[i][j] = max(Plate[i][j], Plate[k][j] + Plate[i - k][j]);
-			}
-			for (int k = 1; k < j; k++) {
-				Plate[i][j] = max(Plate[i][j], Plate[i][k] + Plate[i][j - k]);
+			for (int k = 1; k < i || k < j; k++) {
+				if (k < i)
+					Plate[i][j] = max(Plate[i][j], Plate[k][j] + Plate[i - k][j]);
+				if (k < j)
+					Plate[i][j] = max(Plate[i][j], Plate[i][k] + Plate[i][j - k]);
+
 			}
 		}
 	}
