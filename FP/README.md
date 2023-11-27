@@ -15,6 +15,7 @@ Final Grade: **19.5/20**
 ## Project 2: Minesweeper
 
 This project consisted of designing and coding the well-known videogame minesweeper from scratch.
+
 Final grade: **19.55/20**
 
 ## Caloiros 2023 (Next Year's projects)
