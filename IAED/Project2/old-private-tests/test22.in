@@ -1,7 +1,0 @@
-c abc
-p A 1 2
-p B 2 3
-l aaa A B 0.2 3
-l aaa B A 0.2 3
-c abc
-q

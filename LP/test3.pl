@@ -1,1 +1,0 @@
-ocupacaoMesa([maria, joao, pedrito, jorge, ana, manelito, miguel, guga], [cab1(maria), cab2(joao), honra(joao, guga), lado(ana, manelito), lado(miguel, pedrito), frente(miguel, jorge), naoFrente(pedrito, manelito)], L).
