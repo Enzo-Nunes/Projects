@@ -1,7 +1,7 @@
 # IAED (Introdução aos Algoritmos e Estruturas de Dados)
 ## Introduction to Algorithms and Data Structures.
 
-This repository contains the projects completed as part of the IAED course at Instituto Superior Técnico. The course primarily focused on learning the basics of algorithms and an introduction to data structures.
+This repository contains the projects completed as part of the IAED course at Instituto Superior Técnico. The course primarily focused on learning the basics of algorithms and an introduction to data structures, as well as two projects in **C** programming language.
 
 ## Public Transportation System
 
@@ -9,4 +9,4 @@ The IAED projects consisted of the development of a software application for the
 
 The course also included a small final practical test to ensure the students truely had the skills and were developing the projects by themselves. The grade in this final evaluation violently limited the maximum grade achieved by the student.
 
-Final Grade: *19/20*
+Final Grade: **20/20**

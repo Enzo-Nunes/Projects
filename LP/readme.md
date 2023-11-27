@@ -1,7 +1,7 @@
 # LP (Lógica para Programação)
 ## Programming Logic
 
-This repository contains the projects completed as part of the LP course at Instituto Superior Técnico. The course primarily focused on learning the basic logics of programming and a *Prolog* project.
+This repository contains the projects completed as part of the LP course at Instituto Superior Técnico. The course primarily focused on learning the basic logics of programming and a **Prolog** project.
 
 ## School Database
 
@@ -11,4 +11,4 @@ It's focused around a fictional story of a school's database that was attacked b
 
 The project also includes a final challange for the student, unrelated to the story of the project. It's a permutation problem involving a dinner table and several restrictions to the placement of guests.
 
-Final Grade: *20/20*
+Final Grade: **20/20**
