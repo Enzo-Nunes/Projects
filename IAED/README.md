@@ -1,5 +1,5 @@
 # IAED (Introdução aos Algoritmos e Estruturas de Dados)
-## Introduction to Algorithms and Data Structures.
+## Introduction to Algorithms and Data Structures
 
 This repository contains the projects completed as part of the IAED course at Instituto Superior Técnico. The course primarily focused on learning the basics of algorithms and an introduction to data structures, as well as two projects in **C** programming language.
 
