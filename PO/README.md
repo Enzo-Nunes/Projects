@@ -1,5 +1,5 @@
 # PO (Programação com Objetos)
-## Programming with Objects.
+## Programming with Objects
 
 This repository contains the projects completed as part of the PO course at Instituto Superior Técnico. The course primarily focused on learning the bases of object oriented programming, as well as two projects in **Java** programming language.
 
