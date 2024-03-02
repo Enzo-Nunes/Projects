@@ -18,8 +18,8 @@ This project consisted of designing and coding the well-known videogame mineswee
 
 Final grade: **19.55/20**
 
-## Caloiros 2023 (Next Year's projects)
+## Extra (Next Year's projects)
 
-This folder contains the FP projects I developed the year after completing my course of FP. In other words, projects from the students one year behind me. I developed these projects for fun and to further enhance my python skills.
+This folder contains the FP projects I developed the year after I completed my course of FP. In other words, projects from the students one year behind me. I developed these projects to further improve my python skills and as leisure. As I already had this course, I was able to develop these projects in my own pace, in a more structured way and with a better understanding of the language.
 
-Their course format was way more well structured. Their first project was based on learning recursion through obtaining information on a ractangular board. The second project consisted of developing the japanese game "Go". Project 1 was used as a base for project 2.
+Their course format was way better structured. Their first project was based on learning recursion through obtaining information on a ractangular board. The second project consisted of developing the japanese game "Go". Project 1 was used as a base for project 2.
