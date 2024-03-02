@@ -190,8 +190,7 @@ ocupacaoCritica(HoraInicio, HoraFim, Threshold, ResFinal) :-
     sort(Resultados, ResFinal).
 
 
-% Predicado que permite organizar uma mesa retangular de 8 lugares de acordo com
-% as restricoes dadas.
+% Predicado que permite organizar uma mesa retangular de 8 lugares de acordo com as restricoes dadas.
 % Todas as possibilidades de mesas.
 possibilidades(ListaPessoas, Possibilidades) :-
     findall([[X1, X2, X3], [X4, X5], [X6, X7, X8]], (
