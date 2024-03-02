@@ -13,4 +13,7 @@ Final Grade: **15.21/20**
 
 We were given a modified version of the source code of the previous project completed, without multi-processing. We were also given the souce code of the client. We were tasked with transforming the past project to a server-like program with multi-threading and to implement the API for the client to interact with this server.
 
+
+Both projects were developed by a group of 2 students.
+
 Final Grade: **19/20**
