@@ -5,7 +5,7 @@ This repository contains the projects completed as part of the IAC course at Ins
 
 ## Asteroids Game
 
-The project consisted of developing a game where the player controls a spaceships and has to fire in 3 different directions to destroy asteroids to avoid colliding with them and to collect energy. The objective is to stay alive as long as possible.
+The project consisted of developing a game where the player controls a spaceship and has to fire in 3 different directions to destroy asteroids to avoid colliding with them and to collect energy. The objective is to stay alive as long as possible.
 
 This project was developed by a group of 3 students.
 

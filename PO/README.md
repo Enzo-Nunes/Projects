@@ -7,6 +7,8 @@ This repository contains the projects completed as part of the PO course at Inst
 
 The IAED projects consisted of the development of a software application for creating, editing and managing spreadsheets. The first project consisted on the fundamentals of the this system, the core that made the program partially work. The second project was just the completion of the first. As so, it consisted of some enhancements and implementation of more features.
 
+This project was developed by a group of 2 students.
+
 The course also included a small final practical test to ensure the students truely had the skills and were developing the projects by themselves. The grade in this final evaluation violently limited the maximum grade achieved by the student.
 
 Final Grade: **17.15/20**
