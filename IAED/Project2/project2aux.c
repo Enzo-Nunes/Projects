@@ -17,8 +17,7 @@ char *readNextWord(Buffer *buffer) {
         exit(1);
     }
 
-    while (buffer->buffer[buffer->index] == ' ' ||
-           buffer->buffer[buffer->index] == '\n') {
+    while (buffer->buffer[buffer->index] == ' ' || buffer->buffer[buffer->index] == '\n') {
         buffer->index++;
     }
 
@@ -30,8 +29,7 @@ char *readNextWord(Buffer *buffer) {
         }
         buffer->index++;
     } else {
-        while (buffer->buffer[buffer->index] != ' ' &&
-               buffer->buffer[buffer->index] != '\n' &&
+        while (buffer->buffer[buffer->index] != ' ' && buffer->buffer[buffer->index] != '\n' &&
                buffer->buffer[buffer->index] != '\0') {
             next_word[i] = buffer->buffer[buffer->index];
             i++, buffer->index++;
@@ -66,8 +64,7 @@ Line *sortLines(int nr_lines, Line *lines_list) {
     for (i = 0; i < nr_lines - 1; i++) {
         min_index = i;
         for (j = i + 1; j < nr_lines; j++) {
-            if (strcmp(sorted_lines_list[j].name,
-                       sorted_lines_list[min_index].name) < 0) {
+            if (strcmp(sorted_lines_list[j].name, sorted_lines_list[min_index].name) < 0) {
                 min_index = j;
             }
         }
@@ -108,8 +105,7 @@ void listLines(BusNetwork *sys) {
         line = sys->line_list[i];
         printf("%s ", line.name);
         if (line.nr_line_stops > 0) {
-            printf("%s %s ", line.origin->stop->name,
-                   line.destination->stop->name);
+            printf("%s %s ", line.origin->stop->name, line.destination->stop->name);
         }
         printf("%d %.2f %.2f\n", line.nr_line_stops, line.cost, line.duration);
     }
@@ -181,8 +177,7 @@ void createLine(BusNetwork *sys, char *line_name) {
     if (sys->nr_lines == 0) {
         sys->line_list = (Line *)malloc(CHUNK_SIZE * sizeof(Line));
     } else if (sys->nr_lines % CHUNK_SIZE == 0) {
-        sys->line_list = (Line *)realloc(
-            sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(Line));
+        sys->line_list = (Line *)realloc(sys->line_list, (sys->nr_lines + CHUNK_SIZE) * sizeof(Line));
     }
 
     if (sys->line_list == NULL) {
@@ -190,8 +185,7 @@ void createLine(BusNetwork *sys, char *line_name) {
         exit(1);
     }
 
-    if ((new_line.name = malloc((strlen(line_name) + 1) * sizeof(char))) ==
-        NULL) {
+    if ((new_line.name = malloc((strlen(line_name) + 1) * sizeof(char))) == NULL) {
         printf(ERR_NO_MEMORY);
         exit(1);
     }
@@ -257,8 +251,7 @@ void listStops(BusNetwork *sys) {
 
     for (i = 0; i < sys->nr_stops; i++) {
         stop = sys->stop_list[i];
-        printf("%s: %16.12f %16.12f %d\n", stop.name, stop.lat, stop.lon,
-               nrStopLines(sys, stop.name));
+        printf("%s: %16.12f %16.12f %d\n", stop.name, stop.lat, stop.lon, nrStopLines(sys, stop.name));
     }
 }
 
@@ -272,8 +265,7 @@ void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
     if (sys->nr_stops == 0) {
         sys->stop_list = (Stop *)malloc(CHUNK_SIZE * sizeof(Stop));
     } else if (sys->nr_stops % CHUNK_SIZE == 0) {
-        sys->stop_list = (Stop *)realloc(
-            sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(Stop));
+        sys->stop_list = (Stop *)realloc(sys->stop_list, (sys->nr_stops + CHUNK_SIZE) * sizeof(Stop));
     }
 
     if (sys->stop_list == NULL) {
@@ -281,8 +273,7 @@ void createStop(BusNetwork *sys, char *stop_name, double lat, double lon) {
         exit(1);
     }
 
-    if ((new_stop.name = malloc((strlen(stop_name) + 1) * sizeof(char))) ==
-        NULL) {
+    if ((new_stop.name = malloc((strlen(stop_name) + 1) * sizeof(char))) == NULL) {
         printf(ERR_NO_MEMORY);
         exit(1);
     }
@@ -316,9 +307,8 @@ int isLinkLineCompatible(Line line, Stop origin, Stop destination) {
  * Checks if the link attempted to create has valid arguments. Returns the link
  * type back to linkCommand.
  */
-int isValidLink(BusNetwork *sys, int line_index, int origin_index,
-                int destination_index, char *line_name, char *origin_name,
-                char *destination_name, double cost, double duration) {
+int isValidLink(BusNetwork *sys, int line_index, int origin_index, int destination_index, char *line_name,
+                char *origin_name, char *destination_name, double cost, double duration) {
 
     if (line_index == NOT_FOUND) {
         printf(ERR_NO_LINE, line_name);
@@ -344,16 +334,14 @@ int isValidLink(BusNetwork *sys, int line_index, int origin_index,
         return FIRST_STOPS;
     }
 
-    return isLinkLineCompatible(sys->line_list[line_index],
-                                sys->stop_list[origin_index],
+    return isLinkLineCompatible(sys->line_list[line_index], sys->stop_list[origin_index],
                                 sys->stop_list[destination_index]);
 }
 
 /*
  * Inserts a new origin in the line of index i in the system Line list.
  */
-void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
-                  double cost, double duration) {
+void addNewOrigin(BusNetwork *sys, int line_index, int origin_index, double cost, double duration) {
     StopNode *origin;
 
     if ((origin = (StopNode *)malloc(sizeof(StopNode))) == NULL) {
@@ -374,8 +362,7 @@ void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
 /*
  * Inserts a new destination in the Line of index i in the system Line list.
  */
-void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
-                       double cost, double duration) {
+void addNewDestination(BusNetwork *sys, int line_index, int destination_index, double cost, double duration) {
     StopNode *destination;
 
     if ((destination = (StopNode *)malloc(sizeof(*destination))) == NULL) {
@@ -397,8 +384,8 @@ void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
  * Function used to insert the first 2 stops in the Line of index i in the
  * system Line list.
  */
-void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
-                   int destination_index, double cost, double duration) {
+void addFirstStops(BusNetwork *sys, int line_index, int origin_index, int destination_index, double cost,
+                   double duration) {
     StopNode *origin, *destination;
 
     if (((origin = (StopNode *)malloc(sizeof(StopNode))) == NULL) ||
@@ -430,8 +417,7 @@ void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
  * Line course-plotting function. Based on the link type, adds new stops
  * to the course of the Line of index i in the system Line list .
  */
-void createLink(BusNetwork *sys, int line_index, int origin_index,
-                int destination_index, double cost, double duration,
+void createLink(BusNetwork *sys, int line_index, int origin_index, int destination_index, double cost, double duration,
                 int link_type) {
     switch (link_type) {
     /* Stop is inserted in the begining of the Line course. */
@@ -447,8 +433,7 @@ void createLink(BusNetwork *sys, int line_index, int origin_index,
     /* The mentioned link actually represents the first stops to be inserted in
      * the Line course. */
     case FIRST_STOPS:
-        addFirstStops(sys, line_index, origin_index, destination_index, cost,
-                      duration);
+        addFirstStops(sys, line_index, origin_index, destination_index, cost, duration);
         return;
     }
 
@@ -535,8 +520,7 @@ void removeStopFromSys(BusNetwork *sys, int stop_index) {
 
     free(sys->stop_list[stop_index].name);
     sys->nr_stops--;
-    memmove(sys->stop_list + stop_index, sys->stop_list + stop_index + 1,
-            (sys->nr_stops - stop_index) * sizeof(Stop));
+    memmove(sys->stop_list + stop_index, sys->stop_list + stop_index + 1, (sys->nr_stops - stop_index) * sizeof(Stop));
 
     updateLinePointers(sys, stop_index);
 }
@@ -554,6 +538,5 @@ void removeLineFromSys(BusNetwork *sys, int line_index) {
 
     free(sys->line_list[line_index].name);
     sys->nr_lines--;
-    memmove(sys->line_list + line_index, sys->line_list + line_index + 1,
-            (sys->nr_lines - line_index) * sizeof(Line));
+    memmove(sys->line_list + line_index, sys->line_list + line_index + 1, (sys->nr_lines - line_index) * sizeof(Line));
 }
