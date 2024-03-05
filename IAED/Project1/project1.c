@@ -59,8 +59,7 @@ char *readNextWord(char buffer[]) {
         }
         buffer_index++;
     } else {
-        while (buffer[buffer_index] != ' ' && buffer[buffer_index] != '\n' &&
-               buffer[buffer_index] != '\0') {
+        while (buffer[buffer_index] != ' ' && buffer[buffer_index] != '\n' && buffer[buffer_index] != '\0') {
             next_word[i] = buffer[buffer_index];
             i++, buffer_index++;
         }
@@ -85,8 +84,7 @@ line *sortLines(line lines_list[]) {
     for (i = 0; i < nr_lines - 1; i++) {
         min_index = i;
         for (j = i + 1; j < nr_lines; j++) {
-            if (strcmp(sorted_lines_list[j].line_name,
-                       sorted_lines_list[min_index].line_name) < 0) {
+            if (strcmp(sorted_lines_list[j].line_name, sorted_lines_list[min_index].line_name) < 0) {
                 min_index = j;
             }
         }
@@ -126,13 +124,11 @@ void listLines() {
         printf("%s ", line_list[i].line_name);
 
         if (line_list[i].nr_line_stops > 0) {
-            printf(
-                "%s %s ", line_list[i].course[0].stop_name,
-                line_list[i].course[line_list[i].nr_line_stops - 1].stop_name);
+            printf("%s %s ", line_list[i].course[0].stop_name,
+                   line_list[i].course[line_list[i].nr_line_stops - 1].stop_name);
         }
 
-        printf("%d %.2f %.2f\n", line_list[i].nr_line_stops,
-               line_list[i].total_cost, line_list[i].total_duration);
+        printf("%d %.2f %.2f\n", line_list[i].nr_line_stops, line_list[i].total_cost, line_list[i].total_duration);
     }
 }
 
@@ -285,8 +281,7 @@ void listStops() {
     int i;
 
     for (i = 0; i < nr_stops; i++) {
-        printf("%s: %16.12f %16.12f %d\n", stop_list[i].stop_name,
-               stop_list[i].lat, stop_list[i].lon,
+        printf("%s: %16.12f %16.12f %d\n", stop_list[i].stop_name, stop_list[i].lat, stop_list[i].lon,
                nrStopLines(stop_list[i].stop_name));
     }
 }
@@ -343,17 +338,14 @@ void stopCommand(char buffer[]) {
  * create is valid for the given line. Returns integers that represent link
  * types back to the isValidLink.
  */
-int isLinkLineCompatible(int line_index, int origin_index,
-                         int destination_index) {
+int isLinkLineCompatible(int line_index, int origin_index, int destination_index) {
 
     if (line_list[line_index].is_cycle == 1) {
         printf("link cannot be associated with bus line.\n");
         return -1;
     }
 
-    if (strcmp(line_list[line_index]
-                   .course[line_list[line_index].nr_line_stops - 1]
-                   .stop_name,
+    if (strcmp(line_list[line_index].course[line_list[line_index].nr_line_stops - 1].stop_name,
                stop_list[origin_index].stop_name) == 0) {
         return 1;
     }
@@ -373,8 +365,7 @@ int isLinkLineCompatible(int line_index, int origin_index,
  * it's invalid, 0 if it's an origin link, 1 if it's a destination link and 2 if
  * these are the first stops to be inserted in the line course.
  */
-int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
-                double cost_pre, double duration_pre) {
+int isValidLink(char *line_pre, char *origin_pre, char *destination_pre, double cost_pre, double duration_pre) {
 
     int line_index, origin_index, destination_index;
 
@@ -413,8 +404,7 @@ int isValidLink(char *line_pre, char *origin_pre, char *destination_pre,
  * Function used to insert the first 2 stops in the line of index i in the
  * global line list.
  */
-void createFirstStops(int line_index, int origin_index, int destination_index,
-                      double cost_pre, double duration_pre) {
+void createFirstStops(int line_index, int origin_index, int destination_index, double cost_pre, double duration_pre) {
 
     line_list[line_index].course[0] = stop_list[origin_index];
     line_list[line_index].course[1] = stop_list[destination_index];
@@ -427,8 +417,8 @@ void createFirstStops(int line_index, int origin_index, int destination_index,
  * Line course-plotting function. Based on the link type, adds new stops
  * to the course of the line of index i in the global line list .
  */
-void createLink(int line_index, int origin_index, int destination_index,
-                double cost_pre, double duration_pre, int link_type) {
+void createLink(int line_index, int origin_index, int destination_index, double cost_pre, double duration_pre,
+                int link_type) {
     int i, nr_line_index_stops = line_list[line_index].nr_line_stops;
 
     switch (link_type) {
@@ -436,12 +426,10 @@ void createLink(int line_index, int origin_index, int destination_index,
     /* Origin link. Stop is inserted in the begining of the line course. */
     case 0: {
         line_list[line_index].course =
-            (stop *)realloc(line_list[line_index].course,
-                            (nr_line_index_stops + 1) * sizeof(stop));
+            (stop *)realloc(line_list[line_index].course, (nr_line_index_stops + 1) * sizeof(stop));
 
         for (i = nr_line_index_stops - 1; i >= 0; i--) {
-            line_list[line_index].course[i + 1] =
-                line_list[line_index].course[i];
+            line_list[line_index].course[i + 1] = line_list[line_index].course[i];
         }
         line_list[line_index].course[0] = stop_list[origin_index];
     } break;
@@ -449,17 +437,14 @@ void createLink(int line_index, int origin_index, int destination_index,
     /* Destination link. Stop is inserted at the end of the line course. */
     case 1: {
         line_list[line_index].course =
-            (stop *)realloc(line_list[line_index].course,
-                            (nr_line_index_stops + 1) * sizeof(stop));
-        line_list[line_index].course[nr_line_index_stops] =
-            stop_list[destination_index];
+            (stop *)realloc(line_list[line_index].course, (nr_line_index_stops + 1) * sizeof(stop));
+        line_list[line_index].course[nr_line_index_stops] = stop_list[destination_index];
     } break;
 
     /* First stops. The mentioned link actually represents the first stops to be
      * inserted in the line course. */
     case 2: {
-        createFirstStops(line_index, origin_index, destination_index, cost_pre,
-                         duration_pre);
+        createFirstStops(line_index, origin_index, destination_index, cost_pre, duration_pre);
     }
         return;
     }
@@ -474,9 +459,7 @@ void createLink(int line_index, int origin_index, int destination_index,
     /* Final step to determine if the line becomes a cycle after adding the
      * link. */
     if (line_list[line_index].course[0].stop_name ==
-        line_list[line_index]
-            .course[line_list[line_index].nr_line_stops - 1]
-            .stop_name) {
+        line_list[line_index].course[line_list[line_index].nr_line_stops - 1].stop_name) {
         line_list[line_index].is_cycle = 1;
     }
 }
@@ -505,10 +488,8 @@ void linkCommand(char buffer[]) {
     cost_pre = atof(readNextWord(buffer));
     duration_pre = atof(readNextWord(buffer));
 
-    if ((link_type = isValidLink(line_pre, origin_pre, destination_pre,
-                                 cost_pre, duration_pre)) != -1) {
-        createLink(line_index, origin_index, destination_index, cost_pre,
-                   duration_pre, link_type);
+    if ((link_type = isValidLink(line_pre, origin_pre, destination_pre, cost_pre, duration_pre)) != -1) {
+        createLink(line_index, origin_index, destination_index, cost_pre, duration_pre, link_type);
     }
     return;
 }
@@ -528,8 +509,7 @@ void intsecCommand() {
             printf("%s %d:", stop_pre, nrStopLines(stop_pre));
             for (j = 0; j < nr_lines; j++) {
                 for (k = 0; k < sorted_lines_list[j].nr_line_stops; k++) {
-                    if (strcmp(stop_pre,
-                               sorted_lines_list[j].course[k].stop_name) == 0) {
+                    if (strcmp(stop_pre, sorted_lines_list[j].course[k].stop_name) == 0) {
                         printf(" %s", sorted_lines_list[j].line_name);
                         break;
                     }

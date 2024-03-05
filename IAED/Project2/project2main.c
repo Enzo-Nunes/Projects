@@ -85,11 +85,9 @@ void linkCommand(BusNetwork *sys, Buffer *buffer) {
     cost = atof(cost_pre);
     duration = atof(duration_pre);
 
-    if ((link_type = isValidLink(
-             sys, line_index, origin_index, destination_index, line_name,
-             origin_name, destination_name, cost, duration)) != NOT_FOUND) {
-        createLink(sys, line_index, origin_index, destination_index, cost,
-                   duration, link_type);
+    if ((link_type = isValidLink(sys, line_index, origin_index, destination_index, line_name, origin_name,
+                                 destination_name, cost, duration)) != NOT_FOUND) {
+        createLink(sys, line_index, origin_index, destination_index, cost, duration, link_type);
     }
     free(line_name);
     free(origin_name);
@@ -110,8 +108,7 @@ void intsecCommand(BusNetwork *sys) {
         if ((nr_stop_lines = nrStopLines(sys, sys->stop_list[i].name)) > 1) {
             printf("%s %d:", sys->stop_list[i].name, nr_stop_lines);
             for (j = 0; j < sys->nr_lines; j++) {
-                for (node = sorted_lines_list[j].origin; node != NULL;
-                     node = node->next) {
+                for (node = sorted_lines_list[j].origin; node != NULL; node = node->next) {
                     if (node->stop == &sys->stop_list[i]) {
                         printf(" %s", sorted_lines_list[j].name);
                         break;
