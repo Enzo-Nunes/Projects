@@ -112,17 +112,13 @@ void createStop(BusNetwork *sys, char *stop_name, double lat, double lon);
  * Link functions.
  */
 int isLinkLineCompatible(Line line, Stop origin, Stop destination);
-int isValidLink(BusNetwork *sys, int line_index, int origin_index,
-                int destination_index, char *line_name, char *origin_name,
-                char *destination_name, double cost, double duration);
-void addNewOrigin(BusNetwork *sys, int line_index, int origin_index,
-                  double cost, double duration);
-void addNewDestination(BusNetwork *sys, int line_index, int destination_index,
-                       double cost, double duration);
-void addFirstStops(BusNetwork *sys, int line_index, int origin_index,
-                   int destination_index, double cost, double duration);
-void createLink(BusNetwork *sys, int line_index, int origin_index,
-                int destination_index, double cost, double duration,
+int isValidLink(BusNetwork *sys, int line_index, int origin_index, int destination_index, char *line_name,
+                char *origin_name, char *destination_name, double cost, double duration);
+void addNewOrigin(BusNetwork *sys, int line_index, int origin_index, double cost, double duration);
+void addNewDestination(BusNetwork *sys, int line_index, int destination_index, double cost, double duration);
+void addFirstStops(BusNetwork *sys, int line_index, int origin_index, int destination_index, double cost,
+                   double duration);
+void createLink(BusNetwork *sys, int line_index, int origin_index, int destination_index, double cost, double duration,
                 int link_type);
 
 /*
