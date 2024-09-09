@@ -1,5 +1,5 @@
 # FP (Fundamentos da Programação)
-## Programming Fundamentals
+## Foundations of Programming
 
 This repository contains the projects completed as part of the Fundamentos da Programação course at Instituto Superior Técnico. The course primarily focused on **Python** programming.
 
