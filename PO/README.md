@@ -1,7 +1,7 @@
 # PO (Programação com Objetos)
 ## Object-Oriented Programming
 
-This repository contains the projects completed as part of the PO course at Instituto Superior Técnico. The course primarily focused on learning the bases of object oriented programming, as well as two projects in **Java** programming language.
+This repository contains the projects completed as part of the PO course at IST. The course primarily focused on learning the bases of object oriented programming, as well as two projects in **Java** programming language.
 
 ## Public Transportation System
 
