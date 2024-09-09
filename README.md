@@ -8,7 +8,7 @@ This is a repository with all finished University projects I've previously worke
 The repo is subdivided into Course folders, which all have a README file explaining the Course and projects related. Each Course folder might be subdivided into project folders.
 Each of these project folders have several files which include test files, the project itself, the PDF with the project statement, and more.
 
-Some projects that were developed in group might be in separate repositories, owned by one of the group members. In those cases, a link to that repository will be provided bellow in that project's listing.
+Some projects that were developed in group might be in separate repositories, owned by one of the group members. In those cases, a link to that repository will be provided in that project's listing below.
 
 ## Courses
 ### 1st Year
