@@ -1,5 +1,5 @@
 # ASA (Análise e Síntese de Algoritmos)
-## Algorithm Design and Analysis
+## Analysis and Synthesis of Algorithms
 
 This repository contains the projects completed as part of the ASA course at IST. The course primarily focused on learning and determining the best algorithm for a series of problems. Two **C++** projects and a small **Python** project were developed. This folder also includes a small project (project0) that served as a small introduction to the course. All projects (except 0) are accompanied by a project report.
 

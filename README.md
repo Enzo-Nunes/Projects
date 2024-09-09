@@ -10,13 +10,13 @@ Each of these project folders have several files which include test files, the p
 
 ## Courses
 ### 1st Year
-- FP (Fundamentos da Programação) - Programming Fundamentals
-- LP (Lógica para Programação) - Programming Logic
+- FP (Fundamentos da Programação) - Foundations of Programming
+- LP (Lógica para Programação) - Logic for Programming
 - IAED (Introdução aos Algoritmos e Estruturas de Dados) - Introduction to Algorithms and Data Structures
 - IAC (Introdução à Arquitetura de Computadores) - Introduction to Computer Architecture
 
 ### 2nd Year
-- PO (Programação com Objetos) - Object Oriented Programming
-- ASA (Análise e Síntese de Algoritmos) - Algorithm Design and Analysis
+- PO (Programação com Objetos) - Object-Oriented Programming
+- ASA (Análise e Síntese de Algoritmos) - Analysis and Synthesis of Algorithms
 - SO (Sistemas Operativos) - Operating Systems
  

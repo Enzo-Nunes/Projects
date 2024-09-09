@@ -1,5 +1,5 @@
 # LP (Lógica para Programação)
-## Programming Logic
+## Logic for Programming
 
 This repository contains the projects completed as part of the LP course at Instituto Superior Técnico. The course primarily focused on learning the basic logics of programming and a **Prolog** project.
 
