@@ -21,7 +21,7 @@ Some projects that were developed in group might be in separate repositories, ow
 - PO (Programação com Objetos) - Object-Oriented Programming
 - ASA (Análise e Síntese de Algoritmos) - Analysis and Synthesis of Algorithms
 - SO (Sistemas Operativos) - Operating Systems
-- IPM (Interação Pessoa-Máquina) - Human-Computer Interaction - Owned by @luca-dallalana at [Project_IPM](https://github.com/luca-dallalana/Project_IPM)
+- IPM (Interação Pessoa-Máquina) - Human-Computer Interaction - Owned by [@luca-dallalana](https://github.com/luca-dallalana/) at [Project_IPM](https://github.com/luca-dallalana/Project_IPM)
 - IA (Inteligência Artificial) - Artificial Intelligence
-- BD (Bases de Dados) - Databases - Owned by @guilhermedcampos at [saude-database](https://github.com/guilhermedcampos/saude-database)
+- BD (Bases de Dados) - Databases - Owned by [@guilhermedcampos](https://github.com/guilhermedcampos/) at [saude-database](https://github.com/guilhermedcampos/saude-database)
 - PE (Probabilidade e Estatística) - Probability and Statistics
