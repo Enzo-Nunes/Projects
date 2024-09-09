@@ -1,7 +1,7 @@
 # IAC (Introdução à Arquitetura de Computadores)
 ## Introduction to Computer Architecture
 
-This repository contains the projects completed as part of the IAC course at Instituto Superior Técnico. The course primarily focused on learning the basics of computer structure and a project in a branch of the **Assembly** programming language created by the course professor, called **PEPE-16**
+This repository contains the projects completed as part of the IAC course at IST. The course primarily focused on learning the basics of computer structure and a project in a branch of the **Assembly** programming language created by the course professor, called **PEPE-16**
 
 ## Asteroids Game
 
