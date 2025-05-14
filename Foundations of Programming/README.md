@@ -20,6 +20,6 @@ Final grade: **19.55/20**
 
 ## Extra (Next Year's projects)
 
-This folder contains the projects I developed the year after I completed this course. In other words, projects from the students one year behind me. I developed these projects to further improve my `Python` skills and as leisure. As I already had this course, I was able to develop these projects in my own pace, in a more structured way and with a better understanding of the language.
+This folder contains projects from this course I developed in the years after completing it. I developed these projects to further improve my programming skills, my knowledge of algorithms and data structures, and as leisure. As I already had completed this course, I was able to develop these projects in my own pace, in a more structured way and with better programming understanding.
 
 Their course format was way better structured. Their first project was based on learning recursion through obtaining information on a rectangular board. The second project consisted of developing the japanese game "Go". Project 1 was used as a base for project 2.

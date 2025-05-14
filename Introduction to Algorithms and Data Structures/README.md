@@ -8,8 +8,8 @@ The projects consisted of the development of a software application for the mana
 
 Final Grade: **20/20**
 
-## Extra (Next Year's projects)
+## Extra
 
-This folder contains the project I developed the year after I completed this course. In other words, the project given to the students one year behind me. I developed these projects to further improve my `C` skills, my knowledge of algorithms and data structures, and as leisure. As I already had this course, I was able to develop these projects in my own pace, in a more structured way and with a better understanding of the language.
+This folder contains projects from this course I developed in the years after completing it. I developed these projects to further improve my programming skills, my knowledge of algorithms and data structures, and as leisure. As I already had completed this course, I was able to develop these projects in my own pace, in a more structured way and with better programming understanding.
 
-Their course format was way better structured. They only had one project, which consisted of developing a software application for the management of parking lots. This project was more robust and complex than the ones I had to develop, as it was a combination of two projects.
+Particularly, the 2024-2025 project was developed as a personal challenge to learn the `Go` programming language. As such, I developed the project in `Go` instead of `C`.
