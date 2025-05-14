@@ -1,7 +1,6 @@
-# IA - Inteligência Artificial
-## Artificial Intelligence
+# Artificial Intelligence
 
-This repository contains the project completed as part of the IA course at IST. The course focused on the basic concepts and techniques in AI, including problem-solving, search algorithms, and heuristics. The project was developed in **Python** and consisted of implementing a solution to the Pipemania game using search algorithms.
+This course focused on the basic concepts and techniques both for use and development of Artificial Intelligence, including problem-solving, search algorithms, and heuristics. The project was developed in `Python` and consisted of implementing a solution to the Pipemania game using search algorithms.
 
 ## Pipemania
 
