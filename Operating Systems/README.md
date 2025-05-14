@@ -1,7 +1,6 @@
-# SO (Sistemas Operativos)
-## Operating Systems
+# Operating Systems
 
-This repository contains the projects completed as part of the SO course at IST. The course primarily focused on learning the inner workings of an operating system and how to develop programs that interact with it. Two **C** projects were developed.
+This course primarily focused on learning the inner workings of an operating system and how to develop programs that interact with it. Two `C` projects were developed.
 
 ## Project 1: Multi-process and Multi-thread File Processing
 
@@ -12,7 +11,6 @@ Final Grade: **15.21/20**
 ## Project 2: Client and Server
 
 We were given a modified version of the source code of the previous project completed, without multi-processing. We were also given the souce code of the client. We were tasked with transforming the past project to a server-like program with multi-threading and to implement the API for the client to interact with this server.
-
 
 Both projects were developed by a group of 2 students.
 

@@ -1,7 +1,6 @@
-# ASA (Análise e Síntese de Algoritmos)
-## Analysis and Synthesis of Algorithms
+# Analysis and Synthesis of Algorithms
 
-This repository contains the projects completed as part of the ASA course at IST. The course primarily focused on learning and determining the best algorithm for a series of problems. Two **C++** projects and a small **Python** project were developed. This folder also includes a small project (project0) that served as a small introduction to the course. All projects (except 0) are accompanied by a project report.
+This course primarily focused on learning and determining the best algorithm for a series of problems. Two `C++` projects and a small `Python` project were developed. This folder also includes a small project (project0) that served as a small introduction to the course. All projects (except 0) are accompanied by a project report.
 
 ## Project 0: Friendships (Practice Run)
 
@@ -21,6 +20,6 @@ Final Grade: **20/20**
 
 ## Project 3: Christmas Toys Factory (LP)
 
-In this project we learned how the PuLP python library worked for solving Linear Programming problems. The year I attended this course was the first that contained this third project and, as such, it was short and simple. It basically consisted of interpreting the problem, modeling it as a linear programming problem and writing a program to solve it.
+In this project we learned how the PuLP `Python` library worked for solving Linear Programming problems. The year I attended this course was the first that contained this third project and, as such, it was short and simple. It basically consisted of interpreting the problem, modeling it as a linear programming problem and writing a program to solve it.
 
 Final Grade: **19.70/20**
